@@ -20,8 +20,24 @@ export interface UserProfile {
 export interface AuthResponse {
   data: {
     accessToken: string;
-    profile: UserProfile;
+    name: string;
+    email: string;
+    avatar?: {
+      url: string;
+      alt?: string;
+    };
+    banner?: {
+      url: string;
+      alt?: string;
+    };
+    bio?: string;
+    venueManager?: boolean;
+    _count?: {
+      venues: number;
+      bookings: number;
+    };
   };
+  meta?: object;
 }
 
 export interface RegisterData {
@@ -50,14 +66,20 @@ export async function registerUser(
     },
     body: JSON.stringify(formData),
   });
-
+  const data = await res.json();
   if (!res.ok) {
-    const error = await res.json();
-    throw new Error(error.errors?.[0]?.message || "Registration failed");
+    throw new Error(data.errors?.[0]?.message || "Registration failed");
   }
 
-  const data = await res.json();
-  saveAuth(data.data.accessToken, data.data.profile);
+  const profileFromApi = {
+    name: data.data.name,
+    email: data.data.email,
+    avatar: data.data.avatar,
+    venueManager: data.data.venueManager,
+    _count: data.data._count,
+  };
+
+  saveAuth(data.data.accessToken, profileFromApi);
   return data;
 }
 
@@ -73,21 +95,36 @@ export async function loginUser(
     },
     body: JSON.stringify({ email, password }),
   });
-
+  const data = await res.json();
   if (!res.ok) {
-    const error = await res.json();
-    throw new Error(error.errors?.[0]?.message || "Login failed");
+    throw new Error(data.errors?.[0]?.message || "Login failed");
   }
 
-  const data = await res.json();
-  saveAuth(data.data.accessToken, data.data.profile);
+  const profileFromApi = {
+    name: data.data.name,
+    email: data.data.email,
+    avatar: data.data.avatar,
+    venueManager: data.data.venueManager,
+    _count: data.data._count,
+  };
+
+  saveAuth(data.data.accessToken, profileFromApi);
   return data;
 }
 
 /* ---------- Auth Helpers ---------- */
-export function saveAuth(token: string, profile: UserProfile) {
+export function saveAuth(token: string, profile: any) {
   localStorage.setItem(TOKEN_KEY, token);
-  localStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
+
+  const normalizedProfile: UserProfile = {
+    name: profile?.name ?? "",
+    email: profile?.email ?? "",
+    avatar: profile?.avatar,
+    venueManager: profile?.venueManager ?? false,
+    _count: profile?._count,
+  };
+
+  localStorage.setItem(PROFILE_KEY, JSON.stringify(normalizedProfile));
 }
 
 export function getToken(): string | null {
