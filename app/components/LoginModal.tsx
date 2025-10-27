@@ -18,8 +18,9 @@ export default function LoginModal({ onSuccess }: LoginModalProps) {
 
     try {
       await loginUser(email, password);
-      onSuccess(); // fortell Header at vi er innlogget
+      onSuccess();
     } catch (err) {
+      console.error(err);
       setError((err as Error).message || "Login failed");
     } finally {
       setLoading(false);

@@ -1,5 +1,3 @@
-//login register
-// app/api/auth.ts
 // Handles login, register and token storage for Holidaze API (Noroff v2)
 
 const API_BASE = "https://v2.api.noroff.dev";
@@ -105,6 +103,17 @@ export function clearAuth() {
 
 export function getProfile(): UserProfile | null {
   if (typeof window === "undefined") return null;
+
   const raw = localStorage.getItem("holidaze_profile");
-  return raw ? JSON.parse(raw) : null;
+  if (!raw) return null;
+
+  try {
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === "object" && "name" in parsed) {
+      return parsed as UserProfile;
+    }
+    return null;
+  } catch {
+    return null;
+  }
 }

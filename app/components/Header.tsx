@@ -5,9 +5,11 @@ import { getToken, getProfile, clearAuth, type UserProfile } from "../api/auth";
 import LoginModal from "./LoginModal";
 
 export default function Header() {
+  const [ready, setReady] = useState(false);
+
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [showLogin, setShowLogin] = useState(false); // styrer popupen
+  const [showLogin, setShowLogin] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -17,15 +19,18 @@ export default function Header() {
 
     setIsLoggedIn(!!token);
     setProfile(prof || null);
+    setReady(true);
   }, []);
 
   function handleLogout() {
     clearAuth();
     setIsLoggedIn(false);
     setProfile(null);
+    setShowLogin(false);
   }
 
   function handleLoginSuccess() {
+    // after successful login, refresh auth UI
     setIsLoggedIn(true);
     setProfile(getProfile());
     setShowLogin(false);
@@ -39,7 +44,7 @@ export default function Header() {
           Holidaze
         </Link>
 
-        {/* Navigasjonslenker */}
+        {/* Main nav */}
         <ul className={styles.navLinks}>
           <li>
             <Link to="/">Home</Link>
@@ -52,29 +57,32 @@ export default function Header() {
           </li>
         </ul>
 
-        {/* Auth-seksjon */}
+        {/* Right-side auth */}
         <div className={styles.authArea}>
-          {isLoggedIn && profile ? (
+          {!ready ? (
+            <span className={styles.greeting} style={{ opacity: 0.5 }}>
+              ...
+            </span>
+          ) : isLoggedIn ? (
             <>
-              <span className={styles.greeting}>Hi, {profile.name}</span>
+              {profile?.name && (
+                <span className={styles.greeting}>Hi, {profile.name}</span>
+              )}
               <button onClick={handleLogout} className={styles.logoutBtn}>
                 Log out
               </button>
             </>
           ) : (
-            <>
-              <button
-                onClick={() => setShowLogin(true)}
-                className={styles.loginBtn}
-              >
-                Login
-              </button>
-            </>
+            <button
+              onClick={() => setShowLogin(true)}
+              className={styles.loginBtn}
+            >
+              Login
+            </button>
           )}
         </div>
       </nav>
 
-      {/* LoginModal popper opp her */}
       {showLogin && <LoginModal onSuccess={handleLoginSuccess} />}
     </header>
   );
