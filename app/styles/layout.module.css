@@ -57,3 +57,58 @@ main {
   margin: 2rem auto;
   padding: 0 1.5rem;
 }
+
+.authArea {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.greeting {
+  color: #333;
+  font-weight: 500;
+}
+
+.loginBtn {
+  background-color: #111827;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.45rem 0.9rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.loginBtn:hover {
+  background-color: #1e293b;
+}
+
+.logoutBtn {
+  background-color: transparent;
+  border: 1px solid #aaa;
+  border-radius: 6px;
+  padding: 0.45rem 0.9rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.logoutBtn:hover {
+  background-color: #f5f5f5;
+}
+
+.loginLink {
+  font-weight: 500;
+  color: #333;
+  text-decoration: none;
+  border: 1px solid #aaa;
+  border-radius: 6px;
+  padding: 0.4rem 0.75rem;
+}
+
+.loginLink:hover {
+  background-color: #f5f5f5;
+  text-decoration: none;
+}
