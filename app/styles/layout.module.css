@@ -129,3 +129,21 @@ main {
 .registerBtn:hover {
   background-color: #059669;
 }
+
+/* --- Root layout styles --- */
+.bodyRoot {
+  font-family: system-ui, sans-serif;
+  color: #111;
+  background-color: #fff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.mainWrapper {
+  flex: 1;
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+  width: 100%;
+}

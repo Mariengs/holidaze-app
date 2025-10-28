@@ -14,7 +14,6 @@ export interface Booking {
   };
 }
 
-// Lager headers for API-kall som krever auth
 function buildHeaders(includeJson = false) {
   const token = getToken();
   const apiKey = getApiKey();

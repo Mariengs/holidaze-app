@@ -85,10 +85,8 @@ function saveAuthToStorage(opts: {
 }) {
   const { token, profile, apiKey } = opts;
 
-  // token
   localStorage.setItem(TOKEN_KEY, token);
 
-  // normalized profile
   const normalizedProfile: UserProfile = {
     name: profile?.name ?? "",
     email: profile?.email ?? "",
@@ -99,7 +97,6 @@ function saveAuthToStorage(opts: {
 
   localStorage.setItem(PROFILE_KEY, JSON.stringify(normalizedProfile));
 
-  // apiKey
   if (apiKey) {
     localStorage.setItem(API_KEY_KEY, apiKey);
   }
@@ -131,12 +128,11 @@ export async function registerUser({
   return response.json();
 }
 
-/* ---------- Login (now also ensures API key exists) ---------- */
+/* ---------- Login ---------- */
 export async function loginUser(
   email: string,
   password: string
 ): Promise<AuthResponse> {
-  // 1. Logg inn -> få accessToken + profil
   const res = await fetch(`${API_BASE}/auth/login`, {
     method: "POST",
     headers: {
@@ -161,15 +157,11 @@ export async function loginUser(
     _count: data.data._count,
   };
 
-  // foreløpig har vi ikke apiKey
   saveAuthToStorage({
     token: accessToken,
     profile: profileFromApi,
   });
 
-  // 2. Prøv å lage / hente API key for denne innloggede brukeren
-  //    POST /auth/create-api-key
-  //    headers: Authorization: Bearer <accessToken>
   try {
     const keyRes = await fetch(`${API_BASE}/auth/create-api-key`, {
       method: "POST",
@@ -177,9 +169,9 @@ export async function loginUser(
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json",
       },
-      // optional body, you can name your key or leave empty
+
       body: JSON.stringify({
-        name: "Holidaze Key", // kan være hva som helst < 32 chars
+        name: "Holidaze Key", //  < 32 chars
       }),
     });
 
@@ -191,9 +183,6 @@ export async function loginUser(
         localStorage.setItem(API_KEY_KEY, apiKeyFromApi);
       }
     } else {
-      // hvis 409 Conflict el.l -> key finnes allerede,
-      // her kunne du hatt en GET /auth/api-key hvis Noroff eksponerer den.
-      // Hvis ikke, så skipper vi bare å oppdatere.
       console.warn("API key creation failed or already exists");
     }
   } catch (err) {

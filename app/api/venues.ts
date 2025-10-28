@@ -43,8 +43,8 @@ export interface Venue {
 
 export interface Booking {
   id: string;
-  dateFrom: string; // ISO dato
-  dateTo: string; // ISO dato
+  dateFrom: string;
+  dateTo: string;
   guests: number;
   customer: {
     name: string;
@@ -56,7 +56,6 @@ export interface Booking {
 export async function getAllVenues(query?: string): Promise<Venue[]> {
   const token = getToken();
 
-  // Hvis det finnes et søkeord, legg det til som query parameter (?q=)
   const url = query
     ? `${API_BASE}/venues/search?q=${encodeURIComponent(query)}`
     : `${API_BASE}/venues`;
@@ -76,8 +75,6 @@ export async function getAllVenues(query?: string): Promise<Venue[]> {
 
 /* ---------- Get single venue by ID ---------- */
 export async function getVenueById(id: string): Promise<Venue> {
-  // Noroff API lar oss inkludere relaterte ting med _bookings=true
-  // (det er sånn i v2-dokumentasjonen)
   const res = await fetch(
     `${API_BASE}/venues/${id}?_bookings=true&_owner=true`
   );

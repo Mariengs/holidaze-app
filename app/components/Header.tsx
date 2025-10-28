@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import styles from "../styles/layout.module.css";
 import { getToken, getProfile, clearAuth, type UserProfile } from "../api/auth";
@@ -11,9 +11,8 @@ export default function Header() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [showLogin, setShowLogin] = useState(false);
 
-  useEffect(() => {
+  const refreshAuthState = useCallback(() => {
     if (typeof window === "undefined") return;
-
     const token = getToken();
     const prof = getProfile();
 
@@ -22,17 +21,29 @@ export default function Header() {
     setReady(true);
   }, []);
 
+  useEffect(() => {
+    refreshAuthState();
+  }, [refreshAuthState]);
+
+  useEffect(() => {
+    function handleAuthUpdated() {
+      refreshAuthState();
+    }
+
+    window.addEventListener("auth-updated", handleAuthUpdated);
+    return () => {
+      window.removeEventListener("auth-updated", handleAuthUpdated);
+    };
+  }, [refreshAuthState]);
+
   function handleLogout() {
     clearAuth();
-    setIsLoggedIn(false);
-    setProfile(null);
+    refreshAuthState();
     setShowLogin(false);
   }
 
   function handleLoginSuccess() {
-    // after successful login, refresh auth UI
-    setIsLoggedIn(true);
-    setProfile(getProfile());
+    refreshAuthState();
     setShowLogin(false);
   }
 
