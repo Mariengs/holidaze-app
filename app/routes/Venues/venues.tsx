@@ -1,112 +1,120 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { getAllVenues, type Venue } from "../../api/venues";
-import ProtectedRoute from "../../components/ProtectedRoute";
 
-export default function VenuesPage() {
+export default function Venues() {
   const [venues, setVenues] = useState<Venue[]>([]);
+  const [query, setQuery] = useState("");
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+
+  async function fetchVenues(search?: string) {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await getAllVenues(search);
+      setVenues(data);
+    } catch (err) {
+      console.error(err);
+      setError((err as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
-    async function load() {
-      try {
-        setLoading(true);
-        const data = await getAllVenues();
-        setVenues(data);
-      } catch (err) {
-        setError((err as Error).message);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    load();
+    fetchVenues();
   }, []);
 
+  function handleSearch(e: React.FormEvent) {
+    e.preventDefault();
+    fetchVenues(query);
+  }
+
   return (
-    <ProtectedRoute>
-      <section style={{ padding: "2rem" }}>
-        <h1 style={{ marginBottom: "1rem" }}>Available Venues</h1>
+    <main style={{ padding: "1.5rem" }}>
+      <h1>Available Venues</h1>
 
-        {loading && <p>Loading venues…</p>}
-        {error && (
-          <p style={{ color: "red" }}>Could not load venues: {error}</p>
-        )}
+      {/* 🔍 Search bar */}
+      <form onSubmit={handleSearch} style={{ marginBottom: "1rem" }}>
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search venues..."
+          style={{
+            padding: "0.6rem 0.8rem",
+            border: "1px solid #ccc",
+            borderRadius: "6px",
+            width: "250px",
+            marginRight: "0.5rem",
+          }}
+        />
+        <button
+          type="submit"
+          style={{
+            padding: "0.6rem 1rem",
+            border: "none",
+            borderRadius: "6px",
+            background: "#111827",
+            color: "#fff",
+            cursor: "pointer",
+          }}
+        >
+          Search
+        </button>
+      </form>
 
-        {!loading && !error && (
-          <div
+      {loading && <p>Loading venues...</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      {!loading && venues.length === 0 && <p>No venues found.</p>}
+
+      <div
+        style={{
+          display: "grid",
+          gap: "1rem",
+          gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
+        }}
+      >
+        {venues.map((venue) => (
+          <Link
+            key={venue.id}
+            to={`/venues/${venue.id}`}
             style={{
-              display: "grid",
-              gap: "1.5rem",
-              gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+              textDecoration: "none",
+              color: "inherit",
             }}
           >
-            {venues.map((venue) => (
-              <article
-                key={venue.id}
-                style={{
-                  border: "1px solid #e5e5e5",
-                  borderRadius: "10px",
-                  padding: "1rem",
-                  backgroundColor: "#fff",
-                }}
-              >
+            <div
+              style={{
+                border: "1px solid #ccc",
+                borderRadius: "10px",
+                overflow: "hidden",
+                background: "#fff",
+              }}
+            >
+              {venue.media && venue.media[0] && (
                 <img
-                  src={
-                    venue.media?.[0]?.url ||
-                    "https://via.placeholder.com/300?text=No+image"
-                  }
-                  alt={venue.media?.[0]?.alt || venue.name}
+                  src={venue.media[0].url}
+                  alt={venue.media[0].alt || venue.name}
                   style={{
                     width: "100%",
-                    borderRadius: "8px",
-                    aspectRatio: "4 / 3",
+                    height: "180px",
                     objectFit: "cover",
-                    backgroundColor: "#f5f5f5",
                   }}
                 />
-
-                <h2
-                  style={{
-                    margin: "0.75rem 0 0.5rem",
-                    fontSize: "1rem",
-                    fontWeight: 600,
-                  }}
-                >
-                  {venue.name}
-                </h2>
-
-                <p
-                  style={{
-                    fontSize: ".9rem",
-                    color: "#444",
-                    lineHeight: 1.4,
-                    marginBottom: ".75rem",
-                  }}
-                >
-                  {venue.description}
+              )}
+              <div style={{ padding: "1rem" }}>
+                <h3>{venue.name}</h3>
+                <p>{venue.location?.city || "Unknown city"}</p>
+                <p>
+                  <strong>${venue.price}</strong> / night
                 </p>
-
-                <p style={{ fontWeight: 500, marginBottom: ".5rem" }}>
-                  ${venue.price} / night
-                </p>
-
-                {venue.location?.city || venue.location?.country ? (
-                  <p
-                    style={{
-                      fontSize: ".8rem",
-                      color: "#666",
-                    }}
-                  >
-                    {venue.location?.city ? venue.location.city + ", " : ""}
-                    {venue.location?.country || ""}
-                  </p>
-                ) : null}
-              </article>
-            ))}
-          </div>
-        )}
-      </section>
-    </ProtectedRoute>
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </main>
   );
 }

@@ -73,17 +73,28 @@ export default function Header() {
               </button>
             </>
           ) : (
-            <button
-              onClick={() => setShowLogin(true)}
-              className={styles.loginBtn}
-            >
-              Login
-            </button>
+            <div style={{ display: "flex", gap: "0.5rem" }}>
+              <button
+                onClick={() => setShowLogin(true)}
+                className={styles.loginBtn}
+              >
+                Login
+              </button>
+
+              <Link to="/register" className={styles.registerBtn}>
+                Register
+              </Link>
+            </div>
           )}
         </div>
       </nav>
 
-      {showLogin && <LoginModal onSuccess={handleLoginSuccess} />}
+      {showLogin && (
+        <LoginModal
+          onSuccess={handleLoginSuccess}
+          onClose={() => setShowLogin(false)}
+        />
+      )}
     </header>
   );
 }
