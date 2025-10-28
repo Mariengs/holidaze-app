@@ -40,11 +40,21 @@ export default function Header() {
     clearAuth();
     refreshAuthState();
     setShowLogin(false);
+
+    // informer resten av appen
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new Event("auth-updated"));
+    }
   }
 
   function handleLoginSuccess() {
     refreshAuthState();
     setShowLogin(false);
+
+    // informer resten av appen (ProfilePage osv.)
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new Event("auth-updated"));
+    }
   }
 
   return (

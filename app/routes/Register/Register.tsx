@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { registerUser, loginUser } from "../../api/auth";
+import { registerUser, loginUser, forceVenueManagerTrue } from "../../api/auth";
 import Toast from "../../components/ui/Toast";
 import styles from "./register.module.css";
 
@@ -12,7 +12,7 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [venueManager, setVenueManager] = useState(false);
+  const [venueManager, setVenueManager] = useState(false); // brukerens valg
 
   // UI state
   const [showPassword, setShowPassword] = useState(false);
@@ -25,6 +25,7 @@ export default function RegisterPage() {
     e.preventDefault();
     setError(null);
 
+    // basic validation
     if (!email.endsWith("@stud.noroff.no")) {
       setError("Only @stud.noroff.no emails are allowed.");
       return;
@@ -37,14 +38,36 @@ export default function RegisterPage() {
 
     try {
       setLoading(true);
-      await registerUser({ name, email, password, venueManager });
+
+      // 1. Registrer ny bruker med valgt rolle
+      await registerUser({
+        name,
+        email,
+        password,
+        venueManager, // dette er true/false fra checkboxen
+      });
+
+      // 2. Logg inn for å hente token, apiKey og lagre profilen i localStorage
       await loginUser(email, password);
 
+      // 3. Hvis brukeren valgte "I am a Venue Manager"
+      //    men API evt gir venueManager:false første gang,
+      //    tving serveren -> venueManager:true og sync localStorage.
+      if (venueManager === true) {
+        try {
+          await forceVenueManagerTrue();
+        } catch (err) {
+          // hvis dette feiler, vi lar fortsatt brukeren være logget inn
+          console.warn("Could not force venueManager true:", err);
+        }
+      }
+
+      // 4. si fra til resten av appen at auth-data er oppdatert (header osv.)
       window.dispatchEvent(new Event("auth-updated"));
 
+      // 5. toast + naviger til profilen
       setToastMessage("Account created 🎉 You’re now logged in!");
-
-      setTimeout(() => navigate("/"), 1000);
+      setTimeout(() => navigate("/profile"), 1000);
     } catch (err) {
       console.error(err);
       setError((err as Error).message || "Registration failed");

@@ -1,18 +1,47 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import { getProfile, clearAuth, type UserProfile } from "../../api/auth";
+
 import {
   getUserBookings,
   deleteBooking,
   type Booking,
 } from "../../api/bookings";
-import { useNavigate } from "react-router-dom";
+
+import { getUserVenues, type Venue } from "../../api/venues";
+
+import VenueEditorModal from "../../components/VenueEditorModal";
+import ConfirmDeleteVenueModal from "../../components/ConfirmDeleteVenueModal";
+import ProfileMediaModal from "../../components/ProfileMediaModal";
+
+import styles from "./profile.module.css";
 
 export default function ProfilePage() {
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [bookings, setBookings] = useState<Booking[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  // auth / profile
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+
+  // data
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [venues, setVenues] = useState<Venue[]>([]);
+
+  // loading / error
+  const [loadingProfileData, setLoadingProfileData] = useState(true);
+  const [loadingVenues, setLoadingVenues] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // --- MODAL STATE ---
+  const [showVenueEditor, setShowVenueEditor] = useState(false);
+  const [editingVenue, setEditingVenue] = useState<Venue | undefined>(
+    undefined
+  );
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [venueToDelete, setVenueToDelete] = useState<Venue | null>(null);
+
+  const [showProfileMediaModal, setShowProfileMediaModal] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -26,30 +55,30 @@ export default function ProfilePage() {
 
     setProfile(storedProfile);
 
-    async function fetchBookings() {
+    async function fetchData() {
       try {
-        // ✅ Beskyttelse mot null
         if (!storedProfile?.name) {
           throw new Error("Could not find profile name.");
         }
 
-        const data = await getUserBookings(storedProfile.name);
-        setBookings(data);
+        const bookingsResult = await getUserBookings(storedProfile.name);
+        setBookings(bookingsResult);
+
+        if (storedProfile.venueManager) {
+          setLoadingVenues(true);
+          const venuesResult = await getUserVenues(storedProfile.name);
+          setVenues(venuesResult || []);
+        }
       } catch (err) {
-        console.error("❌ Error fetching bookings:", err);
         setError((err as Error).message);
       } finally {
-        setLoading(false);
+        setLoadingProfileData(false);
+        setLoadingVenues(false);
       }
     }
 
-    fetchBookings();
+    fetchData();
   }, [navigate]);
-
-  function handleLogout() {
-    clearAuth();
-    navigate("/"); // gå tilbake til home etter log out
-  }
 
   async function handleCancelBooking(id: string) {
     if (!confirm("Are you sure you want to cancel this booking?")) return;
@@ -62,9 +91,41 @@ export default function ProfilePage() {
     }
   }
 
-  if (loading) {
+  function handleVenueSaved(savedVenue: Venue) {
+    setVenues((prev) => {
+      const exists = prev.find((v) => v.id === savedVenue.id);
+      if (exists) {
+        return prev.map((v) => (v.id === savedVenue.id ? savedVenue : v));
+      }
+      return [savedVenue, ...prev];
+    });
+
+    setShowVenueEditor(false);
+    setEditingVenue(undefined);
+  }
+
+  function handleVenueDeleted(deletedVenueId: string) {
+    setVenues((prev) => prev.filter((v) => v.id !== deletedVenueId));
+    setShowDeleteModal(false);
+    setVenueToDelete(null);
+  }
+
+  function handleProfileMediaSaved(partial: Partial<UserProfile>) {
+    setProfile((prev) =>
+      prev
+        ? {
+            ...prev,
+            avatar: partial.avatar ?? prev.avatar,
+            banner: partial.banner ?? prev.banner,
+          }
+        : prev
+    );
+  }
+
+  // --- early UI states ---
+  if (loadingProfileData) {
     return (
-      <section style={{ padding: "2rem", textAlign: "center" }}>
+      <section className={styles.centerMessage}>
         <p>Loading profile…</p>
       </section>
     );
@@ -72,7 +133,7 @@ export default function ProfilePage() {
 
   if (error) {
     return (
-      <section style={{ padding: "2rem", textAlign: "center", color: "red" }}>
+      <section className={styles.centerError}>
         <p>{error}</p>
       </section>
     );
@@ -80,165 +141,242 @@ export default function ProfilePage() {
 
   if (!profile) {
     return (
-      <section style={{ padding: "2rem", textAlign: "center" }}>
+      <section className={styles.centerMessage}>
         <h2>You are not logged in.</h2>
         <p>Please log in to view your profile.</p>
       </section>
     );
   }
 
+  // --- main render ---
   return (
-    <section
-      style={{
-        maxWidth: "700px",
-        margin: "2rem auto",
-        padding: "2rem",
-        backgroundColor: "#fff",
-        borderRadius: "10px",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-      }}
-    >
-      <h1 style={{ fontSize: "1.5rem", fontWeight: 600, marginBottom: "1rem" }}>
-        My Profile
-      </h1>
-
-      {/* Brukerinfo */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "1rem",
-          marginBottom: "1.5rem",
-        }}
-      >
-        <img
-          src={profile.avatar?.url || "https://via.placeholder.com/100"}
-          alt={profile.avatar?.alt || profile.name}
-          style={{
-            width: "100px",
-            height: "100px",
-            borderRadius: "50%",
-            objectFit: "cover",
-            backgroundColor: "#f0f0f0",
-          }}
-        />
-
-        <div>
-          <h2 style={{ margin: 0 }}>{profile.name}</h2>
-          <p style={{ margin: 0, color: "#666" }}>{profile.email}</p>
-          {profile.venueManager && (
-            <p style={{ color: "#2563eb", fontWeight: 500 }}>Venue Manager</p>
-          )}
-        </div>
-      </div>
-
-      {/* Log out knapp */}
-      <button
-        onClick={handleLogout}
-        style={{
-          backgroundColor: "#111827",
-          color: "white",
-          padding: "0.6rem 1.2rem",
-          border: "none",
-          borderRadius: "8px",
-          fontWeight: 500,
-          cursor: "pointer",
-        }}
-      >
-        Log out
-      </button>
-
-      <hr
-        style={{
-          margin: "2rem 0",
-          border: "none",
-          borderTop: "1px solid #eee",
-        }}
-      />
-
-      {/* My Venues */}
-      {profile.venueManager && (
-        <div>
-          <h3 style={{ marginBottom: "0.5rem" }}>My Venues</h3>
-          <p style={{ color: "#666" }}>
-            You can list, edit, or delete your venues here (coming soon).
-          </p>
-        </div>
-      )}
-
-      {/* My Bookings */}
-      <div style={{ marginTop: "1.5rem" }}>
-        <h3 style={{ marginBottom: "0.5rem" }}>My Bookings</h3>
-
-        {bookings.length === 0 ? (
-          <p style={{ color: "#666" }}>You have no bookings yet.</p>
-        ) : (
-          <ul
+    <>
+      <section className={styles.wrapper}>
+        {/* Banner */}
+        {profile.banner?.url && (
+          <div
+            className={styles.banner}
             style={{
-              listStyle: "none",
-              padding: 0,
-              display: "grid",
-              gap: "1rem",
+              backgroundImage: `url(${profile.banner.url})`,
             }}
+            aria-label={profile.banner.alt || "Profile banner"}
+          />
+        )}
+
+        {/* Profile header */}
+        <h1 className={styles.title}>My Profile</h1>
+
+        <div className={styles.profileRow}>
+          <img
+            src={profile.avatar?.url || "https://via.placeholder.com/100"}
+            alt={profile.avatar?.alt || profile.name}
+            className={styles.avatar}
+          />
+
+          <div>
+            <h2 className={styles.name}>{profile.name}</h2>
+            <p className={styles.email}>{profile.email}</p>
+
+            {profile.venueManager ? (
+              <p className={styles.roleManager}>Venue Manager</p>
+            ) : (
+              <p className={styles.roleCustomer}>Customer</p>
+            )}
+          </div>
+        </div>
+
+        {/* actions */}
+        <div className={styles.actionRow}>
+          <button
+            onClick={() => setShowProfileMediaModal(true)}
+            className={`${styles.btn} ${styles.btnEditMedia}`}
           >
-            {bookings.map((b) => (
-              <li
-                key={b.id}
-                style={{
-                  border: "1px solid #ddd",
-                  borderRadius: "8px",
-                  padding: "1rem",
-                  display: "flex",
-                  gap: "1rem",
-                  alignItems: "center",
-                  backgroundColor: "#fafafa",
+            Edit profile
+          </button>
+        </div>
+
+        <hr className={styles.divider} />
+
+        {/* My Venues */}
+        {profile.venueManager && (
+          <section style={{ marginBottom: "2rem" }}>
+            <div className={styles.sectionHeadingRow}>
+              <h3 className={styles.sectionHeading}>My Venues</h3>
+
+              <button
+                className={styles.btnNewVenue}
+                onClick={() => {
+                  setEditingVenue(undefined);
+                  setShowVenueEditor(true);
                 }}
               >
-                {b.venue?.media?.[0]?.url && (
-                  <img
-                    src={b.venue.media[0].url}
-                    alt={b.venue.media[0].alt || b.venue.name}
-                    style={{
-                      width: "100px",
-                      height: "80px",
-                      objectFit: "cover",
-                      borderRadius: "6px",
-                    }}
-                  />
-                )}
-                <div style={{ flex: 1 }}>
-                  <h4 style={{ margin: "0 0 0.25rem 0" }}>{b.venue?.name}</h4>
-                  <p style={{ margin: 0, fontSize: "0.9rem", color: "#555" }}>
-                    {b.dateFrom.split("T")[0]} → {b.dateTo.split("T")[0]}
-                  </p>
-                  <p
-                    style={{
-                      margin: "0.3rem 0 0 0",
-                      fontSize: "0.9rem",
-                      color: "#333",
-                    }}
-                  >
-                    Guests: {b.guests}
-                  </p>
-                </div>
-                <button
-                  onClick={() => handleCancelBooking(b.id)}
-                  style={{
-                    backgroundColor: "#dc2626",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "6px",
-                    padding: "0.4rem 0.8rem",
-                    cursor: "pointer",
-                  }}
-                >
-                  Cancel
-                </button>
-              </li>
-            ))}
-          </ul>
+                + New venue
+              </button>
+            </div>
+
+            {loadingVenues ? (
+              <p className={styles.muted}>Loading your venues…</p>
+            ) : venues.length === 0 ? (
+              <p className={styles.muted}>
+                You have not listed any venues yet.
+              </p>
+            ) : (
+              <ul className={styles.venueList}>
+                {venues.map((v) => (
+                  <li key={v.id} className={styles.venueItem}>
+                    {v.media?.[0]?.url && (
+                      <img
+                        src={v.media[0].url}
+                        alt={v.media[0].alt || v.name}
+                        className={styles.venueThumb}
+                      />
+                    )}
+
+                    <div style={{ flex: 1 }}>
+                      <h4 className={styles.venueInfoName}>{v.name}</h4>
+
+                      {v.location?.city && (
+                        <p className={styles.venueInfoLocation}>
+                          {v.location.city}
+                          {v.location.country ? `, ${v.location.country}` : ""}
+                        </p>
+                      )}
+
+                      <p className={styles.venueInfoDesc}>
+                        {v.description || "No description"}
+                      </p>
+
+                      <p className={styles.venueInfoMeta}>
+                        {v.maxGuests} guests • {v.price} NOK/night
+                      </p>
+
+                      {Array.isArray(v.bookings) && v.bookings.length > 0 && (
+                        <div className={styles.venueBookingsBox}>
+                          <p className={styles.venueBookingsTitle}>
+                            Upcoming bookings:
+                          </p>
+
+                          <ul className={styles.venueBookingsList}>
+                            {v.bookings.map((bk) => (
+                              <li
+                                key={bk.id}
+                                className={styles.venueBookingItem}
+                              >
+                                <div className={styles.venueBookingDates}>
+                                  {bk.dateFrom.split("T")[0]} →{" "}
+                                  {bk.dateTo.split("T")[0]}
+                                </div>
+                                <div className={styles.venueBookingInfo}>
+                                  {bk.guests} guests
+                                </div>
+                                <div className={styles.venueBookingInfo}>
+                                  {bk.customer?.name} ({bk.customer?.email})
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className={styles.venueActions}>
+                      <button
+                        className={styles.venueBtnEdit}
+                        onClick={() => {
+                          setEditingVenue(v);
+                          setShowVenueEditor(true);
+                        }}
+                      >
+                        Edit
+                      </button>
+
+                      <button
+                        className={styles.venueBtnDelete}
+                        onClick={() => {
+                          setVenueToDelete(v);
+                          setShowDeleteModal(true);
+                        }}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
         )}
-      </div>
-    </section>
+
+        {/* My Bookings */}
+        <section>
+          <div className={styles.sectionHeadingRow}>
+            <h3 className={styles.sectionHeading}>My Bookings</h3>
+          </div>
+
+          {bookings.length === 0 ? (
+            <p className={styles.muted}>You have no bookings yet.</p>
+          ) : (
+            <ul className={styles.bookingList}>
+              {bookings.map((b) => (
+                <li key={b.id} className={styles.bookingItem}>
+                  {b.venue?.media?.[0]?.url && (
+                    <img
+                      src={b.venue.media[0].url}
+                      alt={b.venue.media[0].alt || b.venue.name}
+                      className={styles.bookingThumb}
+                    />
+                  )}
+
+                  <div style={{ flex: 1 }}>
+                    <h4 className={styles.bookingVenueName}>{b.venue?.name}</h4>
+
+                    <p className={styles.bookingDates}>
+                      {b.dateFrom.split("T")[0]} → {b.dateTo.split("T")[0]}
+                    </p>
+
+                    <p className={styles.bookingGuests}>Guests: {b.guests}</p>
+                  </div>
+
+                  <button
+                    onClick={() => handleCancelBooking(b.id)}
+                    className={styles.cancelBtn}
+                  >
+                    Cancel
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      </section>
+
+      {/* Modals */}
+      <VenueEditorModal
+        isOpen={showVenueEditor}
+        initialVenue={editingVenue}
+        onClose={() => {
+          setShowVenueEditor(false);
+          setEditingVenue(undefined);
+        }}
+        onSaved={handleVenueSaved}
+      />
+
+      <ConfirmDeleteVenueModal
+        isOpen={showDeleteModal}
+        venueId={venueToDelete?.id || null}
+        venueName={venueToDelete?.name}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setVenueToDelete(null);
+        }}
+        onDeleted={handleVenueDeleted}
+      />
+
+      <ProfileMediaModal
+        isOpen={showProfileMediaModal}
+        onClose={() => setShowProfileMediaModal(false)}
+        onSaved={handleProfileMediaSaved}
+      />
+    </>
   );
 }

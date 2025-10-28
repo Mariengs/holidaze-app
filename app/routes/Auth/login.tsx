@@ -1,14 +1,16 @@
-import LoginModal from "../../components/LoginModal";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getToken } from "../../api/auth";
+import LoginModal from "../../components/LoginModal";
 
 export default function LoginPage() {
-  // Hvis du allerede er logget inn, vis en enkel melding
-  const [hasToken] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return !!getToken();
-  });
+  // vi må vente til vi er i browser før vi sjekker localStorage (getToken)
+  const [hasToken, setHasToken] = useState(false);
 
+  useEffect(() => {
+    setHasToken(!!getToken());
+  }, []);
+
+  // Hvis bruker allerede er logget inn:
   if (hasToken) {
     return (
       <main style={{ padding: "2rem", textAlign: "center" }}>
@@ -18,10 +20,19 @@ export default function LoginPage() {
     );
   }
 
-  // Hvis ikke logget inn, bare render modalen som fullside
+  // Ikke logget inn → vis LoginModal sentrert på siden som en "full page login"
   return (
     <main style={{ minHeight: "70vh", display: "grid", placeItems: "center" }}>
-      <LoginModal onSuccess={() => (window.location.href = "/")} />
+      <LoginModal
+        onSuccess={() => {
+          // når login lykkes
+          window.location.href = "/profile";
+        }}
+        onClose={() => {
+          // når bruker trykker ✕
+          window.location.href = "/";
+        }}
+      />
     </main>
   );
 }
