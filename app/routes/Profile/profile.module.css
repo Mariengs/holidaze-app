@@ -342,3 +342,42 @@
 .bannerWrapper {
   width: 100%;
 }
+
+/* gjør hele kortet (bilde + innhold) klikkbart, men behold edit/delete utenfor */
+.venueCardLink {
+  display: flex;
+  gap: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  flex: 1 1 auto; /* så actions kan ligge ved siden eller til høyre */
+}
+
+.venueCardLink:hover .venueInfoName {
+  text-decoration: underline; /* subtil hover-indikasjon */
+}
+
+.venueContent {
+  flex: 1 1 auto;
+  min-width: 0; /* slik at tekst kan ellipses/line-wrappe riktig */
+}
+
+/* Klikkbar booking (bilde + tekst) */
+.bookingCardLink {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  flex: 1 1 auto;
+}
+
+/* Hover-effekt */
+.bookingCardLink:hover .bookingVenueName {
+  text-decoration: underline;
+}
+
+/* erstatter inline style={{ flex: 1 }} */
+.bookingContent {
+  flex: 1 1 auto;
+  min-width: 0;
+}

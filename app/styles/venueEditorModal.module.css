@@ -175,3 +175,77 @@
   padding: 0.4rem 0.5rem;
   min-width: auto;
 }
+
+/* --- Form wrapper to allow sticky footer sibling --- */
+.formContents {
+  display: contents;
+}
+
+/* --- Grid helpers --- */
+.col {
+  flex: 1 1 0%;
+}
+
+.col2 {
+  flex: 2 1 0%;
+}
+
+.alignEndBox {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: flex-end;
+}
+
+/* --- Legend for fieldsets --- */
+.legend {
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+/* --- Section header row (title + action button) --- */
+.sectionHeaderRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.sectionTitle {
+  font-weight: 500;
+}
+
+/* --- Rating row (stars + numeric input) --- */
+.ratingRow {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.ratingInput {
+  width: 90px;
+}
+
+/* --- Stars control --- */
+.starsGroup {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.starBtn {
+  padding: 0.2rem 0.45rem;
+  border-radius: 8px;
+  line-height: 1;
+  background: #fff;
+  border: 1px solid #e5e7eb; /* default */
+}
+
+.starBtnActive {
+  background: #fffbeb;
+  border-color: #f59e0b;
+}
+
+/* --- Checkbox label for amenities --- */
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}

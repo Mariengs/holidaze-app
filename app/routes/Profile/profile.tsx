@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 import { getProfile, clearAuth, type UserProfile } from "../../api/auth";
 
@@ -224,61 +224,70 @@ export default function ProfilePage() {
               <ul className={styles.venueList}>
                 {venues.map((v) => (
                   <li key={v.id} className={styles.venueItem}>
-                    {v.media?.[0]?.url && (
-                      <img
-                        src={v.media[0].url}
-                        alt={v.media[0].alt || v.name}
-                        className={styles.venueThumb}
-                      />
-                    )}
-
-                    <div style={{ flex: 1 }}>
-                      <h4 className={styles.venueInfoName}>{v.name}</h4>
-
-                      {v.location?.city && (
-                        <p className={styles.venueInfoLocation}>
-                          {v.location.city}
-                          {v.location.country ? `, ${v.location.country}` : ""}
-                        </p>
+                    {/* Gjør bilde+innhold klikkbart */}
+                    <Link
+                      to={`/venues/${v.id}`} // ⬅️ lenke til $id-siden
+                      className={styles.venueCardLink} // ⬅️ ny klasse
+                      aria-label={`Open ${v.name}`}
+                    >
+                      {v.media?.[0]?.url && (
+                        <img
+                          src={v.media[0].url}
+                          alt={v.media[0].alt || v.name}
+                          className={styles.venueThumb}
+                        />
                       )}
 
-                      <p className={styles.venueInfoDesc}>
-                        {v.description || "No description"}
-                      </p>
+                      <div className={styles.venueContent}>
+                        <h4 className={styles.venueInfoName}>{v.name}</h4>
 
-                      <p className={styles.venueInfoMeta}>
-                        {v.maxGuests} guests • {v.price} NOK/night
-                      </p>
-
-                      {Array.isArray(v.bookings) && v.bookings.length > 0 && (
-                        <div className={styles.venueBookingsBox}>
-                          <p className={styles.venueBookingsTitle}>
-                            Upcoming bookings:
+                        {v.location?.city && (
+                          <p className={styles.venueInfoLocation}>
+                            {v.location.city}
+                            {v.location.country
+                              ? `, ${v.location.country}`
+                              : ""}
                           </p>
+                        )}
 
-                          <ul className={styles.venueBookingsList}>
-                            {v.bookings.map((bk) => (
-                              <li
-                                key={bk.id}
-                                className={styles.venueBookingItem}
-                              >
-                                <div className={styles.venueBookingDates}>
-                                  {bk.dateFrom.split("T")[0]} →{" "}
-                                  {bk.dateTo.split("T")[0]}
-                                </div>
-                                <div className={styles.venueBookingInfo}>
-                                  {bk.guests} guests
-                                </div>
-                                <div className={styles.venueBookingInfo}>
-                                  {bk.customer?.name} ({bk.customer?.email})
-                                </div>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
+                        <p className={styles.venueInfoDesc}>
+                          {v.description || "No description"}
+                        </p>
 
+                        <p className={styles.venueInfoMeta}>
+                          {v.maxGuests} guests • {v.price} NOK/night
+                        </p>
+
+                        {Array.isArray(v.bookings) && v.bookings.length > 0 && (
+                          <div className={styles.venueBookingsBox}>
+                            <p className={styles.venueBookingsTitle}>
+                              Upcoming bookings:
+                            </p>
+                            <ul className={styles.venueBookingsList}>
+                              {v.bookings.map((bk) => (
+                                <li
+                                  key={bk.id}
+                                  className={styles.venueBookingItem}
+                                >
+                                  <div className={styles.venueBookingDates}>
+                                    {bk.dateFrom.split("T")[0]} →{" "}
+                                    {bk.dateTo.split("T")[0]}
+                                  </div>
+                                  <div className={styles.venueBookingInfo}>
+                                    {bk.guests} guests
+                                  </div>
+                                  <div className={styles.venueBookingInfo}>
+                                    {bk.customer?.name} ({bk.customer?.email})
+                                  </div>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                    </Link>
+
+                    {/* Edit/Delete utenfor linken */}
                     <div className={styles.venueActions}>
                       <button
                         className={styles.venueBtnEdit}
@@ -319,24 +328,38 @@ export default function ProfilePage() {
             <ul className={styles.bookingList}>
               {bookings.map((b) => (
                 <li key={b.id} className={styles.bookingItem}>
-                  {b.venue?.media?.[0]?.url && (
-                    <img
-                      src={b.venue.media[0].url}
-                      alt={b.venue.media[0].alt || b.venue.name}
-                      className={styles.bookingThumb}
-                    />
+                  {/* Klikkbar lenke til venue-detaljsiden */}
+                  {b.venue && (
+                    <Link
+                      to={`/venues/${b.venue.id}`}
+                      className={styles.bookingCardLink}
+                      aria-label={`View ${b.venue.name}`}
+                    >
+                      {b.venue.media?.[0]?.url && (
+                        <img
+                          src={b.venue.media[0].url}
+                          alt={b.venue.media[0].alt || b.venue.name}
+                          className={styles.bookingThumb}
+                        />
+                      )}
+
+                      <div className={styles.bookingContent}>
+                        <h4 className={styles.bookingVenueName}>
+                          {b.venue.name}
+                        </h4>
+
+                        <p className={styles.bookingDates}>
+                          {b.dateFrom.split("T")[0]} → {b.dateTo.split("T")[0]}
+                        </p>
+
+                        <p className={styles.bookingGuests}>
+                          Guests: {b.guests}
+                        </p>
+                      </div>
+                    </Link>
                   )}
 
-                  <div style={{ flex: 1 }}>
-                    <h4 className={styles.bookingVenueName}>{b.venue?.name}</h4>
-
-                    <p className={styles.bookingDates}>
-                      {b.dateFrom.split("T")[0]} → {b.dateTo.split("T")[0]}
-                    </p>
-
-                    <p className={styles.bookingGuests}>Guests: {b.guests}</p>
-                  </div>
-
+                  {/* Cancel-knappen utenfor linken */}
                   <button
                     onClick={() => handleCancelBooking(b.id)}
                     className={styles.cancelBtn}

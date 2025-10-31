@@ -1,3 +1,4 @@
+// SingleVenue.tsx
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
@@ -7,6 +8,7 @@ import {
   type Booking,
 } from "../../api/venues";
 import { getToken } from "../../api/auth";
+import styles from "./$id.module.css";
 
 export default function SingleVenue() {
   const params = useParams<{ id: string }>();
@@ -16,182 +18,302 @@ export default function SingleVenue() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // helper: lag en liste med alle datoer (yyyy-mm-dd) som er booket
+  // calender + form
+  const [dateFrom, setDateFrom] = useState<string>("");
+  const [dateTo, setDateTo] = useState<string>("");
+
+  // Calender
+  const today = new Date();
+  const startOfToday = new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate()
+  );
+  const [currentDate, setCurrentDate] = useState<Date>(startOfToday);
+  const isAtCurrentMonth =
+    currentDate.getFullYear() === startOfToday.getFullYear() &&
+    currentDate.getMonth() === startOfToday.getMonth();
+
+  function handlePrevMonth() {
+    if (isAtCurrentMonth) return;
+    setCurrentDate((d) => new Date(d.getFullYear(), d.getMonth() - 1, 1));
+  }
+  function handleNextMonth() {
+    setCurrentDate((d) => new Date(d.getFullYear(), d.getMonth() + 1, 1));
+  }
+  function handleGoToday() {
+    setCurrentDate(new Date(startOfToday));
+  }
+
   function getBookedDates(bookings: Booking[] | undefined): string[] {
     if (!bookings || bookings.length === 0) return [];
-
-    const allDates: string[] = [];
-
-    for (const booking of bookings) {
-      const start = new Date(booking.dateFrom);
-      const end = new Date(booking.dateTo);
-
-      // gå dag for dag fra start til slutt (inkludert)
-      const current = new Date(start);
-      while (current <= end) {
-        const iso = current.toISOString().split("T")[0]; // "2025-10-28"
-        allDates.push(iso);
-        current.setDate(current.getDate() + 1);
+    const all: string[] = [];
+    for (const b of bookings) {
+      const s = new Date(b.dateFrom);
+      const e = new Date(b.dateTo);
+      const cur = new Date(s);
+      cur.setHours(0, 0, 0, 0);
+      e.setHours(0, 0, 0, 0);
+      while (cur <= e) {
+        all.push(cur.toISOString().split("T")[0]);
+        cur.setDate(cur.getDate() + 1);
       }
     }
-
-    return allDates;
+    return all;
   }
 
   useEffect(() => {
-    async function fetchVenue() {
+    let active = true;
+    (async () => {
       try {
         const data = await getVenueById(id);
-        setVenue(data);
+        if (active) setVenue(data);
       } catch (err) {
         console.error(err);
-        setError((err as Error).message);
+        if (active) setError((err as Error).message);
       } finally {
-        setLoading(false);
+        if (active) setLoading(false);
       }
-    }
-    fetchVenue();
+    })();
+    return () => {
+      active = false;
+    };
   }, [id]);
 
-  if (loading) return <p>Loading venue...</p>;
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
-  if (!venue) return <p>No venue found.</p>;
+  if (loading) return <p className={styles.muted}>Loading venue...</p>;
+  if (error) return <p className={styles.error}>{error}</p>;
+  if (!venue) return <p className={styles.muted}>No venue found.</p>;
 
-  // lag liste over bookede datoer
+  // Calendar logic
   const bookedDates = getBookedDates(venue.bookings);
-
-  // lag en enkel "kalender" for inneværende måned
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = today.getMonth(); // 0-11
+  const bookedSet = new Set(bookedDates);
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
   const firstOfMonth = new Date(year, month, 1);
   const lastOfMonth = new Date(year, month + 1, 0);
   const daysInMonth = lastOfMonth.getDate();
+  const startWeekday = firstOfMonth.getDay(); // 0=sun
 
-  // hvilken ukedag starter måneden på? (0 = søn, 1 = man, ...)
-  const startWeekday = firstOfMonth.getDay();
+  // Helpers
+  const toIso = (d: Date) => {
+    const nd = new Date(d);
+    nd.setHours(0, 0, 0, 0);
+    return nd.toISOString().split("T")[0];
+  };
+  const isRangeBlocked = (startIso: string, endIso: string) => {
+    const start = new Date(startIso);
+    const end = new Date(endIso);
+    start.setHours(0, 0, 0, 0);
+    end.setHours(0, 0, 0, 0);
+    for (const d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+      if (bookedSet.has(toIso(d))) return true;
+    }
+    return false;
+  };
+
+  // Calender handler
+  function handleDayClick(iso?: string, disabled?: boolean) {
+    if (!iso || disabled) return;
+    const clicked = new Date(iso);
+    if (clicked < startOfToday) return;
+    if (bookedSet.has(iso)) return;
+    if (!dateFrom) {
+      setDateFrom(iso);
+      setDateTo("");
+      return;
+    }
+    if (dateFrom && !dateTo) {
+      if (new Date(iso) < new Date(dateFrom)) {
+        setDateFrom(iso);
+        setDateTo("");
+        return;
+      }
+      if (isRangeBlocked(dateFrom, iso)) {
+        setDateFrom(iso);
+        setDateTo("");
+        return;
+      }
+      setDateTo(iso);
+      return;
+    }
+    setDateFrom(iso);
+    setDateTo("");
+  }
 
   const cells: Array<{
     label: string;
     iso?: string;
     booked?: boolean;
+    isToday?: boolean;
+    inRange?: boolean;
+    isStart?: boolean;
+    isEnd?: boolean;
+    disabled?: boolean;
   }> = [];
 
-  // legg inn tomme celler før 1.
-  for (let i = 0; i < startWeekday; i++) {
-    cells.push({ label: "" });
-  }
+  for (let i = 0; i < startWeekday; i++) cells.push({ label: "" });
 
-  // legg inn alle dager i måneden
   for (let day = 1; day <= daysInMonth; day++) {
     const dateObj = new Date(year, month, day);
-    const iso = dateObj.toISOString().split("T")[0];
+    dateObj.setHours(0, 0, 0, 0);
+    const iso = toIso(dateObj);
+    const isToday = dateObj.getTime() === startOfToday.getTime();
+    const booked = bookedSet.has(iso);
+    const isPast = dateObj < startOfToday;
+    const isStart = Boolean(dateFrom) && iso === dateFrom;
+    const isEnd = Boolean(dateTo) && iso === dateTo;
+
+    let inRange = false;
+    if (dateFrom && dateTo) {
+      const s = new Date(dateFrom);
+      const e = new Date(dateTo);
+      s.setHours(0, 0, 0, 0);
+      e.setHours(0, 0, 0, 0);
+      inRange = dateObj > s && dateObj < e;
+    }
+
     cells.push({
       label: String(day),
       iso,
-      booked: bookedDates.includes(iso),
+      booked,
+      isToday,
+      inRange,
+      isStart,
+      isEnd,
+      disabled: booked || isPast,
     });
   }
 
+  // ---------- NEW: Amenities helper ----------
+  function renderAmenity(label: string, value?: boolean) {
+    const active = !!value;
+    return (
+      <li
+        key={label}
+        className={`${styles.amenity} ${active ? styles.amenityOn : styles.amenityOff}`}
+        aria-label={`${label}: ${active ? "included" : "not included"}`}
+        title={active ? `${label} included` : `${label} not included`}
+      >
+        <span className={styles.amenityIcon}>{active ? "✓" : "–"}</span>
+        <span className={styles.amenityText}>{label}</span>
+      </li>
+    );
+  }
+
   return (
-    <main style={{ padding: "2rem", maxWidth: "900px", margin: "0 auto" }}>
-      {/* Bilde */}
+    <main className={styles.page}>
+      {/* Hero-bilde */}
       {venue.media?.[0]?.url && (
         <img
           src={venue.media[0].url}
           alt={venue.media[0].alt || venue.name}
-          style={{
-            width: "100%",
-            height: "350px",
-            objectFit: "cover",
-            borderRadius: "12px",
-            marginBottom: "1.5rem",
-          }}
+          className={styles.hero}
         />
       )}
 
-      {/* Info */}
-      <h1 style={{ marginBottom: "0.5rem" }}>{venue.name}</h1>
-      <p style={{ color: "#666", marginBottom: "1rem" }}>
-        {venue.location?.city}, {venue.location?.country}
-      </p>
-      <p style={{ lineHeight: 1.6 }}>{venue.description}</p>
+      {/* Info-header */}
+      <header className={styles.header}>
+        <h1 className={styles.title}>{venue.name}</h1>
+        <p className={styles.location}>
+          {venue.location?.city}, {venue.location?.country}
+        </p>
+        <p className={styles.description}>{venue.description}</p>
+      </header>
 
-      {/* Pris og rating */}
-      <div
-        style={{
-          marginTop: "1.5rem",
-          display: "flex",
-          flexWrap: "wrap",
-          gap: "1rem",
-          alignItems: "center",
-          padding: "1rem",
-          border: "1px solid #ccc",
-          borderRadius: "8px",
-        }}
-      >
-        <p style={{ margin: 0 }}>
-          <strong>${venue.price}</strong> / night
-        </p>
-        <p style={{ margin: 0 }}>⭐ {venue.rating || "No rating yet"}</p>
-        <p style={{ margin: 0 }}>
-          Max guests: <strong>{venue.maxGuests ?? "N/A"}</strong>
-        </p>
-      </div>
+      {/* Pris / rating / gjester */}
+      <section className={styles.metaRow}>
+        <div className={styles.metaCard}>
+          <span className={styles.metaLabel}>Price</span>
+          <span className={styles.metaValue}>${venue.price} / night</span>
+        </div>
+        <div className={styles.metaCard}>
+          <span className={styles.metaLabel}>Rating</span>
+          <span className={styles.metaValue}>
+            ⭐ {venue.rating ?? "No rating yet"}
+          </span>
+        </div>
+        <div className={styles.metaCard}>
+          <span className={styles.metaLabel}>Max guests</span>
+          <span className={styles.metaValue}>{venue.maxGuests ?? "N/A"}</span>
+        </div>
+      </section>
+
+      {/* ---------- NEW: Amenities ---------- */}
+      <section className={styles.amenitiesSection}>
+        <h3 className={styles.amenitiesTitle}>Amenities</h3>
+
+        {venue.meta &&
+        (venue.meta.wifi ||
+          venue.meta.parking ||
+          venue.meta.breakfast ||
+          venue.meta.pets) ? (
+          <ul className={styles.amenitiesList}>
+            {renderAmenity("Wi-Fi", venue.meta?.wifi)}
+            {renderAmenity("Parking", venue.meta?.parking)}
+            {renderAmenity("Breakfast", venue.meta?.breakfast)}
+            {renderAmenity("Pets allowed", venue.meta?.pets)}
+          </ul>
+        ) : (
+          <p className={styles.muted}>No amenities listed.</p>
+        )}
+      </section>
 
       {/* Eier-info */}
       {venue.owner && (
-        <div style={{ marginTop: "1.5rem" }}>
-          <h3>Hosted by {venue.owner.name}</h3>
-          <p style={{ color: "#555" }}>{venue.owner.email}</p>
-        </div>
+        <section className={styles.host}>
+          <h3 className={styles.hostTitle}>Hosted by {venue.owner.name}</h3>
+          <p className={styles.hostEmail}>{venue.owner.email}</p>
+        </section>
       )}
 
       {/* Kalender */}
-      <section style={{ marginTop: "2rem" }}>
-        <h2 style={{ marginBottom: "0.5rem" }}>Availability</h2>
-        <p
-          style={{
-            fontSize: "0.9rem",
-            color: "#555",
-            marginBottom: "1rem",
-          }}
-        >
-          Booked dates are marked in red.
-        </p>
+      <section className={styles.calendarSection}>
+        <div className={styles.sectionHeader}>
+          <h2>Availability</h2>
+          <span className={styles.legend}>
+            <span className={`${styles.dot} ${styles.dotBooked}`} /> Booked
+            <span className={`${styles.dot} ${styles.dotToday}`} /> Today
+            <span className={`${styles.dot} ${styles.dotSelected}`} /> Selected
+          </span>
+        </div>
 
-        <div
-          style={{
-            border: "1px solid #ddd",
-            borderRadius: "8px",
-            padding: "1rem",
-            maxWidth: "380px",
-            backgroundColor: "#fff",
-          }}
-        >
-          <div
-            style={{
-              textAlign: "center",
-              fontWeight: 600,
-              marginBottom: "0.5rem",
-            }}
-          >
-            {today.toLocaleString("default", {
-              month: "long",
-              year: "numeric",
-            })}
+        <div className={styles.calendarCard}>
+          <div className={styles.calendarHeader}>
+            <div className={styles.navGroup}>
+              <button
+                onClick={handlePrevMonth}
+                className={styles.navButton}
+                aria-label="Previous month"
+                type="button"
+                disabled={isAtCurrentMonth}
+              >
+                ‹
+              </button>
+              <button
+                onClick={handleNextMonth}
+                className={styles.navButton}
+                aria-label="Next month"
+                type="button"
+              >
+                ›
+              </button>
+            </div>
+
+            <span className={styles.monthName}>
+              {currentDate.toLocaleString("default", { month: "long" })} {year}
+            </span>
+
+            <button
+              onClick={handleGoToday}
+              className={styles.todayButton}
+              type="button"
+              disabled={isAtCurrentMonth}
+            >
+              Today
+            </button>
           </div>
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(7, 1fr)",
-              fontSize: "0.8rem",
-              textAlign: "center",
-              color: "#555",
-              marginBottom: "0.5rem",
-            }}
-          >
+          <div className={styles.weekdays}>
             <div>Sun</div>
             <div>Mon</div>
             <div>Tue</div>
@@ -201,63 +323,95 @@ export default function SingleVenue() {
             <div>Sat</div>
           </div>
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(7, 1fr)",
-              gap: "0.4rem",
-              fontSize: "0.9rem",
-              textAlign: "center",
-            }}
-          >
-            {cells.map((cell, idx) => (
-              <div
-                key={idx}
-                style={{
-                  padding: "0.6rem 0",
-                  borderRadius: "6px",
-                  backgroundColor: cell.booked ? "#fecaca" : "#f9fafb",
-                  border: cell.booked
-                    ? "1px solid #dc2626"
-                    : "1px solid #e5e7eb",
-                  color: cell.booked ? "#991b1b" : "#111827",
-                  minHeight: "2.5rem",
-                }}
-              >
-                {cell.label}
-              </div>
-            ))}
+          <div className={styles.grid}>
+            {cells.map((cell, idx) => {
+              const state = cell.booked
+                ? styles.dayBooked
+                : cell.isStart || cell.isEnd
+                  ? styles.daySelectedEdge
+                  : cell.inRange
+                    ? styles.dayInRange
+                    : cell.isToday
+                      ? styles.dayToday
+                      : styles.dayFree;
+
+              return (
+                <button
+                  key={idx}
+                  type="button"
+                  className={`${styles.day} ${state}`}
+                  onClick={() => handleDayClick(cell.iso, cell.disabled)}
+                  disabled={!cell.iso || cell.disabled}
+                  aria-label={cell.iso ? `Select ${cell.iso}` : undefined}
+                >
+                  {cell.label && (
+                    <span className={styles.dayLabel}>{cell.label}</span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Valgindikator under kalender */}
+          <div className={styles.selectionRow}>
+            <div>
+              <strong>From:</strong> {dateFrom || "—"}
+            </div>
+            <div>
+              <strong>To:</strong> {dateTo || "—"}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Booking form */}
-      <section style={{ marginTop: "3rem" }}>
-        <h2 style={{ marginBottom: "1rem" }}>Book this venue</h2>
-        <BookingForm venueId={venue.id} maxGuests={venue.maxGuests} />
+      {/* Booking form (synkronisert med valgene fra kalenderen) */}
+      <section className={styles.formSection}>
+        <h2>Book this venue</h2>
+        <BookingForm
+          venueId={venue.id}
+          maxGuests={venue.maxGuests}
+          dateFrom={dateFrom}
+          dateTo={dateTo}
+          onDateFromChange={setDateFrom}
+          onDateToChange={(val) => {
+            // ikke tillat range med bookede dager
+            if (dateFrom && val && isRangeBlocked(dateFrom, val)) {
+              // om ulovlig, flytt start til val i stedet
+              setDateFrom(val);
+              setDateTo("");
+              return;
+            }
+            setDateTo(val);
+          }}
+        />
       </section>
     </main>
   );
 }
 
 /* ---------------------------------
-   BookingForm (local component)
+   BookingForm 
 --------------------------------- */
 
 function BookingForm({
   venueId,
   maxGuests,
+  dateFrom,
+  dateTo,
+  onDateFromChange,
+  onDateToChange,
 }: {
   venueId: string;
   maxGuests: number;
+  dateFrom: string;
+  dateTo: string;
+  onDateFromChange: (v: string) => void;
+  onDateToChange: (v: string) => void;
 }) {
-  const [dateFrom, setDateFrom] = useState("");
-  const [dateTo, setDateTo] = useState("");
   const [guests, setGuests] = useState(1);
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // 👇 Sjekk om bruker er logget inn
   const token = getToken();
   const isLoggedIn = !!token;
 
@@ -265,10 +419,13 @@ function BookingForm({
     e.preventDefault();
 
     if (!isLoggedIn) {
-      setMessage("⚠️ You must be logged in to make a booking.");
+      setMessage("You must be logged in to make a booking.");
       return;
     }
-
+    if (!dateFrom || !dateTo) {
+      setMessage("Please select a start and end date.");
+      return;
+    }
     if (guests > maxGuests) {
       setMessage(`Maximum guests allowed: ${maxGuests}`);
       return;
@@ -276,12 +433,11 @@ function BookingForm({
 
     setLoading(true);
     setMessage(null);
-
     try {
       await createBooking({ dateFrom, dateTo, guests, venueId });
       setMessage("✅ Booking successful!");
-      setDateFrom("");
-      setDateTo("");
+      onDateFromChange("");
+      onDateToChange("");
       setGuests(1);
     } catch (err) {
       setMessage((err as Error).message || "Booking failed.");
@@ -290,29 +446,13 @@ function BookingForm({
     }
   }
 
-  // 🔹 Hvis ikke innlogget: vis tydelig melding og disable alt
   if (!isLoggedIn) {
     return (
-      <div
-        style={{
-          border: "1px solid #ccc",
-          borderRadius: "8px",
-          background: "#f9fafb",
-          padding: "1.5rem",
-          maxWidth: "400px",
-        }}
-      >
-        <p
-          style={{
-            color: "#b91c1c",
-            fontWeight: 500,
-            marginBottom: "1rem",
-            fontSize: "1rem",
-          }}
-        >
+      <div className={styles.lockedBox}>
+        <p className={styles.lockedTitle}>
           ⚠️ Please log in to book this venue.
         </p>
-        <p style={{ fontSize: "0.9rem", color: "#555" }}>
+        <p className={styles.lockedText}>
           Once you’re logged in, you’ll be able to select dates and confirm your
           stay.
         </p>
@@ -320,63 +460,44 @@ function BookingForm({
     );
   }
 
-  // 🔹 Hvis innlogget: vis det faktiske skjemaet
   return (
-    <form
-      onSubmit={handleSubmit}
-      style={{
-        display: "grid",
-        gap: "0.8rem",
-        maxWidth: "400px",
-        padding: "1rem",
-        border: "1px solid #ccc",
-        borderRadius: "8px",
-        backgroundColor: "#fff",
-      }}
-    >
+    <form onSubmit={handleSubmit} className={styles.form}>
       {message && (
         <p
-          style={{
-            color: message.startsWith("✅") ? "green" : "red",
-            fontSize: "0.9rem",
-          }}
+          className={
+            message.startsWith("✅") ? styles.msgSuccess : styles.msgError
+          }
         >
           {message}
         </p>
       )}
 
-      <label style={{ display: "grid", gap: "0.3rem" }}>
-        From:
+      <label className={styles.field}>
+        <span className={styles.label}>From</span>
         <input
           type="date"
           value={dateFrom}
-          onChange={(e) => setDateFrom(e.target.value)}
+          min={new Date().toISOString().split("T")[0]}
+          onChange={(e) => onDateFromChange(e.target.value)}
           required
-          style={{
-            padding: "0.5rem",
-            borderRadius: "6px",
-            border: "1px solid #ccc",
-          }}
+          className={styles.input}
         />
       </label>
 
-      <label style={{ display: "grid", gap: "0.3rem" }}>
-        To:
+      <label className={styles.field}>
+        <span className={styles.label}>To</span>
         <input
           type="date"
           value={dateTo}
-          onChange={(e) => setDateTo(e.target.value)}
+          min={dateFrom || new Date().toISOString().split("T")[0]}
+          onChange={(e) => onDateToChange(e.target.value)}
           required
-          style={{
-            padding: "0.5rem",
-            borderRadius: "6px",
-            border: "1px solid #ccc",
-          }}
+          className={styles.input}
         />
       </label>
 
-      <label style={{ display: "grid", gap: "0.3rem" }}>
-        Guests (max {maxGuests}):
+      <label className={styles.field}>
+        <span className={styles.label}>Guests (max {maxGuests})</span>
         <input
           type="number"
           min={1}
@@ -384,26 +505,11 @@ function BookingForm({
           value={guests}
           onChange={(e) => setGuests(Number(e.target.value))}
           required
-          style={{
-            padding: "0.5rem",
-            borderRadius: "6px",
-            border: "1px solid #ccc",
-          }}
+          className={styles.input}
         />
       </label>
 
-      <button
-        type="submit"
-        disabled={loading}
-        style={{
-          background: "#111827",
-          color: "#fff",
-          border: "none",
-          padding: "0.6rem",
-          borderRadius: "6px",
-          cursor: "pointer",
-        }}
-      >
+      <button type="submit" disabled={loading} className={styles.button}>
         {loading ? "Booking..." : "Book now"}
       </button>
     </form>
