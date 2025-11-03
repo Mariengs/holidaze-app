@@ -1,4 +1,3 @@
-/* --- Overlay (bakgrunnen som dimmer resten) --- */
 .overlay {
   position: fixed;
   inset: 0;
@@ -8,7 +7,7 @@
   align-items: center;
   justify-content: center;
 
-  padding: 1rem; /* litt luft på små skjermer */
+  padding: 1rem;
   z-index: 9999;
 }
 
@@ -19,19 +18,18 @@
   width: 100%;
   max-width: 600px;
 
-  max-height: 90vh; /* 👈 viktig */
-  overflow-y: auto; /* 👈 viktig */
+  max-height: 90vh;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   padding: 1.5rem;
 }
 
-/* Mindre variant (useful for confirm delete) */
 .modalSmall {
   max-width: 360px;
 }
 
-/* --- Header / tittel --- */
+/* Header  */
 .heading {
   margin: 0 0 1rem;
   font-size: 1.25rem;
@@ -47,7 +45,6 @@
   font-weight: 600;
 }
 
-/* --- Vanlig tekst inni modal --- */
 .text {
   font-size: 0.9rem;
   line-height: 1.4;
@@ -59,7 +56,7 @@
   color: #555;
 }
 
-/* --- Error message --- */
+/* Error message */
 .error {
   color: #dc2626;
   font-size: 0.85rem;
@@ -67,7 +64,7 @@
   margin-top: 0.5rem;
 }
 
-/* --- Form layout --- */
+/* Form layout */
 .formGroup {
   display: block;
   font-size: 0.9rem;
@@ -81,7 +78,7 @@
   gap: 0.5rem;
 }
 
-/* --- Inputs --- */
+/* Inputs */
 .input,
 .textarea {
   width: 100%;
@@ -99,7 +96,7 @@
   resize: vertical;
 }
 
-/* --- Booking list inside venue card (we reused the style for upcoming bookings) */
+/* Booking list inside venue card  */
 .bookingList {
   margin-top: 0.75rem;
   background-color: #fff;
@@ -127,7 +124,7 @@
   color: #555;
 }
 
-/* --- Footer (knapperad nederst i modalen) --- */
+/* Footer  */
 .actions {
   display: flex;
   justify-content: flex-end;
@@ -135,7 +132,7 @@
   gap: 0.5rem;
 }
 
-/* --- Buttons --- */
+/* Buttons */
 .btn {
   border-radius: 6px;
   padding: 0.5rem 0.75rem;
@@ -165,7 +162,6 @@
   border: none;
 }
 
-/* --- Scrollable body inni modalen --- */
 .formBody {
   flex: 1;
   overflow-y: auto;
@@ -173,25 +169,84 @@
   flex-direction: column;
 }
 
-/* juster spacing mellom felter inni formBody */
 .formBodyInner {
   display: flex;
   flex-direction: column;
 }
 
-/* --- Knapperad alltid synlig nederst --- */
 .actions {
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
-
   margin-top: 1.25rem;
   padding-top: 1rem;
-
-  /* sticky footer i modalen */
   position: sticky;
   bottom: 0;
   background-color: #fff;
-  /* liten kant på toppen så man ser at det er footer */
   border-top: 1px solid #eee;
+}
+
+.previewWrapper {
+  margin-bottom: 1rem;
+}
+
+.bannerPreview {
+  width: 100%;
+  height: 160px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+}
+
+.bannerImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatarSection {
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.avatarPreview {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8fafc;
+  flex: 0 0 auto;
+}
+
+.avatarImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatarText {
+  flex: 1;
+}
+
+.previewPlaceholder {
+  opacity: 0.7;
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.previewText {
+  margin: 0;
+  font-size: 0.8rem;
+  opacity: 0.75;
+  color: #475569;
 }

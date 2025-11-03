@@ -9,6 +9,10 @@ interface ProfileMediaModalProps {
   onSaved: (newProfile: Partial<UserProfile>) => void;
 }
 
+function isHttpUrl(url: string) {
+  return /^https?:\/\//i.test(url.trim());
+}
+
 export default function ProfileMediaModal({
   isOpen,
   onClose,
@@ -16,17 +20,15 @@ export default function ProfileMediaModal({
 }: ProfileMediaModalProps) {
   if (!isOpen) return null;
 
-  // hent eksisterende profil så vi kan pre-fylle feltene
   const current = getProfile();
 
   const [avatarUrl, setAvatarUrl] = useState(current?.avatar?.url || "");
-  const [avatarAlt, setAvatarAlt] = useState(current?.avatar?.alt || "");
   const [bannerUrl, setBannerUrl] = useState(
     (current as any)?.banner?.url || ""
   );
-  const [bannerAlt, setBannerAlt] = useState(
-    (current as any)?.banner?.alt || ""
-  );
+
+  const [avatarLoadError, setAvatarLoadError] = useState<string | null>(null);
+  const [bannerLoadError, setBannerLoadError] = useState<string | null>(null);
 
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -39,12 +41,9 @@ export default function ProfileMediaModal({
     try {
       const updated = await updateProfileMedia({
         avatarUrl: avatarUrl.trim() || undefined,
-        avatarAlt: avatarAlt.trim() || undefined,
         bannerUrl: bannerUrl.trim() || undefined,
-        bannerAlt: bannerAlt.trim() || undefined,
       });
 
-      // send data opp til parent (ProfilePage) slik at vi kan sync'e state
       onSaved({
         avatar: updated.avatar,
         banner: updated.banner,
@@ -64,43 +63,81 @@ export default function ProfileMediaModal({
         <h2 className={styles.heading}>Update profile images</h2>
 
         <form onSubmit={handleSave}>
-          <label className={styles.formGroup}>
-            Avatar URL
-            <input
-              className={styles.input}
-              placeholder="https://..."
-              value={avatarUrl}
-              onChange={(e) => setAvatarUrl(e.target.value)}
-            />
-          </label>
+          {/* Banner preview */}
+          <div className={styles.previewWrapper}>
+            <div className={styles.bannerPreview} aria-label="Banner preview">
+              {isHttpUrl(bannerUrl) ? (
+                <img
+                  key={bannerUrl}
+                  src={bannerUrl}
+                  alt="Banner preview"
+                  className={styles.bannerImage}
+                  onLoad={() => setBannerLoadError(null)}
+                  onError={() =>
+                    setBannerLoadError("Could not load banner image")
+                  }
+                />
+              ) : (
+                <span className={styles.previewPlaceholder}>
+                  Banner preview will appear here
+                </span>
+              )}
+            </div>
+            {bannerLoadError && (
+              <p className={styles.error}>{bannerLoadError}</p>
+            )}
+          </div>
 
-          <label className={styles.formGroup}>
-            Avatar alt text
-            <input
-              className={styles.input}
-              placeholder="My face"
-              value={avatarAlt}
-              onChange={(e) => setAvatarAlt(e.target.value)}
-            />
-          </label>
+          {/* Avatar preview */}
+          <div className={styles.avatarSection}>
+            <div className={styles.avatarPreview} aria-label="Avatar preview">
+              {isHttpUrl(avatarUrl) ? (
+                <img
+                  key={avatarUrl}
+                  src={avatarUrl}
+                  alt="Avatar preview"
+                  className={styles.avatarImage}
+                  onLoad={() => setAvatarLoadError(null)}
+                  onError={() =>
+                    setAvatarLoadError("Could not load avatar image")
+                  }
+                />
+              ) : (
+                <span className={styles.previewPlaceholder}>No avatar</span>
+              )}
+            </div>
 
+            <div className={styles.avatarText}>
+              {avatarLoadError && (
+                <p className={styles.error}>{avatarLoadError}</p>
+              )}
+            </div>
+          </div>
+
+          {/* Inputs */}
           <label className={styles.formGroup}>
             Banner URL
             <input
               className={styles.input}
               placeholder="https://..."
               value={bannerUrl}
-              onChange={(e) => setBannerUrl(e.target.value)}
+              onChange={(e) => {
+                setBannerUrl(e.target.value);
+                setBannerLoadError(null);
+              }}
             />
           </label>
 
           <label className={styles.formGroup}>
-            Banner alt text
+            Avatar URL
             <input
               className={styles.input}
-              placeholder="Beach view"
-              value={bannerAlt}
-              onChange={(e) => setBannerAlt(e.target.value)}
+              placeholder="https://..."
+              value={avatarUrl}
+              onChange={(e) => {
+                setAvatarUrl(e.target.value);
+                setAvatarLoadError(null);
+              }}
             />
           </label>
 

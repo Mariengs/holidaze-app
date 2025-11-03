@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { loginUser } from "../api/auth";
-import styles from "./LoginModal.module.css";
+import styles from "../styles/LoginModal.module.css";
 
 type LoginModalProps = {
   onSuccess: () => void;
-  onClose: () => void; // 👈 ny prop
+  onClose: () => void;
 };
 
 export default function LoginModal({ onSuccess, onClose }: LoginModalProps) {

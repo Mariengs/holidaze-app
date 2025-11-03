@@ -1,15 +1,20 @@
-import { useEffect, useState, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState, useCallback, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import styles from "../styles/layout.module.css";
 import { getToken, getProfile, clearAuth, type UserProfile } from "../api/auth";
 import LoginModal from "./LoginModal";
 
 export default function Header() {
   const [ready, setReady] = useState(false);
-
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [showLogin, setShowLogin] = useState(false);
+
+  // 👇 ny: mobilmeny (dropdown) for små skjermer
+  const [showMenu, setShowMenu] = useState(false);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+
+  const navigate = useNavigate();
 
   const refreshAuthState = useCallback(() => {
     if (typeof window === "undefined") return;
@@ -29,7 +34,6 @@ export default function Header() {
     function handleAuthUpdated() {
       refreshAuthState();
     }
-
     window.addEventListener("auth-updated", handleAuthUpdated);
     return () => {
       window.removeEventListener("auth-updated", handleAuthUpdated);
@@ -38,24 +42,34 @@ export default function Header() {
 
   function handleLogout() {
     clearAuth();
-    refreshAuthState();
-    setShowLogin(false);
-
-    // informer resten av appen
     if (typeof window !== "undefined") {
       window.dispatchEvent(new Event("auth-updated"));
     }
+    refreshAuthState();
+    setShowLogin(false);
+    setShowMenu(false);
+    navigate("/", { replace: true });
   }
 
   function handleLoginSuccess() {
     refreshAuthState();
     setShowLogin(false);
-
-    // informer resten av appen (ProfilePage osv.)
     if (typeof window !== "undefined") {
       window.dispatchEvent(new Event("auth-updated"));
     }
   }
+
+  // Klikk utenfor dropdown lukker meny
+  useEffect(() => {
+    function onDocClick(e: MouseEvent) {
+      if (!showMenu) return;
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setShowMenu(false);
+      }
+    }
+    document.addEventListener("mousedown", onDocClick);
+    return () => document.removeEventListener("mousedown", onDocClick);
+  }, [showMenu]);
 
   return (
     <header className={styles.header}>
@@ -65,7 +79,7 @@ export default function Header() {
           Holidaze
         </Link>
 
-        {/* Main nav */}
+        {/* Desktop-nav (skjules på små skjermer via CSS) */}
         <ul className={styles.navLinks}>
           <li>
             <Link to="/">Home</Link>
@@ -78,35 +92,112 @@ export default function Header() {
           </li>
         </ul>
 
-        {/* Right-side auth */}
+        {/* Høyreside */}
         <div className={styles.authArea}>
+          {/* Desktop-visning (skjules på små skjermer via CSS) */}
           {!ready ? (
             <span className={styles.greeting} style={{ opacity: 0.5 }}>
               ...
             </span>
           ) : isLoggedIn ? (
-            <>
+            <div className={styles.desktopAuth}>
               {profile?.name && (
                 <span className={styles.greeting}>Hi, {profile.name}</span>
               )}
               <button onClick={handleLogout} className={styles.logoutBtn}>
                 Log out
               </button>
-            </>
+            </div>
           ) : (
-            <div style={{ display: "flex", gap: "0.5rem" }}>
+            <div className={styles.desktopAuth}>
               <button
                 onClick={() => setShowLogin(true)}
                 className={styles.loginBtn}
               >
                 Login
               </button>
-
               <Link to="/register" className={styles.registerBtn}>
                 Register
               </Link>
             </div>
           )}
+
+          {/* Mobil: liten knapp som åpner dropdown med Profile + Log out (eller Login/Register) */}
+          <div className={styles.mobileMenuWrapper} ref={menuRef}>
+            <button
+              type="button"
+              className={styles.menuBtn}
+              aria-haspopup="menu"
+              aria-expanded={showMenu}
+              aria-label="Open menu"
+              onClick={() => setShowMenu((s) => !s)}
+            >
+              ⋯
+            </button>
+
+            {showMenu && (
+              <div className={styles.dropdown} role="menu">
+                {/* Valgfritt: legg inn Home/Venues også i mobilmenyen */}
+                <Link
+                  to="/"
+                  className={styles.dropdownItem}
+                  role="menuitem"
+                  onClick={() => setShowMenu(false)}
+                >
+                  Home
+                </Link>
+                <Link
+                  to="/venues"
+                  className={styles.dropdownItem}
+                  role="menuitem"
+                  onClick={() => setShowMenu(false)}
+                >
+                  Venues
+                </Link>
+
+                {isLoggedIn ? (
+                  <>
+                    <Link
+                      to="/profile"
+                      className={styles.dropdownItem}
+                      role="menuitem"
+                      onClick={() => setShowMenu(false)}
+                    >
+                      Profile
+                    </Link>
+                    <button
+                      className={`${styles.dropdownItem} ${styles.dropdownDanger}`}
+                      role="menuitem"
+                      onClick={handleLogout}
+                    >
+                      Log out
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      className={styles.dropdownItem}
+                      role="menuitem"
+                      onClick={() => {
+                        setShowMenu(false);
+                        setShowLogin(true);
+                      }}
+                    >
+                      Login
+                    </button>
+                    <Link
+                      to="/register"
+                      className={styles.dropdownItem}
+                      role="menuitem"
+                      onClick={() => setShowMenu(false)}
+                    >
+                      Register
+                    </Link>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </nav>
 

@@ -1,19 +1,20 @@
 import { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-import { getProfile, clearAuth, type UserProfile } from "../../api/auth";
-
+import { getProfile, type UserProfile } from "../../api/auth";
 import {
   getUserBookings,
   deleteBooking,
   type Booking,
 } from "../../api/bookings";
-
 import { getUserVenues, type Venue } from "../../api/venues";
 
 import VenueEditorModal from "../../components/VenueEditorModal";
 import ConfirmDeleteVenueModal from "../../components/ConfirmDeleteVenueModal";
 import ProfileMediaModal from "../../components/ProfileMediaModal";
+
+import VenueCard from "../../components/VenueCard";
+import BookingCard from "../../components/BookingCard";
 
 import styles from "./profile.module.css";
 
@@ -156,9 +157,7 @@ export default function ProfilePage() {
         {profile.banner?.url && (
           <div
             className={styles.banner}
-            style={{
-              backgroundImage: `url(${profile.banner.url})`,
-            }}
+            style={{ backgroundImage: `url(${profile.banner.url})` }}
             aria-label={profile.banner.alt || "Profile banner"}
           />
         )}
@@ -223,93 +222,18 @@ export default function ProfilePage() {
             ) : (
               <ul className={styles.venueList}>
                 {venues.map((v) => (
-                  <li key={v.id} className={styles.venueItem}>
-                    {/* Gjør bilde+innhold klikkbart */}
-                    <Link
-                      to={`/venues/${v.id}`} // ⬅️ lenke til $id-siden
-                      className={styles.venueCardLink} // ⬅️ ny klasse
-                      aria-label={`Open ${v.name}`}
-                    >
-                      {v.media?.[0]?.url && (
-                        <img
-                          src={v.media[0].url}
-                          alt={v.media[0].alt || v.name}
-                          className={styles.venueThumb}
-                        />
-                      )}
-
-                      <div className={styles.venueContent}>
-                        <h4 className={styles.venueInfoName}>{v.name}</h4>
-
-                        {v.location?.city && (
-                          <p className={styles.venueInfoLocation}>
-                            {v.location.city}
-                            {v.location.country
-                              ? `, ${v.location.country}`
-                              : ""}
-                          </p>
-                        )}
-
-                        <p className={styles.venueInfoDesc}>
-                          {v.description || "No description"}
-                        </p>
-
-                        <p className={styles.venueInfoMeta}>
-                          {v.maxGuests} guests • {v.price} NOK/night
-                        </p>
-
-                        {Array.isArray(v.bookings) && v.bookings.length > 0 && (
-                          <div className={styles.venueBookingsBox}>
-                            <p className={styles.venueBookingsTitle}>
-                              Upcoming bookings:
-                            </p>
-                            <ul className={styles.venueBookingsList}>
-                              {v.bookings.map((bk) => (
-                                <li
-                                  key={bk.id}
-                                  className={styles.venueBookingItem}
-                                >
-                                  <div className={styles.venueBookingDates}>
-                                    {bk.dateFrom.split("T")[0]} →{" "}
-                                    {bk.dateTo.split("T")[0]}
-                                  </div>
-                                  <div className={styles.venueBookingInfo}>
-                                    {bk.guests} guests
-                                  </div>
-                                  <div className={styles.venueBookingInfo}>
-                                    {bk.customer?.name} ({bk.customer?.email})
-                                  </div>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-                      </div>
-                    </Link>
-
-                    {/* Edit/Delete utenfor linken */}
-                    <div className={styles.venueActions}>
-                      <button
-                        className={styles.venueBtnEdit}
-                        onClick={() => {
-                          setEditingVenue(v);
-                          setShowVenueEditor(true);
-                        }}
-                      >
-                        Edit
-                      </button>
-
-                      <button
-                        className={styles.venueBtnDelete}
-                        onClick={() => {
-                          setVenueToDelete(v);
-                          setShowDeleteModal(true);
-                        }}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </li>
+                  <VenueCard
+                    key={v.id}
+                    venue={v}
+                    onEdit={(venue) => {
+                      setEditingVenue(venue);
+                      setShowVenueEditor(true);
+                    }}
+                    onDelete={(venue) => {
+                      setVenueToDelete(venue);
+                      setShowDeleteModal(true);
+                    }}
+                  />
                 ))}
               </ul>
             )}
@@ -327,46 +251,11 @@ export default function ProfilePage() {
           ) : (
             <ul className={styles.bookingList}>
               {bookings.map((b) => (
-                <li key={b.id} className={styles.bookingItem}>
-                  {/* Klikkbar lenke til venue-detaljsiden */}
-                  {b.venue && (
-                    <Link
-                      to={`/venues/${b.venue.id}`}
-                      className={styles.bookingCardLink}
-                      aria-label={`View ${b.venue.name}`}
-                    >
-                      {b.venue.media?.[0]?.url && (
-                        <img
-                          src={b.venue.media[0].url}
-                          alt={b.venue.media[0].alt || b.venue.name}
-                          className={styles.bookingThumb}
-                        />
-                      )}
-
-                      <div className={styles.bookingContent}>
-                        <h4 className={styles.bookingVenueName}>
-                          {b.venue.name}
-                        </h4>
-
-                        <p className={styles.bookingDates}>
-                          {b.dateFrom.split("T")[0]} → {b.dateTo.split("T")[0]}
-                        </p>
-
-                        <p className={styles.bookingGuests}>
-                          Guests: {b.guests}
-                        </p>
-                      </div>
-                    </Link>
-                  )}
-
-                  {/* Cancel-knappen utenfor linken */}
-                  <button
-                    onClick={() => handleCancelBooking(b.id)}
-                    className={styles.cancelBtn}
-                  >
-                    Cancel
-                  </button>
-                </li>
+                <BookingCard
+                  key={b.id}
+                  booking={b}
+                  onCancel={handleCancelBooking}
+                />
               ))}
             </ul>
           )}

@@ -10,17 +10,23 @@
 
   padding: 1rem;
   z-index: 9999;
+
+  /* hindre at siden under scroller sideveis når modal er åpen */
+  overscroll-behavior: contain;
 }
 
 /* --- Modal card --- */
 .modal {
+  position: relative; /* for .modalToast */
   background: #fff;
   border-radius: 12px;
+
+  /* Viktig: aldri bredere enn viewport - padding */
   width: 100%;
-  max-width: 600px;
+  max-width: min(600px, calc(100vw - 2rem));
 
   max-height: 90vh;
-  overflow-y: auto;
+  overflow: hidden; /* unngå horisontal scroll; kropp scroller inni .formBody */
 
   display: flex;
   flex-direction: column;
@@ -49,15 +55,17 @@
 /* --- Scrollable body inside the modal --- */
 .formBody {
   flex: 1;
-  overflow-y: auto;
+  overflow-y: auto; /* vertikal scroll bare her */
+  overflow-x: hidden; /* hindre horisontal scroll */
   display: flex;
   flex-direction: column;
-  min-height: 0; /* helps flex children scroll properly in Safari */
+  min-height: 0; /* Safari fix */
 }
 
 .formBodyInner {
   display: flex;
   flex-direction: column;
+  min-width: 0; /* hindre at barn presser bredden */
 }
 
 /* --- Form layout --- */
@@ -73,6 +81,11 @@
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
+  min-width: 0; /* viktig i flex-kontekst */
+}
+
+.row > * {
+  min-width: 0; /* barn kan krympe uten å skape overflow */
 }
 
 /* --- Inputs / textarea --- */
@@ -86,11 +99,13 @@
   font-size: 0.9rem;
   color: #111;
   background-color: #fff;
+  min-width: 0; /* hindre sideveis overflow med lange verdier */
 }
 
 .textarea {
   min-height: 70px;
   resize: vertical;
+  max-width: 100%;
 }
 
 /* --- Single image block wrapper --- */
@@ -100,6 +115,7 @@
   padding: 1rem;
   margin-top: 0.75rem;
   background-color: #fff;
+  overflow: hidden; /* sikkerhet mot sideveis scroll */
 }
 
 /* --- Image preview box --- */
@@ -108,6 +124,7 @@
   display: flex;
   gap: 1rem;
   align-items: flex-start;
+  min-width: 0; /* ellipsis trenger dette */
 }
 
 .imageThumb {
@@ -116,12 +133,25 @@
   object-fit: cover;
   border-radius: 6px;
   border: 1px solid #ddd;
+  flex-shrink: 0;
 }
 
 .imagePreviewMeta {
   font-size: 0.8rem;
   color: #555;
-  word-break: break-all;
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0; /* viktig for ellipsis */
+  flex: 1 1 auto;
+}
+
+/* Linje med URL: kutt med ellipsis */
+.imageUrl {
+  display: block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* --- Sticky footer actions --- */
@@ -137,6 +167,10 @@
   bottom: 0;
   background-color: #fff;
   border-top: 1px solid #eee;
+
+  /* hindre 1px overflow ved sticky på noen mobile nettlesere */
+  left: 0;
+  right: 0;
 }
 
 /* --- Buttons --- */
@@ -184,10 +218,12 @@
 /* --- Grid helpers --- */
 .col {
   flex: 1 1 0%;
+  min-width: 0;
 }
 
 .col2 {
   flex: 2 1 0%;
+  min-width: 0;
 }
 
 .alignEndBox {
@@ -207,6 +243,8 @@
   display: flex;
   justify-content: space-between;
   align-items: baseline;
+  gap: 0.5rem;
+  min-width: 0;
 }
 
 .sectionTitle {
@@ -228,6 +266,7 @@
 .starsGroup {
   display: flex;
   gap: 0.25rem;
+  pointer-events: auto; /* sikrer at overliggende wrappers ikke blokkerer pekeren */
 }
 
 .starBtn {
@@ -248,4 +287,152 @@
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
+}
+
+/* Posisjonering for toast inne i modal (om du bruker det) */
+.modalToast {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2; /* over innholdet i modalen */
+}
+
+/* Små skjermer – litt mindre padding for å unngå overflow */
+@media (max-width: 420px) {
+  .modal {
+    padding: 1rem;
+    max-width: calc(100vw - 1.5rem);
+  }
+}
+
+/* --- Stars: større tappbar flate --- */
+.starBtn {
+  padding: 0.35rem 0.55rem; /* større touch-target */
+  font-size: 1.25rem; /* større stjerner på mobil */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* --- Rating layout --- */
+.ratingRowDesktop {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.ratingRowMobile {
+  display: none; /* vises kun på mobil */
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.ratingRange {
+  width: 100%;
+}
+
+.ratingValue {
+  font-size: 0.9rem;
+  color: #333;
+  min-width: 42px;
+  text-align: right;
+}
+
+/* Mobil: bytt til slider, skjul stjerneraden */
+@media (max-width: 640px) {
+  .ratingRowDesktop {
+    display: none;
+  }
+  .ratingRowMobile {
+    display: flex;
+  }
+}
+
+/* ===== Mobile star slider ===== */
+.ratingRowDesktop {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.ratingRowMobile {
+  display: none; /* vises kun på mobil */
+  margin-top: 0.5rem;
+}
+
+/* Wrapper */
+.starSlider {
+  position: relative;
+  display: grid;
+  align-items: center;
+  grid-template-columns: 1fr auto; /* stjerner + verdi */
+  gap: 0.5rem;
+  padding: 0.25rem 0; /* litt vertikal luft */
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Rad med synlige stjerner */
+.starRow {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  align-items: center;
+  user-select: none;
+  pointer-events: none; /* kun visuell – input/knapper tar interaksjon */
+}
+
+.starVisual {
+  font-size: 1.5rem;
+  line-height: 1;
+  text-align: center;
+}
+
+.starOn {
+  color: #f59e0b;
+} /* gul/orange */
+.starOff {
+  color: #d1d5db;
+} /* grå */
+
+/* Verditekst (f.eks. 3/5) */
+.starValue {
+  font-size: 0.9rem;
+  color: #333;
+  min-width: 42px;
+  text-align: right;
+}
+
+/* Usynlig range som lar brukeren “dra” */
+.starRange {
+  position: absolute;
+  inset: 0 48px 0 0; /* ikke dekk verdien til høyre */
+  width: auto;
+  height: 100%;
+  opacity: 0; /* usynlig men interaktiv */
+}
+
+/* Treff-områder over hver stjerne for presise klikk */
+.starHitRow {
+  position: absolute;
+  inset: 0 48px 0 0;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.starHit {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+/* Mobil: vis “stjerne-slideren” og skjul desktop-varianten */
+@media (max-width: 640px) {
+  .ratingRowDesktop {
+    display: none;
+  }
+  .ratingRowMobile {
+    display: block;
+  }
 }

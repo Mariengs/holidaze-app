@@ -1,11 +1,11 @@
 const API_BASE = "https://v2.api.noroff.dev";
 
-/* ---------- Keys in localStorage ---------- */
+//  Keys in localStorage
 const TOKEN_KEY = "holidaze_token";
 const PROFILE_KEY = "holidaze_profile";
 const API_KEY_KEY = "holidaze_api_key";
 
-/* ---------- Types ---------- */
+// Types
 export interface UserProfile {
   name: string;
   email: string;
@@ -38,7 +38,7 @@ export interface AuthResponse {
   meta?: object;
 }
 
-/* ---------- Storage helpers ---------- */
+// Storage helpers
 export function getToken(): string | null {
   if (typeof window === "undefined") return null;
   const token = localStorage.getItem(TOKEN_KEY);
@@ -75,7 +75,7 @@ export function clearAuth() {
   localStorage.removeItem(API_KEY_KEY);
 }
 
-/* ---------- Internal: save all auth stuff ---------- */
+//save all auth stuff
 function saveAuthToStorage(opts: {
   token: string;
   profile: UserProfile;
@@ -83,10 +83,8 @@ function saveAuthToStorage(opts: {
 }) {
   const { token, profile, apiKey } = opts;
 
-  // Save access token
   localStorage.setItem(TOKEN_KEY, token);
 
-  // Normaliser profilen slik vi vil bruke den i appen
   const normalizedProfile: UserProfile = {
     name: profile?.name ?? "",
     email: profile?.email ?? "",
@@ -98,13 +96,12 @@ function saveAuthToStorage(opts: {
 
   localStorage.setItem(PROFILE_KEY, JSON.stringify(normalizedProfile));
 
-  // Save API key hvis vi har en
   if (apiKey) {
     localStorage.setItem(API_KEY_KEY, apiKey);
   }
 }
 
-/* ---------- Register ---------- */
+// Register
 export async function registerUser({
   name,
   email,
@@ -114,12 +111,11 @@ export async function registerUser({
   name: string;
   email: string;
   password: string;
-  venueManager: boolean; // brukerens valg fra checkboxen
+  venueManager: boolean;
 }): Promise<AuthResponse> {
   const response = await fetch(`${API_BASE}/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    // vi sender videre akkurat det brukeren valgte
     body: JSON.stringify({ name, email, password, venueManager }),
   });
 
@@ -132,17 +128,10 @@ export async function registerUser({
   return data;
 }
 
-/* ---------- Login ---------- */
-/**
- * Logger inn brukeren, sørger for at vi har token, apiKey og RIKTIG venueManager-status.
- * Viktig: denne gjør et ekstra kall til /holidaze/profiles/:name for å hente den sanne
- * rollen (venueManager) etter at brukeren ev. ble oppgradert via forceVenueManagerTrue().
- */
 export async function loginUser(
   email: string,
   password: string
 ): Promise<AuthResponse> {
-  // 1. Logg inn og få accessToken
   const res = await fetch(`${API_BASE}/auth/login`, {
     method: "POST",
     headers: {
@@ -160,8 +149,6 @@ export async function loginUser(
   const accessToken = data.data.accessToken;
   const username = data.data.name;
 
-  // 2. Sørg for at vi har en API key i localStorage
-  //    (vi prøver å lage en hvis det ikke finnes)
   try {
     const keyRes = await fetch(`${API_BASE}/auth/create-api-key`, {
       method: "POST",
@@ -170,7 +157,7 @@ export async function loginUser(
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        name: "Holidaze Key", // må være < 32 chars
+        name: "Holidaze Key",
       }),
     });
 
@@ -181,14 +168,12 @@ export async function loginUser(
         localStorage.setItem(API_KEY_KEY, apiKeyFromApi);
       }
     } else {
-      // kan feile hvis nøkkel allerede finnes -> helt OK
       console.warn("API key creation failed or already exists");
     }
   } catch (err) {
     console.warn("Could not create API key:", err);
   }
 
-  // 3. Bygg et foreløpig profile-objekt fra /auth/login (fallback)
   let finalProfile: UserProfile = {
     name: data.data.name,
     email: data.data.email,
@@ -198,8 +183,6 @@ export async function loginUser(
     _count: data.data._count,
   };
 
-  // 4. Forsøk å hente Holidaze-profilen, som er kilden til sannheten
-  //    om venueManager etter at vi ev. har promotet brukeren.
   try {
     const apiKey = localStorage.getItem(API_KEY_KEY) || "";
 
@@ -235,13 +218,11 @@ export async function loginUser(
     console.warn("Profile sync after login failed:", err);
   }
 
-  // 5. Lagre token og den endelige profilen (med riktig venueManager-status)
   saveAuthToStorage({
     token: accessToken,
     profile: finalProfile,
   });
 
-  // 6. Fyr "auth-updated" så Header / ProfilePage kan lytte
   if (typeof window !== "undefined") {
     window.dispatchEvent(new Event("auth-updated"));
   }
@@ -249,16 +230,6 @@ export async function loginUser(
   return data;
 }
 
-/* ---------- Force venueManager = true (only IF user chose that) ---------- */
-/**
- * Brukes ETTER register + login, men KUN hvis brukeren faktisk huket av
- * "I am a Venue Manager".
- *
- * Den:
- * 1. PUT'er til /holidaze/profiles/:name med { venueManager: true } for å gi rettigheter.
- * 2. Oppdaterer localStorage så UI viser "Venue Manager" umiddelbart.
- * 3. Sender "auth-updated" event slik at komponenter som lytter kan re-rendre.
- */
 export async function forceVenueManagerTrue() {
   const token = getToken();
   const apiKey = getApiKey();
@@ -290,7 +261,6 @@ export async function forceVenueManagerTrue() {
     );
   }
 
-  // sync localStorage så UI viser riktig rolle umiddelbart
   try {
     const raw = localStorage.getItem(PROFILE_KEY);
     if (raw) {
@@ -302,7 +272,6 @@ export async function forceVenueManagerTrue() {
     console.warn("Could not sync venueManager in storage:", err);
   }
 
-  // informer appen slik at sider som ProfilePage kan hente på nytt
   if (typeof window !== "undefined") {
     window.dispatchEvent(new Event("auth-updated"));
   }
@@ -310,7 +279,7 @@ export async function forceVenueManagerTrue() {
   return data;
 }
 
-/* ---------- Update profile media (avatar / banner) ---------- */
+// Update profile media (avatar / banner)
 export async function updateProfileMedia({
   avatarUrl,
   avatarAlt,
@@ -376,7 +345,7 @@ export async function updateProfileMedia({
 
   const updatedProfileFromApi = data.data ?? data;
 
-  // ---- sync avatar/banner til localStorage ----
+  // sync avatar/banner localStorage
   try {
     const raw = localStorage.getItem(PROFILE_KEY);
     if (raw) {
@@ -399,8 +368,6 @@ export async function updateProfileMedia({
   } catch (err) {
     console.warn("Could not sync updated profile in storage:", err);
   }
-
-  // fyr event slik at UI kan re-rendre f.eks. profilbildet i headeren
   if (typeof window !== "undefined") {
     window.dispatchEvent(new Event("auth-updated"));
   }

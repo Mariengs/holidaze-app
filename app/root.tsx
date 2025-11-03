@@ -4,6 +4,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 
 import { AuthProvider } from "./components/context/AuthContext";
+import { ToastProvider } from "./components/context/ToastContext"; // 👈 legg til
 import styles from "./styles/layout.module.css";
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -17,13 +18,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
 
       <body className={styles.bodyRoot}>
-        <AuthProvider>
-          <Header />
+        {/* 👇 Global provider slik at toast funker overalt */}
+        <ToastProvider>
+          <AuthProvider>
+            <Header />
 
-          <main className={styles.mainWrapper}>{children}</main>
+            <main className={styles.mainWrapper}>{children}</main>
 
-          <Footer />
-        </AuthProvider>
+            <Footer />
+          </AuthProvider>
+        </ToastProvider>
 
         <ScrollRestoration />
         <Scripts />

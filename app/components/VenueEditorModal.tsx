@@ -5,13 +5,14 @@ import {
   type Venue,
   type VenuePayload,
 } from "../api/venues";
+import { useToast } from "./context/ToastContext";
 import styles from "../styles/venueEditorModal.module.css";
 
 interface VenueEditorModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSaved: (venue: Venue) => void;
-  initialVenue?: Venue; // if set => edit mode
+  initialVenue?: Venue;
 }
 
 type MediaItem = { url: string };
@@ -30,6 +31,7 @@ export default function VenueEditorModal({
   initialVenue,
 }: VenueEditorModalProps) {
   const isEditing = !!initialVenue;
+  const { showToast } = useToast();
 
   // Basic fields
   const [name, setName] = useState("");
@@ -47,12 +49,12 @@ export default function VenueEditorModal({
     breakfast: false,
     pets: false,
   });
-  const [rating, setRating] = useState<number>(0); // 0–5
+  const [rating, setRating] = useState<number>(0);
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Klikkbare stjerner (0–5)
+  // Clickable stars (desktop)
   function EditableStars({
     value = 0,
     onChange,
@@ -70,9 +72,14 @@ export default function VenueEditorModal({
             role="radio"
             aria-checked={v === n}
             onClick={() => onChange(n)}
-            className={`${styles.btn} ${styles.starBtn} ${
-              v >= n ? styles.starBtnActive : ""
-            }`}
+            onKeyDown={(e) => {
+              if (e.key === " " || e.key === "Enter") {
+                e.preventDefault();
+                onChange(n);
+              }
+            }}
+            onTouchStart={() => onChange(n)}
+            className={`${styles.btn} ${styles.starBtn} ${v >= n ? styles.starBtnActive : ""}`}
             title={`${n} star${n > 1 ? "s" : ""}`}
           >
             {v >= n ? "★" : "☆"}
@@ -82,7 +89,68 @@ export default function VenueEditorModal({
     );
   }
 
-  // Sync data when modal opens or initialVenue changes
+  // Mobile: stars in the background + invisible range + clickable hit areas
+  function StarSlider({
+    value = 0,
+    onChange,
+  }: {
+    value?: number;
+    onChange: (v: number) => void;
+  }) {
+    const v = Math.max(0, Math.min(5, Math.round(value ?? 0)));
+
+    return (
+      <div className={styles.starSlider} aria-label="Rating (mobile)">
+        {/* Visible stars */}
+        <div className={styles.starRow} aria-hidden="true">
+          {[1, 2, 3, 4, 5].map((n) => (
+            <span
+              key={n}
+              className={`${styles.starVisual} ${v >= n ? styles.starOn : styles.starOff}`}
+            >
+              {v >= n ? "★" : "☆"}
+            </span>
+          ))}
+        </div>
+
+        {/* Focusable and accessible control */}
+        <input
+          type="range"
+          min={0}
+          max={5}
+          step={1}
+          value={v}
+          onChange={(e) => onChange(Number(e.target.value))}
+          className={styles.starRange}
+          aria-label="Drag to set rating 0–5"
+          aria-valuemin={0}
+          aria-valuemax={5}
+          aria-valuenow={v}
+        />
+
+        {/* Star hit */}
+        <div className={styles.starHitRow}>
+          {[1, 2, 3, 4, 5].map((n) => (
+            <div
+              key={n}
+              role="presentation"
+              className={styles.starHit}
+              aria-hidden="true"
+              tabIndex={-1}
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => onChange(n)}
+              onTouchStart={() => onChange(n)}
+            />
+          ))}
+        </div>
+
+        <span className={styles.starValue} aria-hidden>
+          {v}/5
+        </span>
+      </div>
+    );
+  }
+
   useEffect(() => {
     if (!isOpen) return;
 
@@ -108,7 +176,6 @@ export default function VenueEditorModal({
         typeof initialVenue.rating === "number" ? initialVenue.rating : 0
       );
     } else {
-      // defaults for create
       setName("");
       setDescription("");
       setPrice(0);
@@ -164,10 +231,7 @@ export default function VenueEditorModal({
         meta,
         location:
           city || country
-            ? {
-                city: city || undefined,
-                country: country || undefined,
-              }
+            ? { city: city || undefined, country: country || undefined }
             : undefined,
       };
 
@@ -177,9 +241,19 @@ export default function VenueEditorModal({
           : await createVenue(body);
 
       onSaved(saved);
+
+      showToast({
+        message: isEditing
+          ? "Venue updated successfully!"
+          : "Venue created successfully!",
+        type: "success",
+      });
+
       onClose();
     } catch (err) {
-      setError((err as Error).message || "Could not save venue");
+      const msg = (err as Error).message || "Could not save venue";
+      setError(msg);
+      showToast({ message: msg, type: "error" });
     } finally {
       setSaving(false);
     }
@@ -192,12 +266,9 @@ export default function VenueEditorModal({
           {isEditing ? "Edit venue" : "New venue"}
         </h2>
 
-        {/* bruk CSS i stedet for inline: */}
         <form onSubmit={handleSubmit} className={styles.formContents}>
-          {/* Scrollable content area */}
           <div className={styles.formBody}>
             <div className={styles.formBodyInner}>
-              {/* BASIC INFO */}
               <label className={styles.formGroup}>
                 Name
                 <input
@@ -304,9 +375,11 @@ export default function VenueEditorModal({
               </fieldset>
 
               {/* RATING */}
-              <label className={styles.formGroup}>
-                Rating
-                <div className={styles.ratingRow}>
+              <fieldset className={styles.formGroup}>
+                <legend className={styles.legend}>Rating</legend>
+
+                {/* Desktop: stars + number input */}
+                <div className={styles.ratingRowDesktop}>
                   <EditableStars value={rating} onChange={setRating} />
                   <input
                     type="number"
@@ -320,9 +393,15 @@ export default function VenueEditorModal({
                       )
                     }
                     className={`${styles.input} ${styles.ratingInput}`}
+                    aria-label="Rating (0 to 5)"
                   />
                 </div>
-              </label>
+
+                {/* Mobile: star slider */}
+                <div className={styles.ratingRowMobile}>
+                  <StarSlider value={rating} onChange={setRating} />
+                </div>
+              </fieldset>
 
               {/* IMAGES */}
               <div className={styles.formGroup}>
@@ -378,7 +457,9 @@ export default function VenueEditorModal({
                         />
                         <div className={styles.imagePreviewMeta}>
                           <div>Preview</div>
-                          <div>{media.url}</div>
+                          <div className={styles.imageUrl} title={media.url}>
+                            {media.url}
+                          </div>
                         </div>
                       </div>
                     )}
