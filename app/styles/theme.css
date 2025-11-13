@@ -4,6 +4,8 @@
   --card-bg: #ffffff;
   --border-color: #e5e7eb;
 
+  --icon-button-border-color: #d1d5db;
+
   --header-bg: #ffffff;
   --header-border-color: #e5e7eb;
 
@@ -38,6 +40,8 @@
   --card-bg: #020617;
   --border-color: #1f2937;
 
+  --icon-button-border-color: #e5e7eb;
+
   --header-bg: #020617;
   --header-border-color: #1f2937;
 
@@ -46,9 +50,9 @@
 
   --muted-text-color: #9ca3af;
 
-  --button-primary-bg: #1e293b; /* mørk blå/grå knapp */
-  --button-primary-text: #f9fafb; /* lys tekst */
-  --button-primary-hover-bg: #334155;
+  --button-primary-bg: #111827;
+  --button-primary-text: #ffffff;
+  --button-primary-hover-bg: #1f2937;
 
   --button-secondary-border: #4b5563;
   --button-secondary-hover-bg: #111827;

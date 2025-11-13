@@ -16,7 +16,7 @@ type Theme = "light" | "dark";
 export function Layout({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>("light");
 
-  // Les lagret tema + systeminnstilling første gang
+  // Les lagret tema / prefers-color-scheme etter at klienten har mountet
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -29,10 +29,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
     const prefersDark = window.matchMedia(
       "(prefers-color-scheme: dark)"
     ).matches;
-    setTheme(prefersDark ? "dark" : "light");
+    if (prefersDark) {
+      setTheme("dark");
+    }
   }, []);
 
-  // Lagre når bruker endrer
   useEffect(() => {
     if (typeof window === "undefined") return;
     window.localStorage.setItem("theme", theme);
@@ -41,6 +42,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const toggleTheme = () => {
     setTheme((prev) => (prev === "light" ? "dark" : "light"));
   };
+
+  // 👇 class på <body> styrer .dark i theme.css
+  const bodyClassName =
+    theme === "dark" ? `${styles.bodyRoot} dark` : styles.bodyRoot;
 
   return (
     <html lang="en">
@@ -51,11 +56,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
 
-      {/* body får class "dark" når theme === "dark" */}
-      <body className={`${styles.bodyRoot} ${theme === "dark" ? "dark" : ""}`}>
+      <body className={bodyClassName}>
         <ToastProvider>
           <AuthProvider>
-            {/* Vi sender theme + toggle inn i Header */}
             <Header theme={theme} onToggleTheme={toggleTheme} />
 
             <main className={styles.mainWrapper}>{children}</main>
@@ -73,13 +76,4 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return <Outlet />;
-}
-
-export function ErrorBoundary() {
-  return (
-    <main style={{ textAlign: "center", padding: "2rem" }}>
-      <h1>Oops!</h1>
-      <p>Something went wrong. Please try again later.</p>
-    </main>
-  );
 }

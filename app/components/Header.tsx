@@ -149,7 +149,7 @@ export default function Header({ theme, onToggleTheme }: HeaderProps) {
               aria-label="Open menu"
               onClick={() => setShowMenu((s) => !s)}
             >
-              ⋯
+              ☰
             </button>
 
             {showMenu && (
@@ -170,17 +170,6 @@ export default function Header({ theme, onToggleTheme }: HeaderProps) {
                 >
                   Venues
                 </Link>
-
-                {/* 🌙/☀️ i mobil-dropdown også */}
-                <button
-                  className={styles.dropdownItem}
-                  role="menuitem"
-                  onClick={() => {
-                    onToggleTheme();
-                  }}
-                >
-                  {theme === "dark" ? "Light mode" : "Dark mode"}
-                </button>
 
                 {isLoggedIn ? (
                   <>
