@@ -1,3 +1,5 @@
+import "../../styles/theme.css";
+
 export default function HomePage() {
   return (
     <section style={{ padding: "2rem", textAlign: "center" }}>

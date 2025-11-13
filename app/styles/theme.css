@@ -1,0 +1,67 @@
+:root {
+  --bg-color: #f9fafb;
+  --text-color: #0f172a;
+  --card-bg: #ffffff;
+  --border-color: #e5e7eb;
+
+  --header-bg: #ffffff;
+  --header-border-color: #e5e7eb;
+
+  --nav-link-color: #111827;
+  --nav-link-hover-color: #2563eb;
+
+  --muted-text-color: #6b7280;
+
+  --button-primary-bg: #111827;
+  --button-primary-text: #ffffff;
+  --button-primary-hover-bg: #1f2937;
+
+  --button-secondary-border: #d1d5db;
+  --button-secondary-hover-bg: #f3f4f6;
+
+  --accent-green: #10b981;
+  --accent-green-hover: #059669;
+
+  --dropdown-bg: #ffffff;
+  --dropdown-border-color: #e5e7eb;
+  --hover-bg-color: #f3f4f6;
+
+  --danger-color: #b91c1c;
+
+  --footer-bg-color: #f9fafb;
+  --footer-border-color: #e5e7eb;
+}
+
+.dark {
+  --bg-color: #020617;
+  --text-color: #e5e7eb;
+  --card-bg: #020617;
+  --border-color: #1f2937;
+
+  --header-bg: #020617;
+  --header-border-color: #1f2937;
+
+  --nav-link-color: #e5e7eb;
+  --nav-link-hover-color: #93c5fd;
+
+  --muted-text-color: #9ca3af;
+
+  --button-primary-bg: #1e293b; /* mørk blå/grå knapp */
+  --button-primary-text: #f9fafb; /* lys tekst */
+  --button-primary-hover-bg: #334155;
+
+  --button-secondary-border: #4b5563;
+  --button-secondary-hover-bg: #111827;
+
+  --accent-green: #22c55e;
+  --accent-green-hover: #16a34a;
+
+  --dropdown-bg: #020617;
+  --dropdown-border-color: #1f2937;
+  --hover-bg-color: #111827;
+
+  --danger-color: #fca5a5;
+
+  --footer-bg-color: #020617;
+  --footer-border-color: #1f2937;
+}

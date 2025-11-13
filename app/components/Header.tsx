@@ -4,13 +4,20 @@ import styles from "../styles/layout.module.css";
 import { getToken, getProfile, clearAuth, type UserProfile } from "../api/auth";
 import LoginModal from "./LoginModal";
 
-export default function Header() {
+type Theme = "light" | "dark";
+
+interface HeaderProps {
+  theme: Theme;
+  onToggleTheme: () => void;
+}
+
+export default function Header({ theme, onToggleTheme }: HeaderProps) {
   const [ready, setReady] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [showLogin, setShowLogin] = useState(false);
 
-  // 👇 ny: mobilmeny (dropdown) for små skjermer
+  // 👇 mobilmeny
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
@@ -79,7 +86,7 @@ export default function Header() {
           Holidaze
         </Link>
 
-        {/* Desktop-nav (skjules på små skjermer via CSS) */}
+        {/* Desktop-nav */}
         <ul className={styles.navLinks}>
           <li>
             <Link to="/">Home</Link>
@@ -94,7 +101,17 @@ export default function Header() {
 
         {/* Høyreside */}
         <div className={styles.authArea}>
-          {/* Desktop-visning (skjules på små skjermer via CSS) */}
+          {/* 🌙/☀️ tema-knapp (alltid synlig) */}
+          <button
+            type="button"
+            onClick={onToggleTheme}
+            className={styles.themeToggleBtn}
+            aria-label="Toggle dark mode"
+          >
+            {theme === "dark" ? "☀️" : "🌙"}
+          </button>
+
+          {/* Desktop-auth (login/logut osv) */}
           {!ready ? (
             <span className={styles.greeting} style={{ opacity: 0.5 }}>
               ...
@@ -122,7 +139,7 @@ export default function Header() {
             </div>
           )}
 
-          {/* Mobil: liten knapp som åpner dropdown med Profile + Log out (eller Login/Register) */}
+          {/* Mobilmeny */}
           <div className={styles.mobileMenuWrapper} ref={menuRef}>
             <button
               type="button"
@@ -137,7 +154,6 @@ export default function Header() {
 
             {showMenu && (
               <div className={styles.dropdown} role="menu">
-                {/* Valgfritt: legg inn Home/Venues også i mobilmenyen */}
                 <Link
                   to="/"
                   className={styles.dropdownItem}
@@ -154,6 +170,17 @@ export default function Header() {
                 >
                   Venues
                 </Link>
+
+                {/* 🌙/☀️ i mobil-dropdown også */}
+                <button
+                  className={styles.dropdownItem}
+                  role="menuitem"
+                  onClick={() => {
+                    onToggleTheme();
+                  }}
+                >
+                  {theme === "dark" ? "Light mode" : "Dark mode"}
+                </button>
 
                 {isLoggedIn ? (
                   <>
