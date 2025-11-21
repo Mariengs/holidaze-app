@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import styles from "../styles/layout.module.css";
 import { getToken, getProfile, clearAuth, type UserProfile } from "../api/auth";
 import LoginModal from "./LoginModal";
+import logo from "../assets/logotransparent.png";
 
 type Theme = "light" | "dark";
 
@@ -17,7 +18,6 @@ export default function Header({ theme, onToggleTheme }: HeaderProps) {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [showLogin, setShowLogin] = useState(false);
 
-  // 👇 mobilmeny
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
@@ -66,7 +66,6 @@ export default function Header({ theme, onToggleTheme }: HeaderProps) {
     }
   }
 
-  // Klikk utenfor dropdown lukker meny
   useEffect(() => {
     function onDocClick(e: MouseEvent) {
       if (!showMenu) return;
@@ -83,7 +82,7 @@ export default function Header({ theme, onToggleTheme }: HeaderProps) {
       <nav className={styles.navbar}>
         {/* Logo */}
         <Link to="/" className={styles.logo}>
-          Holidaze
+          <img src={logo} alt="Holidaze logo" className={styles.logoImage} />
         </Link>
 
         {/* Desktop-nav */}
@@ -111,7 +110,7 @@ export default function Header({ theme, onToggleTheme }: HeaderProps) {
             {theme === "dark" ? "☀️" : "🌙"}
           </button>
 
-          {/* Desktop-auth (login/logut osv) */}
+          {/* Desktop-auth */}
           {!ready ? (
             <span className={styles.greeting} style={{ opacity: 0.5 }}>
               ...

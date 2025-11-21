@@ -7,11 +7,12 @@
   max-width: 900px;
   margin: 2rem auto;
   padding: 2rem;
-  background-color: #fff;
+  background-color: var(--card-bg);
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   word-break: break-word;
   overflow-wrap: anywhere;
+  color: var(--text-color);
 }
 
 /* Banner (cover image) */
@@ -19,7 +20,7 @@
   width: 100%;
   height: 180px;
   border-radius: 8px;
-  background-color: #e5e7eb;
+  background-color: var(--border-color);
   background-size: cover;
   background-position: center;
   margin-bottom: 1rem;
@@ -30,7 +31,7 @@
   font-size: 1.6rem;
   font-weight: 600;
   margin-bottom: 1rem;
-  color: #111;
+  color: var(--text-color);
   text-transform: capitalize; /* store forbokstaver */
 }
 
@@ -48,7 +49,7 @@
   height: 110px;
   border-radius: 50%;
   object-fit: cover;
-  background-color: #f0f0f0;
+  background-color: var(--border-color);
   flex-shrink: 0;
 }
 
@@ -56,13 +57,13 @@
   margin: 0;
   font-size: 1.15rem;
   font-weight: 600;
-  color: #111;
+  color: var(--text-color);
   text-transform: capitalize; /* navn med stor forbokstav */
 }
 
 .email {
   margin: 0;
-  color: #666;
+  color: var(--muted-text-color);
   font-size: 0.95rem;
   word-break: break-word;
   overflow-wrap: anywhere;
@@ -105,6 +106,7 @@
 .btnLogout {
   background-color: #111827;
 }
+
 .btnEditMedia {
   background-color: #3b82f6;
 }
@@ -113,7 +115,7 @@
 .divider {
   margin: 2rem 0;
   border: none;
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--border-color);
 }
 
 /* Section heading ("My Venues", "My Bookings") */
@@ -130,13 +132,13 @@
   margin: 0;
   font-size: 1.05rem;
   font-weight: 600;
-  color: #111;
+  color: var(--text-color);
   text-transform: capitalize;
 }
 
 /* "+ New venue" button */
 .btnNewVenue {
-  background-color: #10b981;
+  background-color: var(--accent-green);
   color: #fff;
   border: none;
   border-radius: 6px;
@@ -149,7 +151,7 @@
 
 /* Generic muted text */
 .muted {
-  color: #666;
+  color: var(--muted-text-color);
   font-size: 0.9rem;
 }
 
@@ -157,15 +159,17 @@
 .centerMessage {
   padding: 2rem;
   text-align: center;
-  color: #111;
+  color: var(--text-color);
 }
+
 .centerError {
   padding: 2rem;
   text-align: center;
   color: red;
 }
+
 .centerMuted {
-  color: #666;
+  color: var(--muted-text-color);
 }
 
 /* Utility for dynamisk banner-bg */
@@ -186,10 +190,10 @@
 }
 
 .venueItem {
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 1rem;
-  background-color: #fafafa;
+  background-color: var(--card-bg);
   display: flex;
   gap: 0.9rem;
   align-items: flex-start;
@@ -205,6 +209,7 @@
   flex: 1 1 auto;
   min-width: 0;
 }
+
 .venueCardLink:hover .venueInfoName {
   text-decoration: underline;
 }
@@ -215,7 +220,7 @@
   object-fit: cover;
   border-radius: 6px;
   flex-shrink: 0;
-  background-color: #ddd;
+  background-color: var(--border-color);
 }
 
 .venueContent {
@@ -228,7 +233,7 @@
   margin: 0 0 0.25rem 0;
   font-size: 1rem;
   font-weight: 600;
-  color: #111;
+  color: var(--text-color);
   overflow-wrap: anywhere;
   text-transform: capitalize;
 }
@@ -236,13 +241,13 @@
 .venueInfoLocation {
   margin: 0;
   font-size: 0.9rem;
-  color: #555;
+  color: var(--muted-text-color);
 }
 
 .venueInfoDesc {
   margin: 0.4rem 0;
   font-size: 0.9rem;
-  color: #333;
+  color: var(--text-color);
 
   /* line-clamp for lange beskrivelser */
   display: -webkit-box;
@@ -255,23 +260,25 @@
 .venueInfoMeta {
   margin: 0;
   font-size: 0.9rem;
-  color: #333;
+  color: var(--text-color);
 }
 
 /* bookings inside each venue */
 .venueBookingsBox {
   margin-top: 0.75rem;
-  background-color: #fff;
-  border: 1px solid #ddd;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   padding: 0.5rem 0.75rem;
 }
+
 .venueBookingsTitle {
   margin: 0 0 0.5rem 0;
   font-size: 0.85rem;
   font-weight: 600;
-  color: #111;
+  color: var(--text-color);
 }
+
 .venueBookingsList {
   list-style: none;
   padding: 0;
@@ -279,20 +286,23 @@
   display: grid;
   gap: 0.5rem;
 }
+
 .venueBookingItem {
   font-size: 0.8rem;
   line-height: 1.4;
   border-left: 3px solid #3b82f6;
   padding-left: 0.5rem;
-  color: #111;
+  color: var(--text-color);
   overflow-wrap: anywhere;
 }
+
 .venueBookingDates {
-  color: #111;
+  color: var(--text-color);
   font-size: 0.8rem;
 }
+
 .venueBookingInfo {
-  color: #555;
+  color: var(--muted-text-color);
   font-size: 0.8rem;
   overflow-wrap: anywhere;
 }
@@ -304,6 +314,7 @@
   flex-shrink: 0;
   min-width: 84px;
 }
+
 .venueBtnEdit,
 .venueBtnDelete {
   color: #fff;
@@ -314,9 +325,11 @@
   font-size: 0.8rem;
   line-height: 1.2;
 }
+
 .venueBtnEdit {
   background-color: #3b82f6;
 }
+
 .venueBtnDelete {
   background-color: #dc2626;
 }
@@ -335,16 +348,17 @@
 
 /* Kort med vertikal stacking: (link = topp) + (cancel = bunn) */
 .bookingItem {
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 1rem;
-  background-color: #fafafa;
+  background-color: var(--card-bg);
   display: flex;
   flex-direction: column; /* viktig: knapp under */
   align-items: stretch;
   gap: 0.8rem;
   transition: box-shadow 0.2s ease;
 }
+
 .bookingItem:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
@@ -359,6 +373,7 @@
   flex: 1 1 auto; /* fyll toppområdet i kortet */
   min-width: 0;
 }
+
 .bookingCardLink:hover .bookingVenueName {
   text-decoration: underline;
 }
@@ -368,7 +383,7 @@
   height: 84px;
   object-fit: cover;
   border-radius: 6px;
-  background-color: #ddd;
+  background-color: var(--border-color);
   flex-shrink: 0;
 }
 
@@ -382,19 +397,21 @@
   margin: 0 0 0.25rem 0;
   font-size: 1rem;
   font-weight: 600;
-  color: #111;
+  color: var(--text-color);
   overflow-wrap: anywhere;
   text-transform: capitalize;
 }
+
 .bookingDates {
   margin: 0;
   font-size: 0.9rem;
-  color: #555;
+  color: var(--muted-text-color);
 }
+
 .bookingGuests {
   margin: 0.3rem 0 0 0;
   font-size: 0.9rem;
-  color: #333;
+  color: var(--text-color);
 }
 
 /* Cancel-knappen nederst i kortet, høyrejustert */
@@ -413,6 +430,7 @@
     background-color 0.15s ease,
     transform 0.15s ease;
 }
+
 .cancelBtn:hover {
   background-color: #b91c1c;
   transform: translateY(-1px);
@@ -428,6 +446,7 @@
     max-width: 95%;
     padding: 1.5rem;
   }
+
   .banner {
     height: 160px;
   }
@@ -440,6 +459,7 @@
     width: 100px;
     height: 80px;
   }
+
   .venueActions {
     min-width: 72px;
   }
@@ -454,7 +474,7 @@
     padding: 1rem;
     border-radius: 8px;
     box-shadow: none;
-    background-color: #fff;
+    background-color: var(--card-bg);
     overflow-x: hidden;
   }
 
@@ -493,9 +513,11 @@
     width: 80px;
     height: 80px;
   }
+
   .name {
     font-size: 1rem;
   }
+
   .email {
     font-size: 0.85rem;
   }
@@ -505,6 +527,7 @@
     align-items: center;
     text-align: center;
   }
+
   .actionRow {
     justify-content: center;
   }
@@ -514,11 +537,13 @@
   .bookingList {
     grid-template-columns: 1fr;
   }
+
   .venueItem,
   .bookingItem {
     flex-direction: column;
     align-items: stretch;
   }
+
   .venueCardLink,
   .bookingCardLink {
     flex-direction: column;
@@ -552,6 +577,7 @@
   .cancelBtn {
     align-self: stretch;
   } /* full width nederst */
+
   .muted {
     text-align: center;
   }
@@ -563,6 +589,7 @@
   .bookingThumb {
     height: 150px;
   }
+
   .banner {
     height: 100px;
   }
@@ -617,9 +644,11 @@
   .title {
     font-size: 1.8rem;
   }
+
   .sectionHeading {
     font-size: 1.15rem;
   }
+
   .venueInfoName,
   .bookingVenueName {
     font-size: 1.05rem;

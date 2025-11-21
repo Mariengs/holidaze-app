@@ -15,7 +15,7 @@
   --muted-text-color: #6b7280;
 
   --button-primary-bg: #111827;
-  --button-primary-text: #ffffff;
+  --button-primary-text: #111827;
   --button-primary-hover-bg: #1f2937;
 
   --button-secondary-border: #d1d5db;
@@ -32,40 +32,68 @@
 
   --footer-bg-color: #f9fafb;
   --footer-border-color: #e5e7eb;
+
+  --rating-star-color: #f59e0b;
+  --rating-star-empty-color: #e5e7eb;
+
+  --amenity-tag-bg: #eef2ff;
+  --amenity-tag-border: #e0e7ff;
+  --amenity-tag-text: #4f46e5;
+
+  --capacity-icon-bg: #e5e7eb;
+  --capacity-icon-text: #374151;
+
+  --search-button-bg: #2563eb;
+  --search-button-text: #ffffff;
+  --search-button-hover-bg: #1d4ed8;
 }
 
 .dark {
-  --bg-color: #020617;
+  --bg-color: #1c1c1e;
   --text-color: #e5e7eb;
-  --card-bg: #020617;
-  --border-color: #1f2937;
+  --card-bg: #2a2a2c;
+  --border-color: #3a3a3c;
 
-  --icon-button-border-color: #e5e7eb;
+  --icon-button-border-color: #4b5563;
 
-  --header-bg: #020617;
-  --header-border-color: #1f2937;
+  --header-bg: #1c1c1e;
+  --header-border-color: #3a3a3c;
 
-  --nav-link-color: #e5e7eb;
+  --nav-link-color: #f1f5f9;
   --nav-link-hover-color: #93c5fd;
 
   --muted-text-color: #9ca3af;
 
-  --button-primary-bg: #111827;
+  --button-primary-bg: #2f2f31;
   --button-primary-text: #ffffff;
-  --button-primary-hover-bg: #1f2937;
+  --button-primary-hover-bg: #3d3d3f;
 
   --button-secondary-border: #4b5563;
-  --button-secondary-hover-bg: #111827;
+  --button-secondary-hover-bg: #2f2f31;
 
   --accent-green: #22c55e;
   --accent-green-hover: #16a34a;
 
-  --dropdown-bg: #020617;
-  --dropdown-border-color: #1f2937;
-  --hover-bg-color: #111827;
+  --dropdown-bg: #2a2a2c;
+  --dropdown-border-color: #3a3a3c;
+  --hover-bg-color: #3a3a3c;
 
   --danger-color: #fca5a5;
 
-  --footer-bg-color: #020617;
-  --footer-border-color: #1f2937;
+  --rating-star-color: #fbbf24;
+  --rating-star-empty-color: #3a3a3c;
+
+  --amenity-tag-bg: #3a3a3c;
+  --amenity-tag-border: #4b5563;
+  --amenity-tag-text: #c7d2fe;
+
+  --capacity-icon-bg: #3d3d3f;
+  --capacity-icon-text: #e5e7eb;
+
+  --search-button-bg: #3b82f6;
+  --search-button-text: #ffffff;
+  --search-button-hover-bg: #1d4ed8;
+
+  --footer-bg-color: #1c1c1e;
+  --footer-border-color: #3a3a3c;
 }

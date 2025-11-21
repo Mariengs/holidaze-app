@@ -45,6 +45,16 @@ body {
   text-decoration: none;
 }
 
+.logoImage {
+  height: 40px;
+  width: auto;
+  display: block;
+}
+
+:global(.dark) .logoImage {
+  filter: brightness(0) invert(1);
+}
+
 /* Desktop-nav */
 .navLinks {
   list-style: none;

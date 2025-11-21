@@ -1,16 +1,24 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getAllVenues, type Venue } from "../../api/venues";
+import styles from "./Venues.module.css";
+import BookingSearchBar from "../../components/BookingSearchBar"; // ✅ only default import
+
+// ✅ Local type for the search values (no need to export it from the component)
+type BookingSearchValues = {
+  destination: string;
+  checkIn: string;
+  checkOut: string;
+  guests: number;
+};
 
 export default function Venues() {
   const [venues, setVenues] = useState<Venue[]>([]);
-  const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(true);
-  const [searching, setSearching] = useState(false); // egen loading-state for søk
+  const [searching, setSearching] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function fetchVenues(search?: string) {
-    // hvis det er et søk, vis "searching..." i stedet for å fjerne hele lista
     if (search && search.trim() !== "") {
       setSearching(true);
     } else {
@@ -31,102 +39,48 @@ export default function Venues() {
     }
   }
 
-  // last inn første gang (alle venues)
   useEffect(() => {
     fetchVenues();
   }, []);
 
-  function handleSearch(e: React.FormEvent) {
-    e.preventDefault();
-    fetchVenues(query);
+  function handleBookingSearch(values: BookingSearchValues) {
+    // Right now we only filter by destination
+    if (values.destination) {
+      fetchVenues(values.destination);
+    } else {
+      fetchVenues();
+    }
   }
 
   return (
-    <main style={{ padding: "1.5rem", maxWidth: "1200px", margin: "0 auto" }}>
-      <h1 style={{ marginBottom: "1rem", fontSize: "1.5rem", fontWeight: 600 }}>
-        Available Venues
-      </h1>
+    <main className={styles.main}>
+      {/* Top search bar shared with homepage etc. */}
+      <BookingSearchBar onSearch={handleBookingSearch} />
 
-      {/* 🔍 Search bar */}
-      <form
-        onSubmit={handleSearch}
-        style={{
-          marginBottom: "1.5rem",
-          display: "flex",
-          flexWrap: "wrap",
-          gap: "0.5rem",
-          alignItems: "center",
-        }}
-      >
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search venues..."
-          style={{
-            padding: "0.6rem 0.8rem",
-            border: "1px solid #ccc",
-            borderRadius: "6px",
-            minWidth: "220px",
-            flex: "0 0 auto",
-            fontSize: "0.9rem",
-          }}
-        />
-        <button
-          type="submit"
-          style={{
-            padding: "0.6rem 1rem",
-            border: "none",
-            borderRadius: "6px",
-            background: "#1f2937",
-            color: "#fff",
-            cursor: "pointer",
-            fontSize: "0.9rem",
-            fontWeight: 500,
-          }}
-        >
-          {searching ? "Searching..." : "Search"}
-        </button>
+      <header className={styles.header}>
+        <div>
+          <h1 className={styles.title}>Available Venues</h1>
+          <p className={styles.subtitle}>
+            Browse and filter venues to find the perfect place for your stay.
+          </p>
+        </div>
 
         {(loading || searching) && (
-          <span
-            style={{
-              fontSize: "0.8rem",
-              color: "#555",
-            }}
-          >
+          <span className={styles.statusText}>
             {searching ? "Searching…" : "Loading venues…"}
           </span>
         )}
-      </form>
+      </header>
 
-      {error && (
-        <p style={{ color: "#dc2626", fontSize: "0.9rem", fontWeight: 500 }}>
-          {error}
-        </p>
-      )}
+      {error && <p className={styles.error}>{error}</p>}
 
       {!loading && !searching && venues.length === 0 && !error && (
-        <p
-          style={{
-            fontSize: "0.9rem",
-            color: "#555",
-            fontStyle: "italic",
-            marginTop: "1rem",
-          }}
-        >
-          No venues found.
+        <p className={styles.emptyState}>
+          No venues found. Try another search.
         </p>
       )}
 
-      {/* cards grid */}
-      <div
-        style={{
-          display: "grid",
-          gap: "1rem",
-          gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
-        }}
-      >
+      <section className={styles.grid}>
         {venues.map((venue) => {
           const imageUrl = venue.media?.[0]?.url || "";
           const city =
@@ -134,105 +88,101 @@ export default function Venues() {
             venue.location?.country ||
             "No location set";
 
+          const rating = typeof venue.rating === "number" ? venue.rating : 0;
+
+          // AMENITIES
+          const amenities: string[] = [];
+          if (venue.meta?.wifi) amenities.push("Wi-Fi");
+          if (venue.meta?.parking) amenities.push("Parking");
+          if (venue.meta?.breakfast) amenities.push("Breakfast");
+          if (venue.meta?.pets) amenities.push("Pets allowed");
+
+          // CAPACITY: guests
+          const maxGuests =
+            typeof venue.maxGuests === "number" ? venue.maxGuests : null;
+
           return (
             <Link
               key={venue.id}
               to={`/venues/${venue.id}`}
-              style={{
-                textDecoration: "none",
-                color: "inherit",
-              }}
+              className={styles.cardLink}
             >
-              <div
-                style={{
-                  border: "1px solid #ddd",
-                  borderRadius: "10px",
-                  overflow: "hidden",
-                  background: "#fff",
-                  boxShadow:
-                    "0 4px 8px rgba(0,0,0,0.03), 0 1px 2px rgba(0,0,0,0.05)",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                {/* bilde eller fallback */}
-                <div
-                  style={{
-                    width: "100%",
-                    height: "180px",
-                    backgroundColor: "#f3f4f6",
-                    position: "relative",
-                  }}
-                >
+              <article className={styles.card}>
+                <div className={styles.imageWrapper}>
                   {imageUrl ? (
                     <img
                       src={imageUrl}
                       alt={venue.media?.[0]?.alt || venue.name}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                        display: "block",
-                      }}
+                      className={styles.image}
                     />
                   ) : (
-                    <div
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        fontSize: "0.8rem",
-                        color: "#6b7280",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        textAlign: "center",
-                        padding: "0.5rem",
-                      }}
-                    >
-                      No image
-                    </div>
+                    <div className={styles.imageFallback}>No image</div>
                   )}
                 </div>
 
-                {/* tekst */}
-                <div style={{ padding: "1rem", fontSize: "0.9rem" }}>
-                  <h3
-                    style={{
-                      margin: "0 0 0.4rem",
-                      fontSize: "1rem",
-                      fontWeight: 600,
-                      color: "#111",
-                      lineHeight: 1.3,
-                    }}
-                  >
+                <div className={styles.cardBody}>
+                  <h3 className={styles.cardTitle}>
                     {venue.name || "Untitled venue"}
                   </h3>
 
-                  <p
-                    style={{
-                      margin: "0 0 0.25rem",
-                      color: "#4b5563",
-                      lineHeight: 1.4,
-                    }}
-                  >
-                    {city}
-                  </p>
+                  <p className={styles.cardLocation}>{city}</p>
 
-                  <p
-                    style={{
-                      margin: 0,
-                      color: "#111",
-                      fontWeight: 500,
-                    }}
-                  >
-                    {venue.price} NOK / night
-                  </p>
+                  {/* Rating + price row */}
+                  <div className={styles.metaRow}>
+                    <div className={styles.rating}>
+                      <div className={styles.ratingStars}>
+                        {Array.from({ length: 5 }, (_, i) => (
+                          <span
+                            key={i}
+                            className={
+                              i < Math.round(rating)
+                                ? styles.ratingStarFilled
+                                : styles.ratingStarEmpty
+                            }
+                          >
+                            ★
+                          </span>
+                        ))}
+                      </div>
+                      <span className={styles.ratingValue}>
+                        {rating.toFixed(1)}
+                      </span>
+                    </div>
+
+                    <p className={styles.cardPrice}>
+                      <span>{venue.price} NOK</span>
+                      <span className={styles.pricePerNight}> / night</span>
+                    </p>
+                  </div>
+
+                  {/* Capacity: guests */}
+                  {maxGuests !== null && maxGuests > 0 && (
+                    <div className={styles.capacityRow}>
+                      <div className={styles.capacityItem}>
+                        <span className={styles.capacityIcon}>👥</span>
+                        <span className={styles.capacityText}>
+                          {maxGuests} guest{maxGuests === 1 ? "" : "s"}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Amenities */}
+                  {amenities.length > 0 && (
+                    <div className={styles.amenities}>
+                      {amenities.map((amenity) => (
+                        <span key={amenity} className={styles.amenityTag}>
+                          {amenity}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              </div>
+              </article>
             </Link>
           );
         })}
-      </div>
+      </section>
     </main>
   );
 }

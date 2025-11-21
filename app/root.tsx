@@ -16,7 +16,6 @@ type Theme = "light" | "dark";
 export function Layout({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>("light");
 
-  // Les lagret tema / prefers-color-scheme etter at klienten har mountet
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -43,7 +42,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
     setTheme((prev) => (prev === "light" ? "dark" : "light"));
   };
 
-  // 👇 class på <body> styrer .dark i theme.css
   const bodyClassName =
     theme === "dark" ? `${styles.bodyRoot} dark` : styles.bodyRoot;
 

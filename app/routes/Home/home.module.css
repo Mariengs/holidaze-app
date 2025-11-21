@@ -1,9 +1,231 @@
-.container {
-  max-width: 1200px;
-  margin: 2rem auto;
-  padding: 1rem;
-  text-align: center;
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+}
 
-  background-color: var(--bg-color);
+/* HERO */
+.hero {
+  position: relative;
+  min-height: 70vh;
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: background-image 1.5s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 1.5rem;
+}
+
+.heroOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 1;
+}
+
+.heroInner {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  max-width: 800px;
+}
+
+.heroTitle {
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  margin: 0 0 1rem;
+  animation: fadeUp 0.7s ease;
+}
+
+.heroSubtitle {
+  font-size: 1.2rem;
+  color: #f5f5f5;
+  margin-bottom: 2rem;
+  animation: fadeUp 1s ease;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* SEARCHBAR */
+.searchOnHero {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* SECTIONS */
+.section {
+  max-width: 1200px;
+  padding: 0 1.5rem;
+  margin: 0 auto 3rem;
+}
+
+.sectionTitle {
+  font-size: 1.7rem;
+  font-weight: 600;
+  margin: 0 0 1.5rem;
+}
+
+/* BANNER LIST */
+.bannerList {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* STOR, FORSIDE-AKTIG BANNER */
+.bannerItem {
+  display: flex;
+  gap: 1.75rem;
+  background: var(--card-bg);
+  border-radius: 1.75rem;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid var(--border-color);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.bannerItem:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.25);
+  border-color: rgba(148, 163, 184, 0.7);
+}
+
+.bannerImageWrapper {
+  flex: 0 0 60%;
+  max-height: 280px;
+  overflow: hidden;
+  background: #020617;
+}
+
+.bannerImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.bannerThumbFallback {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  font-size: 0.8rem;
+  color: var(--muted-text-color);
+}
+
+/* INNHOLD I BANNER */
+.bannerContent {
+  flex: 1;
+  padding: 1.4rem 1.6rem 1.4rem 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.9rem;
+}
+
+.bannerHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.bannerTitle {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.bannerRating {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.bannerLocation {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--muted-text-color);
+}
+
+/* AMENITIES INNI BANNER */
+.bannerAmenities {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+}
+
+.bannerAmenities span {
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  background: var(--hover-bg-color);
   color: var(--text-color);
+  border: 1px solid var(--border-color);
+}
+
+/* FOOTER (PRIS + GJESTER) */
+.bannerFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+  margin-top: 0.35rem;
+}
+
+.bannerPrice {
+  font-weight: 600;
+}
+
+.bannerGuests {
+  color: var(--muted-text-color);
+}
+
+/* MOBILE */
+@media (max-width: 640px) {
+  .hero {
+    padding: 2.5rem 1rem;
+    min-height: 60vh;
+  }
+
+  .heroTitle {
+    font-size: 2.1rem;
+  }
+
+  .heroSubtitle {
+    font-size: 1rem;
+  }
+
+  .bannerItem {
+    flex-direction: column;
+    border-radius: 1.25rem;
+  }
+
+  .bannerImageWrapper {
+    flex: none;
+    width: 100%;
+    height: 220px;
+    max-height: none;
+  }
+
+  .bannerContent {
+    padding: 1rem 1.1rem 1.2rem;
+  }
 }

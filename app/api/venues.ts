@@ -37,10 +37,10 @@ export interface Venue {
   name: string;
   description: string;
   price: number;
-  rating?: number; // kan settes via create/update (valgfritt i APIet)
+  rating?: number;
   maxGuests: number;
   media: { url: string; alt?: string }[];
-  meta?: Meta; // toppnivå
+  meta?: Meta;
   location?: {
     address?: string;
     city?: string;
@@ -62,7 +62,7 @@ export interface VenuePayload {
   price: number;
   maxGuests: number;
   media: { url: string; alt?: string }[];
-  rating?: number; // <-- NYTT: sendes til API ved create/update
+  rating?: number;
   meta?: Meta;
   location?: {
     address?: string;
