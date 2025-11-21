@@ -15,8 +15,8 @@
   --muted-text-color: #6b7280;
 
   --button-primary-bg: #111827;
-  --button-primary-text: #111827;
-  --button-primary-hover-bg: #1f2937;
+  --button-primary-text: #ffffff;
+  --button-primary-hover-bg: #1e293b;
 
   --button-secondary-border: #d1d5db;
   --button-secondary-hover-bg: #f3f4f6;
@@ -64,12 +64,12 @@
 
   --muted-text-color: #9ca3af;
 
-  --button-primary-bg: #2f2f31;
+  --button-primary-bg: #111827;
   --button-primary-text: #ffffff;
-  --button-primary-hover-bg: #3d3d3f;
+  --button-primary-hover-bg: #2563eb;
 
   --button-secondary-border: #4b5563;
-  --button-secondary-hover-bg: #2f2f31;
+  --button-secondary-hover-bg: #1f2937;
 
   --accent-green: #22c55e;
   --accent-green-hover: #16a34a;

@@ -1,8 +1,3 @@
-/* ===========================
-   WRAPPER & GLOBAL
-   =========================== */
-
-/* Wrapper card for hele profilen */
 .wrapper {
   max-width: 900px;
   margin: 2rem auto;
@@ -15,7 +10,6 @@
   color: var(--text-color);
 }
 
-/* Banner (cover image) */
 .banner {
   width: 100%;
   height: 180px;
@@ -32,7 +26,7 @@
   font-weight: 600;
   margin-bottom: 1rem;
   color: var(--text-color);
-  text-transform: capitalize; /* store forbokstaver */
+  text-transform: capitalize;
 }
 
 /* Toppseksjon med avatar + navn/e-post + rolle */
@@ -58,7 +52,7 @@
   font-size: 1.15rem;
   font-weight: 600;
   color: var(--text-color);
-  text-transform: capitalize; /* navn med stor forbokstav */
+  text-transform: capitalize;
 }
 
 .email {
@@ -67,7 +61,7 @@
   font-size: 0.95rem;
   word-break: break-word;
   overflow-wrap: anywhere;
-  text-transform: none; /* aldri endre email */
+  text-transform: none;
 }
 
 .roleManager {
@@ -576,14 +570,13 @@
 
   .cancelBtn {
     align-self: stretch;
-  } /* full width nederst */
+  }
 
   .muted {
     text-align: center;
   }
 }
 
-/* Ekstra små skjermer */
 @media (max-width: 400px) {
   .venueThumb,
   .bookingThumb {
@@ -595,16 +588,12 @@
   }
 }
 
-/* ===========================
-   DESKTOP TWEAKS (≥1025px)
-   =========================== */
 @media (min-width: 1025px) {
   .wrapper {
     max-width: 1100px;
     padding: 2.25rem;
   }
 
-  /* penere ord-bryting på store skjermer */
   .venueContent,
   .bookingContent,
   .venueInfoName,
