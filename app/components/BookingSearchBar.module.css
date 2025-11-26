@@ -13,7 +13,7 @@
   border: 1px solid var(--border-color);
   box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
   padding: 0.35rem;
-  overflow: hidden;
+  overflow: visible;
   position: relative;
 }
 
@@ -25,6 +25,7 @@
   gap: 0.6rem;
   padding: 0.65rem 1rem;
   min-width: 0;
+  position: relative;
 }
 
 .icon {
@@ -44,6 +45,7 @@
   flex-direction: column;
   gap: 0.15rem;
   min-width: 0;
+  position: relative;
 }
 
 .fieldLabel {
@@ -121,12 +123,22 @@
   box-shadow: 0 5px 12px rgba(15, 23, 42, 0.2);
 }
 
+/* Backdrop */
+.calendarBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(2px);
+  z-index: 998;
+  animation: fadeIn 0.15s ease-out;
+}
+
 /* Calendar popup (desktop) */
 .calendarPopup {
   position: absolute;
   top: 75px;
   left: 0;
-  z-index: 999;
+  z-index: 1000;
   background: var(--card-bg);
   border: 1px solid var(--border-color);
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15);
@@ -135,13 +147,61 @@
   animation: fadeIn 0.15s ease-out;
 }
 
-/* Optional: backdrop behind popup */
-.calendarBackdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.25);
-  backdrop-filter: blur(2px);
-  z-index: 998;
+/* Calendar actions */
+.calendarActions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 1rem;
+  border-top: 1px solid var(--border-color);
+  background: var(--card-bg);
+}
+
+.resetButton {
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  background: transparent;
+  color: var(--text-color);
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.resetButton:hover {
+  background: var(--hover-bg-color, #f3f4f6);
+  border-color: var(--muted-text-color);
+}
+
+.resetButton:active {
+  transform: scale(0.98);
+}
+
+/* Close button */
+.closeButton {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: var(--card-bg);
+  color: var(--text-color);
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: background 0.2s ease;
+  z-index: 1001;
+}
+
+.closeButton:hover {
+  background: var(--hover-bg-color, #f3f4f6);
 }
 
 /* Mobile */
@@ -161,22 +221,19 @@
     left: 0;
     right: 0;
     bottom: 0;
-
+    top: auto;
     width: 100%;
     height: 70%;
     max-height: 480px;
-
     border-radius: 1.2rem 1.2rem 0 0;
-    padding: 0.5rem 0;
-
+    padding: 0.5rem 0 0 0;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
-
     background: var(--card-bg);
     border: 1px solid var(--border-color);
     box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.25);
-
     animation: slideUp 0.25s ease;
+    z-index: 1000;
   }
 
   .dateButton {
@@ -189,6 +246,26 @@
     margin-top: 0.5rem;
     padding: 0.8rem 0;
     border-radius: 0.75rem;
+  }
+
+  .closeButton {
+    top: 12px;
+    right: 12px;
+    width: 38px;
+    height: 38px;
+    font-size: 1.4rem;
+  }
+
+  .calendarActions {
+    padding: 0.75rem 1rem;
+    position: sticky;
+    bottom: 0;
+    background: var(--card-bg);
+  }
+
+  .resetButton {
+    width: 100%;
+    padding: 0.75rem;
   }
 }
 
@@ -212,58 +289,5 @@
   to {
     opacity: 1;
     transform: scale(1);
-  }
-}
-
-/* Close button */
-.closeButton {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-
-  width: 32px;
-  height: 32px;
-
-  border: none;
-  border-radius: 50%;
-  background: var(--card-bg);
-  color: var(--text-color);
-
-  font-size: 1.2rem;
-  cursor: pointer;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  transition: background 0.2s ease;
-}
-
-.closeButton:hover {
-  background: var(--hover-bg-color, #f3f4f6);
-}
-
-/* Backdrop */
-.calendarBackdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.35);
-  z-index: 998;
-}
-
-/* Ensure popup stays on top */
-.calendarPopup {
-  z-index: 999;
-}
-
-/* MOBILE - better UI */
-@media (max-width: 640px) {
-  .closeButton {
-    top: 12px;
-    right: 12px;
-    width: 38px;
-    height: 38px;
-    font-size: 1.4rem;
   }
 }

@@ -317,3 +317,205 @@
     font-size: 2.2rem;
   }
 }
+
+/* Filter section */
+.filterSection {
+  max-width: 1200px;
+  margin: 0 auto 2rem;
+  padding: 2rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.filterRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.amenityRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+  margin-bottom: 1rem;
+}
+
+.filterActions {
+  display: flex;
+  justify-content: center;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.filterGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.filterLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.labelText {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-color);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.filterSelect,
+.filterInput {
+  padding: 0.625rem 0.875rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  background: var(--card-bg);
+  color: var(--text-color);
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.filterSelect:hover,
+.filterInput:hover {
+  border-color: var(--muted-text-color);
+}
+
+.filterSelect:focus,
+.filterInput:focus {
+  outline: none;
+  border-color: var(--button-primary-bg);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.filterInput {
+  width: 100%;
+}
+
+.rangeInputs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filterInputSmall {
+  padding: 0.625rem 0.875rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  background: var(--card-bg);
+  color: var(--text-color);
+  font-size: 0.9rem;
+  width: 100%;
+  transition: all 0.2s ease;
+}
+
+.filterInputSmall:hover {
+  border-color: var(--muted-text-color);
+}
+
+.filterInputSmall:focus {
+  outline: none;
+  border-color: var(--button-primary-bg);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.rangeSeparator {
+  color: var(--muted-text-color);
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.amenityFilters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.amenityCheckbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--text-color);
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+  background: var(--card-bg);
+}
+
+.amenityCheckbox:hover {
+  background: var(--hover-bg-color, #f9fafb);
+  border-color: var(--button-primary-bg);
+}
+
+.amenityCheckbox input[type="checkbox"] {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--button-primary-bg);
+}
+
+.resetFiltersButton {
+  padding: 0.75rem 2rem;
+  border: 2px solid var(--button-primary-bg);
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--button-primary-bg);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.resetFiltersButton:hover {
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+.resetFiltersButton:active {
+  transform: translateY(0);
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  font-size: 1.2rem;
+  color: var(--muted-text-color);
+}
+
+@media (max-width: 768px) {
+  .filterSection {
+    padding: 1.5rem;
+  }
+
+  .filterRow {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .amenityFilters {
+    flex-direction: column;
+  }
+
+  .amenityCheckbox {
+    width: 100%;
+  }
+
+  .resetFiltersButton {
+    width: 100%;
+  }
+}

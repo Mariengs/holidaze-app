@@ -4,6 +4,13 @@ import BookingSearchBar from "../../components/BookingSearchBar";
 import { getAllVenues, type Venue } from "../../api/venues";
 import styles from "./home.module.css";
 
+type BookingSearchValues = {
+  destination: string;
+  checkIn: string;
+  checkOut: string;
+  guests: number;
+};
+
 export default function HomePage() {
   const navigate = useNavigate();
 
@@ -11,14 +18,15 @@ export default function HomePage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [topVenues, setTopVenues] = useState<Venue[]>([]);
 
-  function handleSearch(values: any) {
-    const params = new URLSearchParams({
-      destination: values.destination || "",
-      checkIn: values.checkIn || "",
-      checkOut: values.checkOut || "",
-      guests: String(values.guests || 1),
-    });
+  function handleSearch(values: BookingSearchValues) {
+    // Build query params
+    const params = new URLSearchParams();
+    if (values.destination) params.set("destination", values.destination);
+    if (values.guests) params.set("guests", values.guests.toString());
+    if (values.checkIn) params.set("checkIn", values.checkIn);
+    if (values.checkOut) params.set("checkOut", values.checkOut);
 
+    // Navigate to venues page with search params
     navigate(`/venues?${params.toString()}`);
   }
 

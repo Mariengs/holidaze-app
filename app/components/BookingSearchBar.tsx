@@ -32,6 +32,7 @@ export default function BookingSearchBar({
 }: BookingSearchBarProps) {
   const [destination, setDestination] = useState("");
   const [guests, setGuests] = useState(2);
+  const [guestsInput, setGuestsInput] = useState("2");
 
   const [dateRange, setDateRange] = useState<DateRangeItem[]>([
     {
@@ -40,6 +41,8 @@ export default function BookingSearchBar({
       key: "selection",
     },
   ]);
+
+  const [datesSelected, setDatesSelected] = useState(false); // Track if dates have been selected
 
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -92,6 +95,41 @@ export default function BookingSearchBar({
     });
   }
 
+  function handleReset() {
+    const today = new Date();
+    setDateRange([
+      {
+        startDate: today,
+        endDate: today,
+        key: "selection",
+      },
+    ]);
+    setDatesSelected(false); // Reset the flag
+  }
+
+  function handleDateChange(item: DateSelection) {
+    setDateRange([item.selection]);
+    setDatesSelected(true); // Mark that dates have been selected
+  }
+
+  function handleGuestsChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const value = e.target.value;
+    setGuestsInput(value);
+
+    const numValue = parseInt(value);
+    if (!isNaN(numValue) && numValue >= 1) {
+      setGuests(numValue);
+    }
+  }
+
+  function handleGuestsBlur() {
+    const numValue = parseInt(guestsInput);
+    if (isNaN(numValue) || numValue < 1) {
+      setGuests(1);
+      setGuestsInput("1");
+    }
+  }
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
@@ -108,20 +146,12 @@ export default function BookingSearchBar({
   }
 
   const selection = dateRange[0];
-  const dateLabel = `${formatDateLabel(selection.startDate)} – ${formatDateLabel(
-    selection.endDate
-  )}`;
+  const dateLabel = datesSelected
+    ? `${formatDateLabel(selection.startDate)} – ${formatDateLabel(selection.endDate)}`
+    : "-- / -- / ---- – -- / -- / ----";
 
   return (
     <section className={`${styles.wrapper} ${className || ""}`}>
-      {/* Backdrop behind the calendar */}
-      {isCalendarOpen && (
-        <div
-          className={styles.calendarBackdrop}
-          onClick={() => setIsCalendarOpen(false)}
-        />
-      )}
-
       <form onSubmit={handleSubmit} className={styles.searchBar}>
         {/* Destination */}
         <div className={styles.field}>
@@ -172,14 +202,22 @@ export default function BookingSearchBar({
 
                 <DateRange
                   ranges={dateRange}
-                  onChange={(item: DateSelection) =>
-                    setDateRange([item.selection])
-                  }
+                  onChange={handleDateChange}
                   moveRangeOnFirstSelection={false}
                   months={isMobile ? 1 : 2}
                   direction={isMobile ? "vertical" : "horizontal"}
                   rangeColors={["#2563eb"]}
                 />
+
+                <div className={styles.calendarActions}>
+                  <button
+                    type="button"
+                    className={styles.resetButton}
+                    onClick={handleReset}
+                  >
+                    Clear
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -197,10 +235,9 @@ export default function BookingSearchBar({
             <input
               type="number"
               min={1}
-              value={guests}
-              onChange={(e) =>
-                setGuests(Math.max(1, Number(e.target.value) || 1))
-              }
+              value={guestsInput}
+              onChange={handleGuestsChange}
+              onBlur={handleGuestsBlur}
               className={styles.fieldInput}
               aria-label="Number of guests"
             />
@@ -212,6 +249,14 @@ export default function BookingSearchBar({
           Search
         </button>
       </form>
+
+      {/* Backdrop ETTER form - så kalenderen kommer over */}
+      {isCalendarOpen && (
+        <div
+          className={styles.calendarBackdrop}
+          onClick={() => setIsCalendarOpen(false)}
+        />
+      )}
     </section>
   );
 }
