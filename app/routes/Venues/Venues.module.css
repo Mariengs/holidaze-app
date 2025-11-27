@@ -1,6 +1,40 @@
 .main {
-  /* La layouten styre bredde/padding – denne kan holdes ganske “lett” */
+  /* La layouten styre bredde/padding – denne kan holdes ganske "lett" */
   padding-bottom: 2.5rem;
+}
+
+/* Desktop search - show on desktop, hide on mobile */
+.desktopSearch {
+  display: block;
+}
+
+/* Mobile search button - hide on desktop, show on mobile */
+.mobileSearchButton {
+  display: none;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 0 1.5rem 0;
+  padding: 1rem 1.5rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-color);
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.mobileSearchButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-color: var(--button-primary-bg);
+}
+
+.mobileSearchButton:active {
+  transform: translateY(0);
 }
 
 /* Header */
@@ -304,20 +338,6 @@
   font-weight: 500;
 }
 
-/* Responsivitet */
-
-@media (min-width: 768px) {
-  .header {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: flex-end;
-  }
-
-  .title {
-    font-size: 2.2rem;
-  }
-}
-
 /* Filter section */
 .filterSection {
   max-width: 1200px;
@@ -327,6 +347,56 @@
   border: 1px solid var(--border-color);
   border-radius: 1rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Filter toggle button (mobile only) */
+.filterToggle {
+  display: none;
+  width: 100%;
+  padding: 1rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.filterToggleText {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.activeFilterBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  background: var(--button-primary-bg);
+  color: white;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.filterToggleIcon {
+  font-size: 0.75rem;
+  transition: transform 0.2s ease;
+  color: var(--muted-text-color);
+}
+
+.filterToggleIconOpen {
+  transform: rotate(180deg);
+}
+
+/* Filter content */
+.filterContent {
+  display: block;
 }
 
 .filterRow {
@@ -468,13 +538,20 @@
   padding: 0.75rem 2rem;
   border: 2px solid var(--button-primary-bg);
   border-radius: 0.5rem;
-  background: transparent;
+  background: rgba(37, 99, 235, 0.08);
   color: var(--button-primary-bg);
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
+}
+
+:global(.dark) .resetFiltersButton {
+  background: rgba(37, 99, 235, 0.15);
+  border-color: #3b82f6;
+  color: #60a5fa;
+  box-shadow: 0 2px 12px rgba(37, 99, 235, 0.25);
 }
 
 .resetFiltersButton:hover {
@@ -497,9 +574,42 @@
   color: var(--muted-text-color);
 }
 
+/* Responsivitet */
+
+@media (min-width: 768px) {
+  .header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .title {
+    font-size: 2.2rem;
+  }
+}
+
 @media (max-width: 768px) {
   .filterSection {
+    padding: 0;
+    border: 1px solid var(--border-color);
+    border-radius: 1rem;
+  }
+
+  /* Show filter toggle button on mobile */
+  .filterToggle {
+    display: flex;
+  }
+
+  /* Hide filter content by default on mobile */
+  .filterContent {
+    display: none;
     padding: 1.5rem;
+    border-top: 1px solid var(--border-color);
+  }
+
+  /* Show filter content when open */
+  .filterContentOpen {
+    display: block;
   }
 
   .filterRow {
@@ -517,5 +627,17 @@
 
   .resetFiltersButton {
     width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  /* Hide desktop search on mobile */
+  .desktopSearch {
+    display: none;
+  }
+
+  /* Show mobile search button */
+  .mobileSearchButton {
+    display: block;
   }
 }

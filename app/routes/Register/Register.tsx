@@ -66,7 +66,7 @@ export default function RegisterPage() {
       window.dispatchEvent(new Event("auth-updated"));
 
       // 5. toast + naviger til profilen
-      setToastMessage("Account created 🎉 You’re now logged in!");
+      setToastMessage("Account created 🎉 You're now logged in!");
       setTimeout(() => navigate("/profile"), 1000);
     } catch (err) {
       console.error(err);
@@ -166,7 +166,12 @@ export default function RegisterPage() {
 
           <p className={styles.text}>
             Already have an account?{" "}
-            <span className={styles.link} onClick={() => navigate("/login")}>
+            <span
+              className={styles.link}
+              onClick={() =>
+                window.dispatchEvent(new Event("open-login-modal"))
+              }
+            >
               Log in here
             </span>
           </p>

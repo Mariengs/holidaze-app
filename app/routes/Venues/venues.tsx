@@ -3,6 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { getAllVenues, type Venue } from "../../api/venues";
 import styles from "./Venues.module.css";
 import BookingSearchBar from "../../components/BookingSearchBar";
+import SearchModal from "../../components/SearchModal";
 
 type BookingSearchValues = {
   destination: string;
@@ -25,6 +26,8 @@ export default function Venues() {
   const [loading, setLoading] = useState(true);
   const [filtering, setFiltering] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
   // Filter states
   const [sortBy, setSortBy] = useState<SortOption>("none");
@@ -69,6 +72,36 @@ export default function Venues() {
     const destination = searchParams.get("destination") || "";
     const guests = parseInt(searchParams.get("guests") || "0");
 
+    // Read filter parameters from URL
+    const urlSort = searchParams.get("sort") as SortOption | null;
+    const urlMinPrice = searchParams.get("minPrice");
+    const urlMaxPrice = searchParams.get("maxPrice");
+    const urlMinRating = searchParams.get("minRating");
+    const urlMinGuests = searchParams.get("minGuests");
+
+    // Apply URL parameters to filters
+    if (urlSort && urlSort !== sortBy) setSortBy(urlSort);
+    if (urlMinPrice) {
+      const val = parseInt(urlMinPrice);
+      setMinPrice(val);
+      setMinPriceInput(val.toString());
+    }
+    if (urlMaxPrice) {
+      const val = parseInt(urlMaxPrice);
+      setMaxPrice(val);
+      setMaxPriceInput(val.toString());
+    }
+    if (urlMinRating) {
+      const val = parseFloat(urlMinRating);
+      setMinRating(val);
+      setMinRatingInput(val.toString());
+    }
+    if (urlMinGuests) {
+      const val = parseInt(urlMinGuests);
+      setMinGuests(val);
+      setMinGuestsInput(val.toString());
+    }
+
     if (destination || guests > 0) {
       setFiltering(true);
       setTimeout(() => {
@@ -78,10 +111,16 @@ export default function Venues() {
     } else {
       filterAndSortVenues({ destination: "", guests: 0 });
     }
+  }, [allVenues, searchParams, loading]);
+
+  // Re-filter when filter states change
+  useEffect(() => {
+    if (loading || allVenues.length === 0) return;
+
+    const destination = searchParams.get("destination") || "";
+    const guests = parseInt(searchParams.get("guests") || "0");
+    filterAndSortVenues({ destination, guests });
   }, [
-    allVenues,
-    searchParams,
-    loading,
     sortBy,
     minRating,
     maxRating,
@@ -333,7 +372,25 @@ export default function Venues() {
 
   return (
     <main className={styles.main}>
-      <BookingSearchBar onSearch={handleBookingSearch} />
+      {/* Desktop search bar */}
+      <div className={styles.desktopSearch}>
+        <BookingSearchBar onSearch={handleBookingSearch} />
+      </div>
+
+      {/* Mobile search button */}
+      <button
+        className={styles.mobileSearchButton}
+        onClick={() => setIsSearchModalOpen(true)}
+      >
+        🔍 Search for stays
+      </button>
+
+      {/* Search Modal for mobile */}
+      <SearchModal
+        isOpen={isSearchModalOpen}
+        onClose={() => setIsSearchModalOpen(false)}
+        onSearch={handleBookingSearch}
+      />
 
       <header className={styles.header}>
         <div>
@@ -352,127 +409,169 @@ export default function Venues() {
 
       {/* FILTERS AND SORTING */}
       <section className={styles.filterSection}>
-        <div className={styles.filterRow}>
-          <div className={styles.filterGroup}>
-            <label className={styles.filterLabel}>
-              <span className={styles.labelText}>Sort by</span>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as SortOption)}
-                className={styles.filterSelect}
-              >
-                <option value="none">No Sorting</option>
-                <option value="rating-high">Rating (High to Low)</option>
-                <option value="rating-low">Rating (Low to High)</option>
-                <option value="price-high">Price (High to Low)</option>
-                <option value="price-low">Price (Low to High)</option>
-              </select>
-            </label>
-          </div>
+        {/* Mobile: Collapsible header */}
+        <button
+          className={styles.filterToggle}
+          onClick={() => setIsFiltersOpen(!isFiltersOpen)}
+        >
+          <span className={styles.filterToggleText}>
+            Sort & Filter
+            {(sortBy !== "none" ||
+              minRating > 0 ||
+              maxRating < 5 ||
+              minPrice > 0 ||
+              maxPrice < 10000 ||
+              selectedAmenities.length > 0 ||
+              minGuests > 0) && (
+              <span className={styles.activeFilterBadge}>
+                {
+                  [
+                    sortBy !== "none",
+                    minRating > 0 || maxRating < 5,
+                    minPrice > 0 || maxPrice < 10000,
+                    selectedAmenities.length > 0,
+                    minGuests > 0,
+                  ].filter(Boolean).length
+                }
+              </span>
+            )}
+          </span>
+          <span
+            className={`${styles.filterToggleIcon} ${isFiltersOpen ? styles.filterToggleIconOpen : ""}`}
+          >
+            ▼
+          </span>
+        </button>
 
-          <div className={styles.filterGroup}>
-            <span className={styles.labelText}>Rating</span>
-            <div className={styles.rangeInputs}>
-              <input
-                type="text"
-                value={minRatingInput}
-                onChange={handleMinRatingChange}
-                onBlur={handleMinRatingBlur}
-                className={styles.filterInputSmall}
-                placeholder="Min"
-              />
-              <span className={styles.rangeSeparator}>–</span>
-              <input
-                type="text"
-                value={maxRatingInput}
-                onChange={handleMaxRatingChange}
-                onBlur={handleMaxRatingBlur}
-                className={styles.filterInputSmall}
-                placeholder="Max"
-              />
+        {/* Filter content - always visible on desktop, collapsible on mobile */}
+        <div
+          className={`${styles.filterContent} ${isFiltersOpen ? styles.filterContentOpen : ""}`}
+        >
+          <div className={styles.filterRow}>
+            <div className={styles.filterGroup}>
+              <label className={styles.filterLabel}>
+                <span className={styles.labelText}>Sort by</span>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as SortOption)}
+                  className={styles.filterSelect}
+                >
+                  <option value="none">No Sorting</option>
+                  <option value="rating-high">Rating (High to Low)</option>
+                  <option value="rating-low">Rating (Low to High)</option>
+                  <option value="price-high">Price (High to Low)</option>
+                  <option value="price-low">Price (Low to High)</option>
+                </select>
+              </label>
+            </div>
+
+            <div className={styles.filterGroup}>
+              <span className={styles.labelText}>Rating</span>
+              <div className={styles.rangeInputs}>
+                <input
+                  type="text"
+                  value={minRatingInput}
+                  onChange={handleMinRatingChange}
+                  onBlur={handleMinRatingBlur}
+                  className={styles.filterInputSmall}
+                  placeholder="Min"
+                />
+                <span className={styles.rangeSeparator}>–</span>
+                <input
+                  type="text"
+                  value={maxRatingInput}
+                  onChange={handleMaxRatingChange}
+                  onBlur={handleMaxRatingBlur}
+                  className={styles.filterInputSmall}
+                  placeholder="Max"
+                />
+              </div>
+            </div>
+
+            <div className={styles.filterGroup}>
+              <span className={styles.labelText}>Price (NOK)</span>
+              <div className={styles.rangeInputs}>
+                <input
+                  type="text"
+                  value={minPriceInput}
+                  onChange={handleMinPriceChange}
+                  onBlur={handleMinPriceBlur}
+                  className={styles.filterInputSmall}
+                  placeholder="Min"
+                />
+                <span className={styles.rangeSeparator}>–</span>
+                <input
+                  type="text"
+                  value={maxPriceInput}
+                  onChange={handleMaxPriceChange}
+                  onBlur={handleMaxPriceBlur}
+                  className={styles.filterInputSmall}
+                  placeholder="Max"
+                />
+              </div>
+            </div>
+
+            <div className={styles.filterGroup}>
+              <label className={styles.filterLabel}>
+                <span className={styles.labelText}>Min Guests</span>
+                <input
+                  type="text"
+                  value={minGuestsInput}
+                  onChange={handleMinGuestsChange}
+                  onBlur={handleMinGuestsBlur}
+                  className={styles.filterInput}
+                  placeholder="Any"
+                />
+              </label>
             </div>
           </div>
 
-          <div className={styles.filterGroup}>
-            <span className={styles.labelText}>Price (NOK)</span>
-            <div className={styles.rangeInputs}>
-              <input
-                type="text"
-                value={minPriceInput}
-                onChange={handleMinPriceChange}
-                onBlur={handleMinPriceBlur}
-                className={styles.filterInputSmall}
-                placeholder="Min"
-              />
-              <span className={styles.rangeSeparator}>–</span>
-              <input
-                type="text"
-                value={maxPriceInput}
-                onChange={handleMaxPriceChange}
-                onBlur={handleMaxPriceBlur}
-                className={styles.filterInputSmall}
-                placeholder="Max"
-              />
+          <div className={styles.amenityRow}>
+            <span className={styles.labelText}>Amenities</span>
+            <div className={styles.amenityFilters}>
+              <label className={styles.amenityCheckbox}>
+                <input
+                  type="checkbox"
+                  checked={selectedAmenities.includes("wifi")}
+                  onChange={() => toggleAmenity("wifi")}
+                />
+                <span>Wi-Fi</span>
+              </label>
+              <label className={styles.amenityCheckbox}>
+                <input
+                  type="checkbox"
+                  checked={selectedAmenities.includes("parking")}
+                  onChange={() => toggleAmenity("parking")}
+                />
+                <span>Parking</span>
+              </label>
+              <label className={styles.amenityCheckbox}>
+                <input
+                  type="checkbox"
+                  checked={selectedAmenities.includes("breakfast")}
+                  onChange={() => toggleAmenity("breakfast")}
+                />
+                <span>Breakfast</span>
+              </label>
+              <label className={styles.amenityCheckbox}>
+                <input
+                  type="checkbox"
+                  checked={selectedAmenities.includes("pets")}
+                  onChange={() => toggleAmenity("pets")}
+                />
+                <span>Pets</span>
+              </label>
             </div>
           </div>
 
-          <div className={styles.filterGroup}>
-            <label className={styles.filterLabel}>
-              <span className={styles.labelText}>Min Guests</span>
-              <input
-                type="text"
-                value={minGuestsInput}
-                onChange={handleMinGuestsChange}
-                onBlur={handleMinGuestsBlur}
-                className={styles.filterInput}
-                placeholder="Any"
-              />
-            </label>
+          <div className={styles.filterActions}>
+            <button
+              onClick={resetFilters}
+              className={styles.resetFiltersButton}
+            >
+              Reset Filters
+            </button>
           </div>
-        </div>
-
-        <div className={styles.amenityRow}>
-          <span className={styles.labelText}>Amenities</span>
-          <div className={styles.amenityFilters}>
-            <label className={styles.amenityCheckbox}>
-              <input
-                type="checkbox"
-                checked={selectedAmenities.includes("wifi")}
-                onChange={() => toggleAmenity("wifi")}
-              />
-              <span>Wi-Fi</span>
-            </label>
-            <label className={styles.amenityCheckbox}>
-              <input
-                type="checkbox"
-                checked={selectedAmenities.includes("parking")}
-                onChange={() => toggleAmenity("parking")}
-              />
-              <span>Parking</span>
-            </label>
-            <label className={styles.amenityCheckbox}>
-              <input
-                type="checkbox"
-                checked={selectedAmenities.includes("breakfast")}
-                onChange={() => toggleAmenity("breakfast")}
-              />
-              <span>Breakfast</span>
-            </label>
-            <label className={styles.amenityCheckbox}>
-              <input
-                type="checkbox"
-                checked={selectedAmenities.includes("pets")}
-                onChange={() => toggleAmenity("pets")}
-              />
-              <span>Pets</span>
-            </label>
-          </div>
-        </div>
-
-        <div className={styles.filterActions}>
-          <button onClick={resetFilters} className={styles.resetFiltersButton}>
-            Reset Filters
-          </button>
         </div>
       </section>
 

@@ -1,252 +1,304 @@
 .wrapper {
-  max-width: 900px;
+  max-width: 1200px;
   margin: 2rem auto;
-  padding: 2rem;
-  background-color: var(--card-bg);
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  word-break: break-word;
-  overflow-wrap: anywhere;
+  padding: 0 1.5rem;
   color: var(--text-color);
 }
 
+/* Banner */
 .banner {
   width: 100%;
-  height: 180px;
-  border-radius: 8px;
+  height: 240px;
+  border-radius: 1rem;
   background-color: var(--border-color);
   background-size: cover;
   background-position: center;
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-/* Hovedoverskrift "My Profile" */
+/* Profile Header */
 .title {
-  font-size: 1.6rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
   color: var(--text-color);
-  text-transform: capitalize;
 }
 
-/* Toppseksjon med avatar + navn/e-post + rolle */
 .profileRow {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  padding: 2rem;
+  background: var(--card-bg);
+  border-radius: 1rem;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .avatar {
-  width: 110px;
-  height: 110px;
+  width: 120px;
+  height: 120px;
   border-radius: 50%;
   object-fit: cover;
   background-color: var(--border-color);
   flex-shrink: 0;
+  border: 4px solid var(--bg-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .name {
-  margin: 0;
-  font-size: 1.15rem;
-  font-weight: 600;
+  margin: 0 0 0.5rem 0;
+  font-size: 1.5rem;
+  font-weight: 700;
   color: var(--text-color);
-  text-transform: capitalize;
 }
 
 .email {
-  margin: 0;
+  margin: 0 0 0.5rem 0;
   color: var(--muted-text-color);
-  font-size: 0.95rem;
-  word-break: break-word;
-  overflow-wrap: anywhere;
-  text-transform: none;
+  font-size: 1rem;
 }
 
 .roleManager {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  background: rgba(37, 99, 235, 0.1);
   color: #2563eb;
-  font-weight: 500;
-  margin: 0.25rem 0 0 0;
-  font-size: 0.9rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  border: 1px solid rgba(37, 99, 235, 0.2);
+}
+
+:global(.dark) .roleManager {
+  background: rgba(37, 99, 235, 0.2);
+  color: #60a5fa;
+  border-color: rgba(59, 130, 246, 0.3);
 }
 
 .roleCustomer {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  background: rgba(16, 185, 129, 0.1);
   color: #10b981;
-  font-weight: 500;
-  margin: 0.25rem 0 0 0;
-  font-size: 0.9rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
-/* Action buttons row (Edit profile, etc.) */
+:global(.dark) .roleCustomer {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border-color: rgba(52, 211, 153, 0.3);
+}
+
+/* Action Row */
 .actionRow {
   display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  margin-bottom: 1.5rem;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
 }
 
 .btn {
-  padding: 0.6rem 1.2rem;
+  padding: 0.75rem 1.5rem;
   border: none;
-  border-radius: 8px;
-  font-weight: 500;
+  border-radius: 0.5rem;
+  font-weight: 600;
   cursor: pointer;
   font-size: 0.9rem;
-  line-height: 1.2;
-  color: #fff;
-}
-
-.btnLogout {
-  background-color: #111827;
+  transition: all 0.2s ease;
 }
 
 .btnEditMedia {
-  background-color: #3b82f6;
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
 }
 
-/* Divider line */
+.btnEditMedia:hover {
+  background: var(--button-primary-hover-bg);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+/* Divider */
 .divider {
-  margin: 2rem 0;
+  margin: 3rem 0;
   border: none;
   border-top: 1px solid var(--border-color);
 }
 
-/* Section heading ("My Venues", "My Bookings") */
+/* New venue button row */
+.newVenueButtonRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+}
+
+/* Section Heading */
 .sectionHeadingRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
-  margin-bottom: 0.5rem;
-  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
 }
 
 .sectionHeading {
   margin: 0;
-  font-size: 1.05rem;
-  font-weight: 600;
+  font-size: 1.5rem;
+  font-weight: 700;
   color: var(--text-color);
-  text-transform: capitalize;
 }
 
-/* "+ New venue" button */
+/* Mobile toggle button - hidden on desktop */
+.mobileToggle {
+  display: none;
+}
+
+/* Desktop only class - visible on desktop, hidden on mobile */
+.desktopOnly {
+  display: block;
+}
+
+/* Collapsible content - always visible on desktop */
+.collapsibleContent {
+  display: block;
+}
+
 .btnNewVenue {
-  background-color: var(--accent-green);
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 0.45rem 0.9rem;
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  border: 2px solid #10b981;
+  border-radius: 0.5rem;
+  padding: 0.65rem 1.25rem;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   font-weight: 600;
-  line-height: 1.2;
+  transition: all 0.2s ease;
 }
 
-/* Generic muted text */
+.btnNewVenue:hover {
+  background: #10b981;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+:global(.dark) .btnNewVenue {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+  border-color: #34d399;
+}
+
+:global(.dark) .btnNewVenue:hover {
+  background: #10b981;
+  color: white;
+}
+
+/* Muted text */
 .muted {
   color: var(--muted-text-color);
-  font-size: 0.9rem;
+  font-size: 1rem;
+  text-align: center;
+  padding: 2rem;
 }
 
-/* Loading / error / not logged in states */
+/* Loading/Error states */
 .centerMessage {
-  padding: 2rem;
+  padding: 4rem 2rem;
   text-align: center;
   color: var(--text-color);
 }
 
 .centerError {
-  padding: 2rem;
+  padding: 4rem 2rem;
   text-align: center;
-  color: red;
+  color: #dc2626;
 }
 
-.centerMuted {
-  color: var(--muted-text-color);
-}
-
-/* Utility for dynamisk banner-bg */
-.bannerWrapper {
-  width: 100%;
-}
-
-/* ===========================
+/* ========================
    VENUES LIST
-   =========================== */
+   ======================== */
 
 .venueList {
   list-style: none;
   padding: 0;
+  margin: 0 0 3rem 0;
   display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
 }
 
 .venueItem {
   border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 1rem;
-  background-color: var(--card-bg);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  background: var(--card-bg);
   display: flex;
-  gap: 0.9rem;
-  align-items: flex-start;
-  min-width: 0;
+  flex-direction: column;
+  gap: 1rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-/* gjør hele kortet (bilde + innhold) klikkbart, men behold edit/delete utenfor */
+.venueItem:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  border-color: var(--button-primary-bg);
+}
+
 .venueCardLink {
   display: flex;
-  gap: 0.75rem;
+  flex-direction: column;
+  gap: 1rem;
   text-decoration: none;
   color: inherit;
-  flex: 1 1 auto;
-  min-width: 0;
-}
-
-.venueCardLink:hover .venueInfoName {
-  text-decoration: underline;
 }
 
 .venueThumb {
-  width: 112px;
-  height: 84px;
+  width: 100%;
+  height: 200px;
   object-fit: cover;
-  border-radius: 6px;
-  flex-shrink: 0;
+  border-radius: 0.75rem;
   background-color: var(--border-color);
 }
 
 .venueContent {
-  flex: 1 1 auto;
-  min-width: 0;
-  overflow-wrap: anywhere;
+  flex: 1;
 }
 
 .venueInfoName {
-  margin: 0 0 0.25rem 0;
-  font-size: 1rem;
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
   font-weight: 600;
   color: var(--text-color);
-  overflow-wrap: anywhere;
-  text-transform: capitalize;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.venueCardLink:hover .venueInfoName {
+  color: var(--button-primary-bg);
 }
 
 .venueInfoLocation {
-  margin: 0;
+  margin: 0 0 0.75rem 0;
   font-size: 0.9rem;
   color: var(--muted-text-color);
 }
 
 .venueInfoDesc {
-  margin: 0.4rem 0;
-  font-size: 0.9rem;
+  margin: 0 0 0.75rem 0;
+  font-size: 0.95rem;
   color: var(--text-color);
-
-  /* line-clamp for lange beskrivelser */
+  line-height: 1.5;
   display: -webkit-box;
-  -webkit-line-clamp: 2; /* WebKit/Blink */
-  line-clamp: 2; /* Standard */
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -255,403 +307,388 @@
   margin: 0;
   font-size: 0.9rem;
   color: var(--text-color);
+  font-weight: 600;
 }
 
-/* bookings inside each venue */
+/* Venue actions */
+.venueActions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: auto;
+}
+
+.venueBtnEdit,
+.venueBtnDelete {
+  flex: 1;
+  padding: 0.65rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.venueBtnEdit {
+  background: rgba(37, 99, 235, 0.1);
+  color: #2563eb;
+  border: 2px solid rgba(37, 99, 235, 0.3);
+}
+
+.venueBtnEdit:hover {
+  background: var(--button-primary-bg);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+:global(.dark) .venueBtnEdit {
+  background: rgba(37, 99, 235, 0.15);
+  color: #60a5fa;
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.venueBtnDelete {
+  background: rgba(220, 38, 38, 0.1);
+  color: #dc2626;
+  border: 2px solid rgba(220, 38, 38, 0.3);
+}
+
+.venueBtnDelete:hover {
+  background: #dc2626;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
+}
+
+:global(.dark) .venueBtnDelete {
+  background: rgba(220, 38, 38, 0.15);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+/* Venue bookings box */
 .venueBookingsBox {
   margin-top: 0.75rem;
-  background-color: var(--card-bg);
+  background: var(--bg-color);
   border: 1px solid var(--border-color);
-  border-radius: 6px;
-  padding: 0.5rem 0.75rem;
+  border-radius: 0.75rem;
+  padding: 1rem;
 }
 
 .venueBookingsTitle {
-  margin: 0 0 0.5rem 0;
-  font-size: 0.85rem;
+  margin: 0 0 0.75rem 0;
+  font-size: 0.9rem;
   font-weight: 600;
   color: var(--text-color);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .venueBookingsList {
   list-style: none;
   padding: 0;
   margin: 0;
-  display: grid;
-  gap: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .venueBookingItem {
-  font-size: 0.8rem;
-  line-height: 1.4;
-  border-left: 3px solid #3b82f6;
-  padding-left: 0.5rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  border-left: 3px solid var(--button-primary-bg);
+  padding-left: 0.75rem;
   color: var(--text-color);
-  overflow-wrap: anywhere;
 }
 
 .venueBookingDates {
   color: var(--text-color);
-  font-size: 0.8rem;
+  font-weight: 600;
 }
 
 .venueBookingInfo {
   color: var(--muted-text-color);
-  font-size: 0.8rem;
-  overflow-wrap: anywhere;
 }
 
-/* venue actions (Edit / Delete) */
-.venueActions {
-  display: grid;
-  gap: 0.5rem;
-  flex-shrink: 0;
-  min-width: 84px;
-}
-
-.venueBtnEdit,
-.venueBtnDelete {
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 0.4rem 0.8rem;
-  cursor: pointer;
-  font-size: 0.8rem;
-  line-height: 1.2;
-}
-
-.venueBtnEdit {
-  background-color: #3b82f6;
-}
-
-.venueBtnDelete {
-  background-color: #dc2626;
-}
-
-/* ===========================
-   BOOKINGS LIST (USER)
-   =========================== */
+/* ========================
+   BOOKINGS LIST
+   ======================== */
 
 .bookingList {
   list-style: none;
   padding: 0;
+  margin: 0;
   display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
 }
 
-/* Kort med vertikal stacking: (link = topp) + (cancel = bunn) */
 .bookingItem {
   border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 1rem;
-  background-color: var(--card-bg);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  background: var(--card-bg);
   display: flex;
-  flex-direction: column; /* viktig: knapp under */
-  align-items: stretch;
-  gap: 0.8rem;
-  transition: box-shadow 0.2s ease;
+  flex-direction: column;
+  gap: 1rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .bookingItem:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  border-color: var(--button-primary-bg);
 }
 
-/* Klikkbar booking (bilde + tekst) */
 .bookingCardLink {
   display: flex;
-  align-items: flex-start;
-  gap: 0.75rem;
+  flex-direction: column;
+  gap: 1rem;
   text-decoration: none;
   color: inherit;
-  flex: 1 1 auto; /* fyll toppområdet i kortet */
-  min-width: 0;
-}
-
-.bookingCardLink:hover .bookingVenueName {
-  text-decoration: underline;
+  flex: 1;
 }
 
 .bookingThumb {
-  width: 112px;
-  height: 84px;
+  width: 100%;
+  height: 200px;
   object-fit: cover;
-  border-radius: 6px;
+  border-radius: 0.75rem;
   background-color: var(--border-color);
-  flex-shrink: 0;
 }
 
 .bookingContent {
-  flex: 1 1 auto;
-  min-width: 0;
-  overflow-wrap: anywhere;
+  flex: 1;
 }
 
 .bookingVenueName {
-  margin: 0 0 0.25rem 0;
-  font-size: 1rem;
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
   font-weight: 600;
   color: var(--text-color);
-  overflow-wrap: anywhere;
-  text-transform: capitalize;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.bookingCardLink:hover .bookingVenueName {
+  color: var(--button-primary-bg);
 }
 
 .bookingDates {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.95rem;
+  color: var(--text-color);
+  font-weight: 600;
+}
+
+.bookingGuests {
   margin: 0;
   font-size: 0.9rem;
   color: var(--muted-text-color);
 }
 
-.bookingGuests {
-  margin: 0.3rem 0 0 0;
-  font-size: 0.9rem;
-  color: var(--text-color);
-}
-
-/* Cancel-knappen nederst i kortet, høyrejustert */
+/* Cancel button */
 .cancelBtn {
-  align-self: flex-end; /* høyre kant */
-  background-color: #dc2626;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 0.45rem 1rem;
+  margin-top: auto;
+  background: rgba(220, 38, 38, 0.1);
+  color: #dc2626;
+  border: 2px solid rgba(220, 38, 38, 0.3);
+  border-radius: 0.5rem;
+  padding: 0.65rem 1rem;
   cursor: pointer;
   font-size: 0.85rem;
-  font-weight: 500;
-  line-height: 1.2;
-  transition:
-    background-color 0.15s ease,
-    transform 0.15s ease;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  width: 100%;
 }
 
 .cancelBtn:hover {
-  background-color: #b91c1c;
-  transform: translateY(-1px);
+  background: #dc2626;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
 }
 
-/* ===========================
-   RESPONSIVE
-   =========================== */
+:global(.dark) .cancelBtn {
+  background: rgba(220, 38, 38, 0.15);
+  color: #ef4444;
+  border-color: rgba(239, 68, 68, 0.3);
+}
 
-/* Mellomstore skjermer */
-@media (max-width: 1024px) {
+:global(.dark) .cancelBtn:hover {
+  background: #dc2626;
+  color: white;
+}
+
+/* ========================
+   RESPONSIVE
+   ======================== */
+
+@media (max-width: 640px) {
   .wrapper {
-    max-width: 95%;
-    padding: 1.5rem;
+    padding: 0 1rem;
+    margin: 1rem auto;
   }
 
   .banner {
     height: 160px;
-  }
-}
-
-/* Nettbrett / små laptops */
-@media (max-width: 820px) {
-  .venueThumb,
-  .bookingThumb {
-    width: 100px;
-    height: 80px;
-  }
-
-  .venueActions {
-    min-width: 72px;
-  }
-}
-
-/* Mobil */
-@media (max-width: 640px) {
-  .wrapper {
-    width: 100%;
-    max-width: 100%;
-    margin: 0.75rem auto;
-    padding: 1rem;
-    border-radius: 8px;
-    box-shadow: none;
-    background-color: var(--card-bg);
-    overflow-x: hidden;
-  }
-
-  .venueList,
-  .bookingList,
-  .venueItem,
-  .bookingItem,
-  .venueCardLink,
-  .bookingCardLink {
-    max-width: 100%;
-    overflow-x: hidden;
-  }
-
-  .banner {
-    height: 120px;
-    border-radius: 6px;
-    margin-left: auto;
-    margin-right: auto;
-    overflow: hidden;
+    border-radius: 0.75rem;
   }
 
   .title {
-    font-size: 1.3rem;
-    margin-bottom: 0.75rem;
+    font-size: 1.5rem;
     text-align: center;
   }
 
   .profileRow {
     flex-direction: column;
-    align-items: center;
-    gap: 0.75rem;
     text-align: center;
+    padding: 1.5rem;
   }
 
   .avatar {
-    width: 80px;
-    height: 80px;
+    width: 100px;
+    height: 100px;
   }
 
   .name {
-    font-size: 1rem;
+    font-size: 1.25rem;
   }
 
   .email {
-    font-size: 0.85rem;
-  }
-
-  .sectionHeadingRow {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+    font-size: 0.9rem;
   }
 
   .actionRow {
     justify-content: center;
+    flex-wrap: wrap;
   }
 
-  /* Én kolonne på lister og vertikal stacking i kort */
+  .sectionHeadingRow {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+
+  /* New venue button full width on mobile */
+  .newVenueButtonRow {
+    margin-bottom: 1rem;
+  }
+
+  .btnNewVenue {
+    width: 100%;
+  }
+  .desktopOnly {
+    display: none;
+  }
+
+  /* Show mobile toggle button */
+  .mobileToggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 1rem;
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    order: -1;
+  }
+
+  .mobileToggle:hover {
+    border-color: var(--button-primary-bg);
+    background: var(--hover-bg-color);
+  }
+
+  .mobileToggleText {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .countBadge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 0.5rem;
+    background: var(--button-primary-bg);
+    color: white;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+
+  .mobileToggleIcon {
+    font-size: 0.75rem;
+    color: var(--muted-text-color);
+    transition: transform 0.2s ease;
+  }
+
+  .mobileToggleIconOpen {
+    transform: rotate(180deg);
+  }
+
+  /* Collapsible content */
+  .collapsibleContent {
+    display: none;
+    overflow: hidden;
+  }
+
+  .collapsibleContentOpen {
+    display: block;
+    animation: slideDown 0.2s ease;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      max-height: 0;
+    }
+    to {
+      opacity: 1;
+      max-height: 5000px;
+    }
+  }
+
+  .sectionHeading {
+    font-size: 1.25rem;
+    text-align: center;
+  }
+
+  .btnNewVenue {
+    width: 100%;
+  }
+
   .venueList,
   .bookingList {
     grid-template-columns: 1fr;
   }
 
-  .venueItem,
-  .bookingItem {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .venueCardLink,
-  .bookingCardLink {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .venueThumb,
-  .bookingThumb {
-    width: 100%;
-    height: 180px;
-    border-radius: 6px;
-    display: block;
-  }
-
   .venueActions {
-    display: flex;
     flex-direction: column;
-    gap: 0.4rem;
-    margin-top: 0.5rem;
   }
 
-  .btn,
   .venueBtnEdit,
-  .venueBtnDelete,
-  .cancelBtn,
-  .btnNewVenue {
+  .venueBtnDelete {
     width: 100%;
-    text-align: center;
-  }
-
-  .cancelBtn {
-    align-self: stretch;
-  }
-
-  .muted {
-    text-align: center;
   }
 }
 
-@media (max-width: 400px) {
-  .venueThumb,
-  .bookingThumb {
-    height: 150px;
-  }
-
-  .banner {
-    height: 100px;
-  }
-}
-
-@media (min-width: 1025px) {
-  .wrapper {
-    max-width: 1100px;
-    padding: 2.25rem;
-  }
-
-  .venueContent,
-  .bookingContent,
-  .venueInfoName,
-  .bookingVenueName,
-  .venueInfoDesc {
-    overflow-wrap: break-word;
-    word-break: normal;
-  }
-
+@media (min-width: 641px) and (max-width: 1024px) {
   .venueList,
   .bookingList {
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  }
-
-  /* gjør bilde + innhold til to kolonner i link-delen */
-  .venueCardLink,
-  .bookingCardLink {
-    display: grid;
-    grid-template-columns: 140px 1fr;
-    gap: 0.9rem;
-    align-items: start;
-  }
-
-  .venueThumb,
-  .bookingThumb {
-    width: 100%;
-    height: 110px;
-    border-radius: 8px;
-    object-fit: cover;
-  }
-
-  .venueActions {
-    margin-left: auto;
-    align-self: start;
-  }
-
-  .title {
-    font-size: 1.8rem;
-  }
-
-  .sectionHeading {
-    font-size: 1.15rem;
-  }
-
-  .venueInfoName,
-  .bookingVenueName {
-    font-size: 1.05rem;
-  }
-
-  .banner {
-    height: auto;
-    aspect-ratio: 3 / 1;
-    border-radius: 10px;
-  }
-
-  .venueItem:hover,
-  .bookingItem:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-    transition: box-shadow 160ms ease;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   }
 }

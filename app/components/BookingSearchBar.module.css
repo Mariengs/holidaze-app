@@ -1,6 +1,7 @@
 .wrapper {
   margin: 0 auto 1.75rem;
-  max-width: 1200px;
+  max-width: 1600px; /* Mye bredere - var 1400px */
+  position: relative;
 }
 
 /* Main bar */
@@ -12,7 +13,7 @@
   background-color: var(--card-bg);
   border: 1px solid var(--border-color);
   box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
-  padding: 0.35rem;
+  padding: 0.3rem; /* Lavere - var 0.6rem */
   overflow: visible;
   position: relative;
 }
@@ -22,30 +23,52 @@
   flex: 1 1 0;
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0.65rem 1rem;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
   min-width: 0;
   position: relative;
 }
 
+/* Give destination field significantly more space */
+.field:first-child {
+  flex: 2.2 1 0; /* Mer plass */
+  min-width: 280px;
+  padding-right: 1.5rem;
+}
+
+/* Date field gets more space */
+.field:nth-child(3) {
+  flex: 1.8 1 0; /* Mer plass - var 0.9 */
+  min-width: 200px;
+}
+
+/* Guests field gets normal space */
+.field:nth-child(5) {
+  flex: 1 1 0; /* Normal plass - var 0.7 */
+  min-width: 120px;
+}
+
 .icon {
-  width: 28px;
-  height: 28px;
+  width: 24px; /* Mindre - var 26px */
+  height: 24px; /* Mindre - var 26px */
   border-radius: 999px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
+  font-size: 0.9rem; /* Mindre - var 0.95rem */
   background-color: var(--capacity-icon-bg);
   color: var(--capacity-icon-text);
+  flex-shrink: 0;
 }
 
 .fieldContent {
   display: flex;
   flex-direction: column;
+  justify-content: center; /* Vertikal sentrering av innholdet */
   gap: 0.15rem;
   min-width: 0;
   position: relative;
+  flex: 1;
 }
 
 .fieldLabel {
@@ -53,16 +76,19 @@
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--muted-text-color);
+  line-height: 1;
 }
 
 .fieldInput {
   border: none;
   outline: none;
   background: transparent;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   color: var(--text-color);
   padding: 0;
   min-width: 0;
+  width: 100%;
+  line-height: 1.3;
 }
 
 .fieldInput::placeholder {
@@ -73,12 +99,14 @@
 .dateButton {
   background: transparent;
   border: none;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   color: var(--text-color);
   padding: 0;
   cursor: pointer;
   text-align: left;
   white-space: nowrap;
+  line-height: 1.3;
+  width: 100%;
 }
 
 /* Divider */
@@ -90,15 +118,15 @@
 
 /* Submit button */
 .submitButton {
-  border: none;
+  border: 2px solid var(--button-primary-bg);
   border-radius: 999px;
   padding: 0 1.5rem;
   margin-left: 0.35rem;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
-  background-color: var(--search-button-bg, var(--button-primary-bg));
-  color: var(--search-button-text, var(--button-primary-text));
+  background: rgba(37, 99, 235, 0.08);
+  color: var(--button-primary-bg);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -106,14 +134,20 @@
   transition:
     background-color 0.15s ease,
     transform 0.1s ease,
-    box-shadow 0.15s ease;
+    box-shadow 0.15s ease,
+    color 0.15s ease;
+}
+
+:global(.dark) .submitButton {
+  background: rgba(37, 99, 235, 0.15);
+  border-color: #3b82f6;
+  color: #60a5fa;
+  box-shadow: 0 2px 12px rgba(37, 99, 235, 0.25);
 }
 
 .submitButton:hover {
-  background-color: var(
-    --search-button-hover-bg,
-    var(--button-primary-hover-bg)
-  );
+  background-color: var(--button-primary-bg);
+  color: var(--button-primary-text);
   transform: translateY(-1px);
   box-shadow: 0 10px 24px rgba(37, 99, 235, 0.35);
 }
@@ -130,21 +164,54 @@
   background: rgba(0, 0, 0, 0.35);
   backdrop-filter: blur(2px);
   z-index: 998;
-  animation: fadeIn 0.15s ease-out;
 }
 
 /* Calendar popup (desktop) */
 .calendarPopup {
   position: absolute;
   top: 75px;
-  left: 0;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 1000;
   background: var(--card-bg);
   border: 1px solid var(--border-color);
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15);
   border-radius: 1rem;
   overflow: hidden;
-  animation: fadeIn 0.15s ease-out;
+}
+
+/* Style disabled/past dates */
+.calendarPopup :global(.rdrDayDisabled) {
+  background-color: transparent !important;
+  color: var(--muted-text-color) !important;
+  opacity: 0.4 !important;
+  cursor: not-allowed !important;
+}
+
+.calendarPopup :global(.rdrDayDisabled .rdrDayNumber span) {
+  color: var(--muted-text-color) !important;
+  opacity: 0.4 !important;
+}
+
+.calendarPopup :global(.rdrDayDisabled:hover) {
+  background-color: transparent !important;
+  cursor: not-allowed !important;
+}
+
+/* Additional styling for past dates */
+.calendarPopup :global(.rdrDay.rdrDayPassive) {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.calendarPopup :global(.rdrDay.rdrDayPassive .rdrDayNumber span) {
+  color: var(--muted-text-color);
+}
+
+:global(.dark) .calendarPopup :global(.rdrDayDisabled),
+:global(.dark) .calendarPopup :global(.rdrDay.rdrDayPassive) {
+  opacity: 0.3;
+  color: #6b7280 !important;
 }
 
 /* Calendar actions */
@@ -206,6 +273,10 @@
 
 /* Mobile */
 @media (max-width: 640px) {
+  .wrapper {
+    max-width: 100%;
+  }
+
   .searchBar {
     flex-direction: column;
     border-radius: 1.25rem;
@@ -244,7 +315,7 @@
   .submitButton {
     width: 100%;
     margin-top: 0.5rem;
-    padding: 0.8rem 0;
+    padding: 0.9rem 0; /* Litt høyere - var 0.8rem */
     border-radius: 0.75rem;
   }
 
@@ -278,16 +349,5 @@
   to {
     transform: translateY(0);
     opacity: 1;
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
   }
 }

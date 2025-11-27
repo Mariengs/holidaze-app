@@ -1,0 +1,223 @@
+/* Backdrop */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 999;
+  animation: fadeIn 0.2s ease;
+}
+
+/* Modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg-color);
+  z-index: 1000;
+  overflow-y: auto;
+  animation: slideUp 0.3s ease;
+}
+
+/* Modal Header */
+.modalHeader {
+  position: sticky;
+  top: 0;
+  background: var(--bg-color);
+  border-bottom: 1px solid var(--border-color);
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+}
+
+.modalTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text-color);
+}
+
+.closeButton {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: var(--card-bg);
+  color: var(--text-color);
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+  border: 1px solid var(--border-color);
+}
+
+.closeButton:hover {
+  background: var(--hover-bg-color);
+}
+
+/* Modal Content */
+.modalContent {
+  padding: 1.5rem;
+  padding-bottom: 5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Input Groups */
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.labelText {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-color);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.input {
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  padding: 0.875rem 1rem;
+  font-size: 1rem;
+  color: var(--text-color);
+  background: var(--card-bg);
+  transition: border-color 0.2s ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--search-button-bg, #2563eb);
+}
+
+.input::placeholder {
+  color: var(--muted-text-color);
+}
+
+/* Date Display */
+.dateDisplay {
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.75rem;
+  background: var(--card-bg);
+  color: var(--text-color);
+  font-size: 1rem;
+}
+
+/* Clear Button */
+.clearButton {
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  background: transparent;
+  color: var(--text-color);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clearButton:hover {
+  background: var(--hover-bg-color);
+  border-color: var(--muted-text-color);
+}
+
+/* Search Button - Sticky at bottom */
+.searchButton {
+  padding: 1rem;
+  border: none;
+  border-radius: 0.75rem;
+  background: var(--search-button-bg, #2563eb);
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: all 0.2s ease;
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.searchButton:hover {
+  background: var(--search-button-hover-bg, #1d4ed8);
+  box-shadow:
+    0 -4px 12px rgba(0, 0, 0, 0.1),
+    0 4px 20px rgba(37, 99, 235, 0.35);
+}
+
+.searchButton:active {
+  transform: scale(0.98);
+}
+
+/* Style disabled/past dates in modal calendar */
+.modal :global(.rdrDayDisabled) {
+  background-color: transparent !important;
+  color: var(--muted-text-color) !important;
+  opacity: 0.4 !important;
+  cursor: not-allowed !important;
+}
+
+.modal :global(.rdrDayDisabled .rdrDayNumber span) {
+  color: var(--muted-text-color) !important;
+  opacity: 0.4 !important;
+}
+
+.modal :global(.rdrDayDisabled:hover) {
+  background-color: transparent !important;
+  cursor: not-allowed !important;
+}
+
+.modal :global(.rdrDay.rdrDayPassive) {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.modal :global(.rdrDay.rdrDayPassive .rdrDayNumber span) {
+  color: var(--muted-text-color);
+}
+
+:global(.dark) .modal :global(.rdrDayDisabled),
+:global(.dark) .modal :global(.rdrDay.rdrDayPassive) {
+  opacity: 0.3;
+  color: #6b7280 !important;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}

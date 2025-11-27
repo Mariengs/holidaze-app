@@ -44,6 +44,10 @@ export default function ProfilePage() {
 
   const [showProfileMediaModal, setShowProfileMediaModal] = useState(false);
 
+  // Mobile collapsible sections
+  const [isVenuesOpen, setIsVenuesOpen] = useState(true);
+  const [isBookingsOpen, setIsBookingsOpen] = useState(true);
+
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -199,9 +203,8 @@ export default function ProfilePage() {
         {/* My Venues */}
         {profile.venueManager && (
           <section style={{ marginBottom: "2rem" }}>
-            <div className={styles.sectionHeadingRow}>
-              <h3 className={styles.sectionHeading}>My Venues</h3>
-
+            {/* New venue button - above section */}
+            <div className={styles.newVenueButtonRow}>
               <button
                 className={styles.btnNewVenue}
                 onClick={() => {
@@ -213,52 +216,106 @@ export default function ProfilePage() {
               </button>
             </div>
 
-            {loadingVenues ? (
-              <p className={styles.muted}>Loading your venues…</p>
-            ) : venues.length === 0 ? (
-              <p className={styles.muted}>
-                You have not listed any venues yet.
-              </p>
-            ) : (
-              <ul className={styles.venueList}>
-                {venues.map((v) => (
-                  <VenueCard
-                    key={v.id}
-                    venue={v}
-                    onEdit={(venue) => {
-                      setEditingVenue(venue);
-                      setShowVenueEditor(true);
-                    }}
-                    onDelete={(venue) => {
-                      setVenueToDelete(venue);
-                      setShowDeleteModal(true);
-                    }}
-                  />
-                ))}
-              </ul>
-            )}
+            <div className={styles.sectionHeadingRow}>
+              {/* Desktop title */}
+              <h3 className={`${styles.sectionHeading} ${styles.desktopOnly}`}>
+                My Venues
+              </h3>
+
+              {/* Mobile collapsible toggle */}
+              <button
+                className={styles.mobileToggle}
+                onClick={() => setIsVenuesOpen(!isVenuesOpen)}
+              >
+                <span className={styles.mobileToggleText}>
+                  My Venues
+                  {venues.length > 0 && (
+                    <span className={styles.countBadge}>{venues.length}</span>
+                  )}
+                </span>
+                <span
+                  className={`${styles.mobileToggleIcon} ${isVenuesOpen ? styles.mobileToggleIconOpen : ""}`}
+                >
+                  ▼
+                </span>
+              </button>
+            </div>
+
+            <div
+              className={`${styles.collapsibleContent} ${isVenuesOpen ? styles.collapsibleContentOpen : ""}`}
+            >
+              {loadingVenues ? (
+                <p className={styles.muted}>Loading your venues…</p>
+              ) : venues.length === 0 ? (
+                <p className={styles.muted}>
+                  You have not listed any venues yet.
+                </p>
+              ) : (
+                <ul className={styles.venueList}>
+                  {venues.map((v) => (
+                    <VenueCard
+                      key={v.id}
+                      venue={v}
+                      onEdit={(venue) => {
+                        setEditingVenue(venue);
+                        setShowVenueEditor(true);
+                      }}
+                      onDelete={(venue) => {
+                        setVenueToDelete(venue);
+                        setShowDeleteModal(true);
+                      }}
+                    />
+                  ))}
+                </ul>
+              )}
+            </div>
           </section>
         )}
 
         {/* My Bookings */}
         <section>
           <div className={styles.sectionHeadingRow}>
-            <h3 className={styles.sectionHeading}>My Bookings</h3>
+            {/* Desktop title */}
+            <h3 className={`${styles.sectionHeading} ${styles.desktopOnly}`}>
+              My Bookings
+            </h3>
+
+            {/* Mobile collapsible toggle */}
+            <button
+              className={styles.mobileToggle}
+              onClick={() => setIsBookingsOpen(!isBookingsOpen)}
+            >
+              <span className={styles.mobileToggleText}>
+                My Bookings
+                {bookings.length > 0 && (
+                  <span className={styles.countBadge}>{bookings.length}</span>
+                )}
+              </span>
+              <span
+                className={`${styles.mobileToggleIcon} ${isBookingsOpen ? styles.mobileToggleIconOpen : ""}`}
+              >
+                ▼
+              </span>
+            </button>
           </div>
 
-          {bookings.length === 0 ? (
-            <p className={styles.muted}>You have no bookings yet.</p>
-          ) : (
-            <ul className={styles.bookingList}>
-              {bookings.map((b) => (
-                <BookingCard
-                  key={b.id}
-                  booking={b}
-                  onCancel={handleCancelBooking}
-                />
-              ))}
-            </ul>
-          )}
+          <div
+            className={`${styles.collapsibleContent} ${isBookingsOpen ? styles.collapsibleContentOpen : ""}`}
+          >
+            {bookings.length === 0 ? (
+              <p className={styles.muted}>You have no bookings yet.</p>
+            ) : (
+              <ul className={styles.bookingList}>
+                {bookings.map((b) => (
+                  <BookingCard
+                    key={b.id}
+                    booking={b}
+                    onCancel={handleCancelBooking}
+                  />
+                ))}
+              </ul>
+            )}
+          </div>
         </section>
       </section>
 
