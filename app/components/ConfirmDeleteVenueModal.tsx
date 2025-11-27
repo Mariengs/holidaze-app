@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { deleteVenue } from "../api/venues";
-import styles from "../styles/modal.module.css";
+import styles from "../styles/ProfileModal.module.css";
 
 interface ConfirmDeleteVenueModalProps {
   isOpen: boolean;

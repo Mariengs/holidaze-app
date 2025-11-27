@@ -17,6 +17,10 @@ export default function SingleVenue() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Image gallery state
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
   // Calendar + form
   const [dateFrom, setDateFrom] = useState<string>("");
   const [dateTo, setDateTo] = useState<string>("");
@@ -62,6 +66,42 @@ export default function SingleVenue() {
     }
     return all;
   }
+
+  // Image gallery functions
+  function openLightbox(index: number) {
+    setCurrentImageIndex(index);
+    setLightboxOpen(true);
+  }
+
+  function closeLightbox() {
+    setLightboxOpen(false);
+  }
+
+  function nextImage() {
+    if (!venue?.media) return;
+    setCurrentImageIndex((prev) => (prev + 1) % venue.media.length);
+  }
+
+  function prevImage() {
+    if (!venue?.media) return;
+    setCurrentImageIndex((prev) =>
+      prev === 0 ? venue.media.length - 1 : prev - 1
+    );
+  }
+
+  // Keyboard navigation for lightbox
+  useEffect(() => {
+    if (!lightboxOpen) return;
+
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") closeLightbox();
+      if (e.key === "ArrowRight") nextImage();
+      if (e.key === "ArrowLeft") prevImage();
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [lightboxOpen, venue?.media]);
 
   useEffect(() => {
     let active = true;
@@ -121,7 +161,7 @@ export default function SingleVenue() {
     return false;
   };
 
-  // FORBEDRET calendar handler
+  // Calendar handler
   function handleDayClick(iso: string) {
     const [year, month, day] = iso.split("-").map(Number);
     const clicked = new Date(year, month - 1, day);
@@ -237,15 +277,114 @@ export default function SingleVenue() {
     );
   }
 
+  const images = venue.media || [];
+  const hasMultipleImages = images.length > 1;
+
   return (
     <main className={styles.page}>
-      {/* Hero image */}
-      {venue.media?.[0]?.url && (
-        <img
-          src={venue.media[0].url}
-          alt={venue.media[0].alt || venue.name}
-          className={styles.hero}
-        />
+      {/* Image Gallery */}
+      {images.length > 0 && (
+        <section className={styles.gallery}>
+          {/* Main image */}
+          <div
+            className={styles.mainImage}
+            onClick={() => openLightbox(0)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                openLightbox(0);
+              }
+            }}
+          >
+            <img
+              src={images[0].url}
+              alt={images[0].alt || venue.name}
+              className={styles.mainImg}
+            />
+            {hasMultipleImages && (
+              <div className={styles.imageCount}>
+                📷 {images.length} {images.length === 1 ? "photo" : "photos"}
+              </div>
+            )}
+          </div>
+
+          {/* Thumbnail grid - only show if multiple images */}
+          {hasMultipleImages && (
+            <div className={styles.thumbnails}>
+              {images.slice(1, 5).map((img, idx) => (
+                <div
+                  key={idx}
+                  className={styles.thumbnail}
+                  onClick={() => openLightbox(idx + 1)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      openLightbox(idx + 1);
+                    }
+                  }}
+                >
+                  <img src={img.url} alt={img.alt || venue.name} />
+                  {idx === 3 && images.length > 5 && (
+                    <div className={styles.moreImages}>
+                      +{images.length - 5}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+      )}
+
+      {/* Lightbox */}
+      {lightboxOpen && images.length > 0 && (
+        <div className={styles.lightbox} onClick={closeLightbox}>
+          <button
+            className={styles.lightboxClose}
+            onClick={closeLightbox}
+            aria-label="Close lightbox"
+          >
+            ✕
+          </button>
+
+          <div
+            className={styles.lightboxContent}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={images[currentImageIndex].url}
+              alt={images[currentImageIndex].alt || venue.name}
+              className={styles.lightboxImage}
+            />
+
+            {hasMultipleImages && (
+              <>
+                <button
+                  className={`${styles.lightboxNav} ${styles.lightboxPrev}`}
+                  onClick={prevImage}
+                  aria-label="Previous image"
+                >
+                  ‹
+                </button>
+                <button
+                  className={`${styles.lightboxNav} ${styles.lightboxNext}`}
+                  onClick={nextImage}
+                  aria-label="Next image"
+                >
+                  ›
+                </button>
+
+                <div className={styles.lightboxCounter}>
+                  {currentImageIndex + 1} / {images.length}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
       )}
 
       {/* Info header */}

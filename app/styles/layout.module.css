@@ -1,4 +1,4 @@
-/* Global guards      */
+/* Global guards */
 *,
 *::before,
 *::after {
@@ -55,7 +55,7 @@ body {
   filter: brightness(0) invert(1);
 }
 
-/* Desktop-nav */
+/* Desktop-nav - Unified styling for links and buttons */
 .navLinks {
   list-style: none;
   display: flex;
@@ -64,17 +64,26 @@ body {
   padding: 0;
 }
 
-.navLinks a {
+.navLinks a,
+.navLinkButton {
   text-decoration: none;
   color: var(--nav-link-color, var(--text-color));
   font-weight: 500;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: inherit;
+  font-family: inherit;
+  padding: 0;
+  transition: color 0.2s ease;
 }
 
-.navLinks a:hover {
+.navLinks a:hover,
+.navLinkButton:hover {
   color: var(--nav-link-hover-color, var(--primary-color));
 }
 
-/* Auth  */
+/* Auth Area */
 .authArea {
   position: absolute;
   right: 0;
@@ -156,13 +165,13 @@ body {
   transform: translateX(30px);
 }
 
-/* Mobilemeny-wrapper */
+/* Mobile Menu Wrapper */
 .mobileMenuWrapper {
   display: none;
   position: relative;
 }
 
-/* Mobilemeny-button */
+/* Mobile Menu Button */
 .menuBtn {
   border: 1px solid var(--icon-button-border-color, var(--border-color));
   background: var(--card-bg, var(--bg-color));
@@ -213,7 +222,7 @@ body {
   color: var(--danger-color, #b91c1c);
 }
 
-/* Buttons / Links    */
+/* Auth Buttons */
 .loginBtn {
   background-color: var(--button-primary-bg);
   color: var(--button-primary-text);
@@ -242,20 +251,6 @@ body {
 
 .logoutBtn:hover {
   background-color: var(--button-secondary-hover-bg);
-}
-
-.loginLink {
-  font-weight: 500;
-  color: var(--nav-link-color, var(--text-color));
-  text-decoration: none;
-  border: 1px solid var(--button-secondary-border, #aaa);
-  border-radius: 6px;
-  padding: 0.4rem 0.75rem;
-}
-
-.loginLink:hover {
-  background-color: var(--button-secondary-hover-bg, #f5f5f5);
-  text-decoration: none;
 }
 
 .registerBtn {
@@ -309,7 +304,7 @@ body {
   text-decoration: underline;
 }
 
-/* Layout root */
+/* Layout Root */
 .bodyRoot {
   min-height: 100vh;
   margin: 0;
@@ -335,25 +330,11 @@ body {
   width: 100%;
 }
 
-.navLinkButton {
-  background: none;
-  border: none;
-  color: inherit;
-  cursor: pointer;
-  font-size: inherit;
-  font-weight: inherit;
-  font-family: inherit;
-  padding: 0;
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
+/* ===================================
+   RESPONSIVE
+   =================================== */
 
-.navLinkButton:hover {
-  color: var(--link-hover-color, #2563eb);
-  text-decoration: underline;
-}
-
-/* Små skjermer */
+/* Small screens */
 @media (max-width: 640px) {
   .mainWrapper {
     max-width: 100%;
@@ -399,10 +380,12 @@ body {
   }
 }
 
+/* Hide desktop nav on mobile, show mobile menu */
 @media (max-width: 720px) {
   .navLinks {
     display: none;
   }
+
   .desktopAuth {
     display: none;
   }

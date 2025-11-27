@@ -22,13 +22,22 @@ export default function BookingSearchBar({
   const [guests, setGuests] = useState(2);
   const [showCalendar, setShowCalendar] = useState(false);
 
-  const [dateRange, setDateRange] = useState([
-    {
-      startDate: new Date(),
-      endDate: new Date(),
-      key: "selection",
-    },
-  ]);
+  // Initialize with today and tomorrow as default date range
+  const getDefaultDateRange = () => {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    return [
+      {
+        startDate: today,
+        endDate: tomorrow,
+        key: "selection",
+      },
+    ];
+  };
+
+  const [dateRange, setDateRange] = useState(getDefaultDateRange());
 
   function formatDate(date: Date) {
     const day = String(date.getDate()).padStart(2, "0");
@@ -50,13 +59,18 @@ export default function BookingSearchBar({
   }
 
   function handleReset() {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
     setDateRange([
       {
-        startDate: new Date(),
-        endDate: new Date(),
+        startDate: today,
+        endDate: tomorrow,
         key: "selection",
       },
     ]);
+    setShowCalendar(false);
   }
 
   const displayCheckIn = formatDate(dateRange[0].startDate);

@@ -210,6 +210,35 @@ export default function VenueEditorModal({
     setMeta((m) => ({ ...m, [key]: !m[key] }));
   }
 
+  function handleCancel() {
+    // Check if user has made any changes
+    const hasChanges =
+      name.trim() !== "" ||
+      description.trim() !== "" ||
+      price > 0 ||
+      maxGuests > 1 ||
+      city.trim() !== "" ||
+      country.trim() !== "" ||
+      mediaList.some((m) => m.url.trim() !== "") ||
+      meta.wifi ||
+      meta.parking ||
+      meta.breakfast ||
+      meta.pets ||
+      rating > 0;
+
+    if (hasChanges) {
+      if (
+        confirm(
+          "Are you sure you want to cancel? Any unsaved changes will be lost."
+        )
+      ) {
+        onClose();
+      }
+    } else {
+      onClose();
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
@@ -475,7 +504,7 @@ export default function VenueEditorModal({
           <div className={styles.actions}>
             <button
               type="button"
-              onClick={onClose}
+              onClick={handleCancel}
               className={`${styles.btn} ${styles.btnOutline}`}
               disabled={saving}
             >

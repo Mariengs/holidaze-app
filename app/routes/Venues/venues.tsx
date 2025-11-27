@@ -28,6 +28,7 @@ export default function Venues() {
   const [error, setError] = useState<string | null>(null);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
 
   // Filter states
   const [sortBy, setSortBy] = useState<SortOption>("none");
@@ -45,6 +46,9 @@ export default function Venues() {
   const [maxPriceInput, setMaxPriceInput] = useState("10000");
   const [minGuestsInput, setMinGuestsInput] = useState("0");
 
+  // Reset key to force BookingSearchBar to remount
+  const [resetKey, setResetKey] = useState(0);
+
   async function fetchVenues() {
     setLoading(true);
     setError(null);
@@ -58,6 +62,7 @@ export default function Venues() {
       setFilteredVenues([]);
     } finally {
       setLoading(false);
+      setHasLoadedOnce(true);
     }
   }
 
@@ -365,6 +370,12 @@ export default function Venues() {
     setMinPriceInput("0");
     setMaxPriceInput("10000");
     setMinGuestsInput("0");
+
+    // Clear URL parameters
+    setSearchParams({});
+
+    // Force BookingSearchBar to reset by changing key
+    setResetKey((prev) => prev + 1);
   }
 
   const currentDestination = searchParams.get("destination") || "";
@@ -374,7 +385,7 @@ export default function Venues() {
     <main className={styles.main}>
       {/* Desktop search bar */}
       <div className={styles.desktopSearch}>
-        <BookingSearchBar onSearch={handleBookingSearch} />
+        <BookingSearchBar key={resetKey} onSearch={handleBookingSearch} />
       </div>
 
       {/* Mobile search button */}
@@ -387,6 +398,7 @@ export default function Venues() {
 
       {/* Search Modal for mobile */}
       <SearchModal
+        key={resetKey}
         isOpen={isSearchModalOpen}
         onClose={() => setIsSearchModalOpen(false)}
         onSearch={handleBookingSearch}
@@ -577,18 +589,22 @@ export default function Venues() {
 
       {error && <p className={styles.error}>{error}</p>}
 
-      {!isLoading && filteredVenues.length === 0 && !error && (
+      {isLoading ? (
+        <div className={styles.loadingContainer}>
+          <div className={styles.spinner}></div>
+          <p className={styles.loadingText}>
+            {filtering ? "Searching venues..." : "Loading venues..."}
+          </p>
+        </div>
+      ) : filteredVenues.length === 0 &&
+        !error &&
+        hasLoadedOnce &&
+        allVenues.length > 0 ? (
         <p className={styles.emptyState}>
           {currentDestination
             ? `No venues found for "${currentDestination}". Try another search.`
             : "No venues found matching your filters."}
         </p>
-      )}
-
-      {isLoading ? (
-        <div className={styles.loadingContainer}>
-          <p>Loading...</p>
-        </div>
       ) : (
         <section className={styles.grid}>
           {filteredVenues.map((venue) => {

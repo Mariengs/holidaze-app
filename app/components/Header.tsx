@@ -257,7 +257,7 @@ export default function Header({ theme, onToggleTheme }: HeaderProps) {
                       Profile
                     </Link>
 
-                    {/* Create Venue in Mobile - After Profile */}
+                    {/* Create Venue in Mobile  */}
                     {profile?.venueManager && (
                       <button
                         className={styles.dropdownItem}

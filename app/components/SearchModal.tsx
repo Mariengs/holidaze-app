@@ -36,13 +36,24 @@ export default function SearchModal({
   const [guests, setGuests] = useState(2);
   const [guestsInput, setGuestsInput] = useState("2");
 
-  const [dateRange, setDateRange] = useState<DateRangeItem[]>([
-    {
-      startDate: new Date(),
-      endDate: new Date(),
-      key: "selection",
-    },
-  ]);
+  // Initialize with today and tomorrow as default date range
+  const getDefaultDateRange = (): DateRangeItem[] => {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    return [
+      {
+        startDate: today,
+        endDate: tomorrow,
+        key: "selection",
+      },
+    ];
+  };
+
+  const [dateRange, setDateRange] = useState<DateRangeItem[]>(
+    getDefaultDateRange()
+  );
 
   const [datesSelected, setDatesSelected] = useState(false);
   const [hasHydrated, setHasHydrated] = useState(false);
@@ -82,10 +93,13 @@ export default function SearchModal({
 
   function handleReset() {
     const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
     setDateRange([
       {
         startDate: today,
-        endDate: today,
+        endDate: tomorrow,
         key: "selection",
       },
     ]);

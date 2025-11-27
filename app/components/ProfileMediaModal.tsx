@@ -1,7 +1,8 @@
 import { useState } from "react";
-import styles from "../styles/modal.module.css";
+import styles from "../styles/ProfileModal.module.css";
 import { updateProfileMedia } from "../api/auth";
 import { getProfile, type UserProfile } from "../api/auth";
+import { useToast } from "./context/ToastContext";
 
 interface ProfileMediaModalProps {
   isOpen: boolean;
@@ -21,6 +22,7 @@ export default function ProfileMediaModal({
   if (!isOpen) return null;
 
   const current = getProfile();
+  const { showToast } = useToast();
 
   const [avatarUrl, setAvatarUrl] = useState(current?.avatar?.url || "");
   const [bannerUrl, setBannerUrl] = useState(
@@ -49,24 +51,53 @@ export default function ProfileMediaModal({
         banner: updated.banner,
       });
 
+      showToast({
+        message: "Profile updated successfully!",
+        type: "success",
+        duration: 3000,
+      });
+
       onClose();
     } catch (error) {
-      setErr((error as Error).message || "Failed to update profile images");
+      setErr((error as Error).message || "Failed to update profile");
     } finally {
       setSaving(false);
     }
   }
 
+  const hasValidBannerUrl = isHttpUrl(bannerUrl);
+  const hasValidAvatarUrl = isHttpUrl(avatarUrl);
+
   return (
-    <div className={styles.overlay}>
-      <div className={styles.modal}>
+    <div
+      className={styles.overlay}
+      onClick={() => {
+        if (!saving) {
+          onClose();
+        }
+      }}
+    >
+      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <h2 className={styles.heading}>Update profile images</h2>
 
         <form onSubmit={handleSave}>
           {/* Banner preview */}
           <div className={styles.previewWrapper}>
+            <label className={styles.formGroup}>
+              Banner URL
+              <input
+                className={styles.input}
+                placeholder="https://example.com/banner.jpg"
+                value={bannerUrl}
+                onChange={(e) => {
+                  setBannerUrl(e.target.value);
+                  setBannerLoadError(null);
+                }}
+              />
+            </label>
+
             <div className={styles.bannerPreview} aria-label="Banner preview">
-              {isHttpUrl(bannerUrl) ? (
+              {hasValidBannerUrl && !bannerLoadError ? (
                 <img
                   key={bannerUrl}
                   src={bannerUrl}
@@ -79,7 +110,7 @@ export default function ProfileMediaModal({
                 />
               ) : (
                 <span className={styles.previewPlaceholder}>
-                  Banner preview will appear here
+                  {bannerLoadError || "Banner preview will appear here"}
                 </span>
               )}
             </div>
@@ -89,57 +120,50 @@ export default function ProfileMediaModal({
           </div>
 
           {/* Avatar preview */}
-          <div className={styles.avatarSection}>
-            <div className={styles.avatarPreview} aria-label="Avatar preview">
-              {isHttpUrl(avatarUrl) ? (
-                <img
-                  key={avatarUrl}
-                  src={avatarUrl}
-                  alt="Avatar preview"
-                  className={styles.avatarImage}
-                  onLoad={() => setAvatarLoadError(null)}
-                  onError={() =>
-                    setAvatarLoadError("Could not load avatar image")
-                  }
-                />
-              ) : (
-                <span className={styles.previewPlaceholder}>No avatar</span>
-              )}
-            </div>
+          <div className={styles.previewWrapper}>
+            <label className={styles.formGroup}>
+              Avatar URL
+              <input
+                className={styles.input}
+                placeholder="https://example.com/avatar.jpg"
+                value={avatarUrl}
+                onChange={(e) => {
+                  setAvatarUrl(e.target.value);
+                  setAvatarLoadError(null);
+                }}
+              />
+            </label>
 
-            <div className={styles.avatarText}>
-              {avatarLoadError && (
-                <p className={styles.error}>{avatarLoadError}</p>
-              )}
+            <div className={styles.avatarSection}>
+              <div className={styles.avatarPreview} aria-label="Avatar preview">
+                {hasValidAvatarUrl && !avatarLoadError ? (
+                  <img
+                    key={avatarUrl}
+                    src={avatarUrl}
+                    alt="Avatar preview"
+                    className={styles.avatarImage}
+                    onLoad={() => setAvatarLoadError(null)}
+                    onError={() =>
+                      setAvatarLoadError("Could not load avatar image")
+                    }
+                  />
+                ) : (
+                  <span className={styles.previewPlaceholder}>
+                    {avatarLoadError || "Avatar preview"}
+                  </span>
+                )}
+              </div>
+
+              <div className={styles.avatarText}>
+                <p className={styles.previewText}>
+                  Your profile picture will appear as a circle
+                </p>
+                {avatarLoadError && (
+                  <p className={styles.error}>{avatarLoadError}</p>
+                )}
+              </div>
             </div>
           </div>
-
-          {/* Inputs */}
-          <label className={styles.formGroup}>
-            Banner URL
-            <input
-              className={styles.input}
-              placeholder="https://..."
-              value={bannerUrl}
-              onChange={(e) => {
-                setBannerUrl(e.target.value);
-                setBannerLoadError(null);
-              }}
-            />
-          </label>
-
-          <label className={styles.formGroup}>
-            Avatar URL
-            <input
-              className={styles.input}
-              placeholder="https://..."
-              value={avatarUrl}
-              onChange={(e) => {
-                setAvatarUrl(e.target.value);
-                setAvatarLoadError(null);
-              }}
-            />
-          </label>
 
           {err && <p className={styles.error}>{err}</p>}
 
@@ -158,7 +182,7 @@ export default function ProfileMediaModal({
               disabled={saving}
               className={`${styles.btn} ${styles.btnPrimary}`}
             >
-              {saving ? "Saving..." : "Save"}
+              {saving ? "Saving..." : "Save changes"}
             </button>
           </div>
         </form>
