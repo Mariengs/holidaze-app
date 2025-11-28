@@ -12,7 +12,7 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [venueManager, setVenueManager] = useState(false); // brukerens valg
+  const [venueManager, setVenueManager] = useState(false);
 
   // UI state
   const [showPassword, setShowPassword] = useState(false);
