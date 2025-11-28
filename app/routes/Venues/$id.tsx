@@ -7,6 +7,7 @@ import {
   type Booking,
 } from "../../api/venues";
 import { getToken } from "../../api/auth";
+import { useToast } from "../../components/context/ToastContext";
 import styles from "./$id.module.css";
 
 export default function SingleVenue() {
@@ -616,6 +617,7 @@ function BookingForm({
   const [guests, setGuests] = useState(1);
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const { showToast } = useToast();
 
   const token = getToken();
   const isLoggedIn = !!token;
@@ -642,12 +644,27 @@ function BookingForm({
     setMessage(null);
     try {
       await createBooking({ dateFrom, dateTo, guests, venueId });
-      setMessage("✅ Booking successful!");
+
+      // Show success toast
+      showToast({
+        message: "Booking successful!",
+        type: "success",
+        duration: 3000,
+      });
+
       onClearDates();
       setGuests(1);
       await onBookingSuccess();
     } catch (err) {
-      setMessage((err as Error).message || "Booking failed.");
+      const errorMsg = (err as Error).message || "Booking failed.";
+      setMessage(errorMsg);
+
+      // Show error toast
+      showToast({
+        message: errorMsg,
+        type: "error",
+        duration: 4000,
+      });
     } finally {
       setLoading(false);
     }
@@ -656,9 +673,7 @@ function BookingForm({
   if (!isLoggedIn) {
     return (
       <div className={styles.lockedBox}>
-        <p className={styles.lockedTitle}>
-          ⚠️ Please log in to book this venue.
-        </p>
+        <p className={styles.lockedTitle}>Please log in to book this venue.</p>
         <p className={styles.lockedText}>
           Once you're logged in, you'll be able to select dates and confirm your
           stay.
@@ -669,14 +684,8 @@ function BookingForm({
 
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
-      {message && (
-        <p
-          className={
-            message.startsWith("✅") ? styles.msgSuccess : styles.msgError
-          }
-        >
-          {message}
-        </p>
+      {message && !message.startsWith("✅") && (
+        <p className={styles.msgError}>{message}</p>
       )}
 
       <div className={styles.dateDisplay}>
@@ -711,8 +720,24 @@ function BookingForm({
           type="number"
           min={1}
           max={maxGuests}
-          value={guests}
-          onChange={(e) => setGuests(Number(e.target.value))}
+          value={guests === 0 ? "" : guests}
+          onChange={(e) => {
+            const val = e.target.value;
+            if (val === "") {
+              setGuests(0);
+            } else {
+              const num = Number(val);
+              if (num >= 1 && num <= maxGuests) {
+                setGuests(num);
+              }
+            }
+          }}
+          onBlur={(e) => {
+            // If field is empty on blur, set to 1
+            if (e.target.value === "" || Number(e.target.value) < 1) {
+              setGuests(1);
+            }
+          }}
           required
           className={styles.input}
         />

@@ -1,48 +1,48 @@
 import { useState } from "react";
-import { deleteVenue } from "../api/venues";
+import { deleteBooking } from "../api/bookings";
 import { useToast } from "./context/ToastContext";
 import styles from "../styles/ProfileModal.module.css";
 
-interface ConfirmDeleteVenueModalProps {
+interface ConfirmCancelBookingModalProps {
   isOpen: boolean;
-  venueId: string | null;
+  bookingId: string | null;
   venueName?: string;
   onClose: () => void;
-  onDeleted: (deletedVenueId: string) => void;
+  onCancelled: (bookingId: string) => void;
 }
 
-export default function ConfirmDeleteVenueModal({
+export default function ConfirmCancelBookingModal({
   isOpen,
-  venueId,
+  bookingId,
   venueName,
   onClose,
-  onDeleted,
-}: ConfirmDeleteVenueModalProps) {
+  onCancelled,
+}: ConfirmCancelBookingModalProps) {
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const { showToast } = useToast();
 
-  if (!isOpen || !venueId) return null;
+  if (!isOpen || !bookingId) return null;
 
-  async function handleDelete() {
-    if (!venueId) return;
+  async function handleCancel() {
+    if (!bookingId) return;
 
     setErr(null);
     setLoading(true);
     try {
-      await deleteVenue(venueId);
-      onDeleted(venueId);
+      await deleteBooking(bookingId);
+      onCancelled(bookingId);
 
       // Show success toast
       showToast({
-        message: "Venue deleted successfully!",
+        message: "Booking cancelled successfully!",
         type: "success",
         duration: 3000,
       });
 
       onClose();
     } catch (e) {
-      const errorMsg = (e as Error).message || "Failed to delete venue";
+      const errorMsg = (e as Error).message || "Failed to cancel booking";
       setErr(errorMsg);
 
       // Show error toast
@@ -59,11 +59,17 @@ export default function ConfirmDeleteVenueModal({
   return (
     <div className={styles.overlay}>
       <div className={`${styles.modal} ${styles.modalSmall}`}>
-        <h2 className={styles.headingDanger}>Delete venue?</h2>
+        <h2 className={styles.headingDanger}>Cancel booking?</h2>
 
         <p className={styles.text}>
-          Are you sure you want to delete{" "}
-          <strong>{venueName || "this venue"}</strong>? This cannot be undone.
+          Are you sure you want to cancel your booking
+          {venueName && (
+            <>
+              {" "}
+              for <strong>{venueName}</strong>
+            </>
+          )}
+          ? This cannot be undone.
         </p>
 
         {err && <p className={styles.error}>{err}</p>}
@@ -75,15 +81,15 @@ export default function ConfirmDeleteVenueModal({
             disabled={loading}
             className={`${styles.btn} ${styles.btnOutline}`}
           >
-            Cancel
+            Keep booking
           </button>
 
           <button
-            onClick={handleDelete}
+            onClick={handleCancel}
             disabled={loading}
             className={`${styles.btn} ${styles.btnDanger}`}
           >
-            {loading ? "Deleting..." : "Delete"}
+            {loading ? "Cancelling..." : "Cancel booking"}
           </button>
         </div>
       </div>

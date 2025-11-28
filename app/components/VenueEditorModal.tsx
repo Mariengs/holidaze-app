@@ -436,13 +436,6 @@ export default function VenueEditorModal({
               <div className={styles.formGroup}>
                 <div className={styles.sectionHeaderRow}>
                   <span className={styles.sectionTitle}>Images</span>
-                  <button
-                    type="button"
-                    onClick={handleAddMedia}
-                    className={`${styles.btn} ${styles.btnSmall} ${styles.btnOutline}`}
-                  >
-                    + Add image
-                  </button>
                 </div>
 
                 {mediaList.map((media, index) => (
@@ -486,14 +479,19 @@ export default function VenueEditorModal({
                         />
                         <div className={styles.imagePreviewMeta}>
                           <div>Preview</div>
-                          <div className={styles.imageUrl} title={media.url}>
-                            {media.url}
-                          </div>
                         </div>
                       </div>
                     )}
                   </div>
                 ))}
+
+                <button
+                  type="button"
+                  onClick={handleAddMedia}
+                  className={`${styles.btn} ${styles.btnSmall} ${styles.btnOutline} ${styles.addImageBtn}`}
+                >
+                  + Add image
+                </button>
               </div>
 
               {error && <p className={styles.error}>{error}</p>}

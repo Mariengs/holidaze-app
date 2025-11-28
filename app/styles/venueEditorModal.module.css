@@ -232,6 +232,11 @@ fieldset.formGroup {
   color: var(--text-color);
 }
 
+.addImageBtn {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
 /* Image block */
 .imageBlock {
   border: 2px solid var(--border-color);
@@ -283,20 +288,6 @@ fieldset.formGroup {
   font-weight: 600;
   color: var(--text-color);
   font-size: 0.9rem;
-}
-
-.imageUrl {
-  display: block;
-  max-width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-family: monospace;
-  font-size: 0.8rem;
-  padding: 0.5rem;
-  background: var(--bg-color);
-  border-radius: 0.25rem;
-  border: 1px solid var(--border-color);
 }
 
 .alignEndBox {

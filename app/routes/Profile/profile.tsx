@@ -11,6 +11,7 @@ import { getUserVenues, type Venue } from "../../api/venues";
 
 import VenueEditorModal from "../../components/VenueEditorModal";
 import ConfirmDeleteVenueModal from "../../components/ConfirmDeleteVenueModal";
+import ConfirmCancelBookingModal from "../../components/ConfirmCancelBookingModal";
 import ProfileMediaModal from "../../components/ProfileMediaModal";
 
 import VenueCard from "../../components/VenueCard";
@@ -43,6 +44,10 @@ export default function ProfilePage() {
   const [venueToDelete, setVenueToDelete] = useState<Venue | null>(null);
 
   const [showProfileMediaModal, setShowProfileMediaModal] = useState(false);
+
+  // Confirm cancel booking modal
+  const [showCancelBookingModal, setShowCancelBookingModal] = useState(false);
+  const [bookingToCancel, setBookingToCancel] = useState<Booking | null>(null);
 
   // Mobile collapsible sections
   const [isVenuesOpen, setIsVenuesOpen] = useState(true);
@@ -85,15 +90,15 @@ export default function ProfilePage() {
     fetchData();
   }, [navigate]);
 
-  async function handleCancelBooking(id: string) {
-    if (!confirm("Are you sure you want to cancel this booking?")) return;
+  function handleCancelBookingClick(booking: Booking) {
+    setBookingToCancel(booking);
+    setShowCancelBookingModal(true);
+  }
 
-    try {
-      await deleteBooking(id);
-      setBookings((prev) => prev.filter((b) => b.id !== id));
-    } catch (err) {
-      alert((err as Error).message);
-    }
+  function handleConfirmCancelBooking(id: string) {
+    setBookings((prev) => prev.filter((b) => b.id !== id));
+    setShowCancelBookingModal(false);
+    setBookingToCancel(null);
   }
 
   function handleVenueSaved(savedVenue: Venue) {
@@ -310,7 +315,7 @@ export default function ProfilePage() {
                   <BookingCard
                     key={b.id}
                     booking={b}
-                    onCancel={handleCancelBooking}
+                    onCancel={() => handleCancelBookingClick(b)}
                   />
                 ))}
               </ul>
@@ -339,6 +344,18 @@ export default function ProfilePage() {
           setVenueToDelete(null);
         }}
         onDeleted={handleVenueDeleted}
+      />
+
+      {/* Cancel Booking Modal */}
+      <ConfirmCancelBookingModal
+        isOpen={showCancelBookingModal}
+        bookingId={bookingToCancel?.id || null}
+        venueName={bookingToCancel?.venue?.name}
+        onClose={() => {
+          setShowCancelBookingModal(false);
+          setBookingToCancel(null);
+        }}
+        onCancelled={handleConfirmCancelBooking}
       />
 
       <ProfileMediaModal

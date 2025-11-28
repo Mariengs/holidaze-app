@@ -803,6 +803,13 @@
   color: var(--text-color);
 }
 
+.input[type="number"]::-webkit-inner-spin-button,
+.input[type="number"]::-webkit-outer-spin-button {
+  opacity: 1;
+  height: 40px;
+  cursor: pointer;
+}
+
 .input:focus {
   border-color: var(--search-button-bg);
   box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
@@ -852,16 +859,6 @@
   transform: none;
 }
 
-.msgSuccess {
-  color: var(--accent-green);
-  font-size: 1rem;
-  font-weight: 600;
-  padding: 1rem;
-  background: var(--amenity-tag-bg);
-  border-radius: 12px;
-  border: 1px solid var(--accent-green);
-}
-
 .msgError {
   color: var(--danger-color);
   font-size: 1rem;
@@ -896,13 +893,36 @@
   }
 
   .calendarTop {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
     gap: 0.75rem;
+  }
+
+  .calendarHeader {
+    width: 100%;
+    order: 0;
+    justify-content: space-between;
+  }
+
+  .navGroup {
+    order: 0;
+  }
+
+  .monthName {
+    order: 1;
+    flex: 1;
+    text-align: center;
+  }
+
+  .todayButton {
+    order: 2;
+    margin-left: 0;
   }
 
   .legend {
     width: 100%;
+    order: 2;
     justify-content: space-between;
   }
 
