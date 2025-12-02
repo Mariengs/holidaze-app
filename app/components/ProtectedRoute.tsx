@@ -23,6 +23,12 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     setIsLoggedIn(true);
   }
 
+  function handleModalClose() {
+    // Redirect til hjemmesiden hvis brukeren prøver å lukke modal
+    // uten å logge inn (siden de trenger å være innlogget for å se denne siden)
+    window.location.href = "/";
+  }
+
   // Unngå flicker: ikke vis noe før vi har sjekket auth
   if (checkingAuth) return null;
 
@@ -42,7 +48,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
           <p>You need to log in to view this page.</p>
         </div>
 
-        <LoginModal onSuccess={handleLoginSuccess} />
+        <LoginModal onSuccess={handleLoginSuccess} onClose={handleModalClose} />
       </>
     );
   }
