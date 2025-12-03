@@ -55,7 +55,7 @@ body {
   filter: brightness(0) invert(1);
 }
 
-/* Desktop-nav - Unified styling for links and buttons */
+/* Desktop-nav */
 .navLinks {
   list-style: none;
   display: flex;
@@ -240,7 +240,7 @@ body {
 }
 
 .logoutBtn {
-  background-color: transparent;
+  background-color: var(--button-primary-bg);
   border: 1px solid var(--button-secondary-border);
   border-radius: 6px;
   padding: 0.45rem 0.9rem;
@@ -254,7 +254,7 @@ body {
 }
 
 .registerBtn {
-  background-color: var(--accent-green, #10b981);
+  background-color: var(--button-primary-bg);
   color: #fff;
   border-radius: 6px;
   font-size: 0.9rem;
@@ -267,7 +267,7 @@ body {
 }
 
 .registerBtn:hover {
-  background-color: var(--accent-green-hover, #059669);
+  background-color: var(--button-primary-hover-bg);
 }
 
 /* Footer */
