@@ -1,0 +1,150 @@
+/* LOCKED STATE (NOT LOGGED IN) */
+
+.lockedBox {
+  border: 2px solid #fecaca;
+  border-radius: 16px;
+  background: #fee2e2;
+  padding: 2rem;
+  width: 100%;
+  max-width: 500px;
+}
+
+.lockedTitle {
+  color: #dc2626;
+  font-weight: 700;
+  margin: 0 0 0.75rem 0;
+  font-size: 1.25rem;
+}
+
+.lockedText {
+  color: #991b1b;
+  font-size: 1rem;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* BOOKING FORM */
+
+.form {
+  display: grid;
+  gap: 1.25rem;
+  width: 100%;
+  max-width: 500px;
+  padding: 2rem;
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  background: var(--card-bg);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+/* ERROR MESSAGE */
+
+.msgError {
+  color: var(--danger-color);
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 1rem;
+  background: #fee2e2;
+  border-radius: 12px;
+  border: 1px solid #fecaca;
+}
+
+/* DATE DISPLAY */
+
+.dateDisplay {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+/* FORM FIELDS */
+
+.field {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.label {
+  font-weight: 700;
+  color: var(--text-color);
+  font-size: 1rem;
+}
+
+.dateValue {
+  padding: 0.875rem 1rem;
+  border-radius: 12px;
+  border: 2px solid var(--border-color);
+  background: var(--hover-bg-color);
+  font-size: 1rem;
+  color: var(--text-color);
+  font-weight: 500;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+}
+
+/* INPUT*/
+
+.input {
+  padding: 0.875rem 1rem;
+  border-radius: 12px;
+  border: 2px solid var(--border-color);
+  background: var(--card-bg);
+  outline: none;
+  transition: all 0.2s ease;
+  font-size: 1rem;
+  color: var(--text-color);
+}
+
+.input[type="number"]::-webkit-inner-spin-button,
+.input[type="number"]::-webkit-outer-spin-button {
+  opacity: 1;
+  height: 40px;
+  cursor: pointer;
+}
+
+.input:focus {
+  border-color: var(--search-button-bg);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+/* SUBMIT BUTTON */
+
+.button {
+  background: var(--button-primary-bg);
+  color: var(--button-primary-text);
+  border: none;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1.05rem;
+  box-shadow: 0 4px 12px rgba(17, 24, 39, 0.2);
+}
+
+.button:hover:not(:disabled) {
+  background: var(--button-primary-hover-bg);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(17, 24, 39, 0.3);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (max-width: 640px) {
+  .dateDisplay {
+    grid-template-columns: 1fr;
+  }
+
+  .form {
+    padding: 1.5rem;
+  }
+
+  .lockedBox {
+    padding: 1.5rem;
+  }
+}

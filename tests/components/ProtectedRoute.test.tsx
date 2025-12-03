@@ -32,7 +32,7 @@ describe("ProtectedRoute", () => {
   });
 
   afterEach(() => {
-    cleanup(); // Clean up DOM after each test
+    cleanup();
   });
 
   describe("When User is Logged In", () => {

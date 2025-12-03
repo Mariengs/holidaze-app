@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { DateRange } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
-import styles from "./Searchmodal.module.css";
+import styles from "../styles/SearchModal.module.css";
 
 export interface BookingSearchValues {
   destination: string;
