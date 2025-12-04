@@ -1,3 +1,4 @@
+/* === BACKDROP === */
 .backdrop {
   position: fixed;
   inset: 0;
@@ -7,33 +8,81 @@
   z-index: 9999;
 }
 
+/* === MODAL === */
 .modal {
   position: relative;
   background: var(--card-bg);
   color: var(--text-color);
-  border-radius: 12px;
-  padding: 1.8rem;
+  border-radius: 16px;
+  padding: 2rem;
   width: 100%;
-  max-width: 340px;
+  max-width: 420px; /* Økt for å gi plass til tabs */
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   font-family: system-ui, sans-serif;
 }
 
-.modal h2 {
-  margin-bottom: 1rem;
-  text-align: center;
+/* Header inside modal */
+.header {
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
   color: var(--text-color);
 }
 
+.subtitle {
+  font-size: 0.9rem;
+  color: var(--muted-text-color);
+  line-height: 1.4;
+}
+
+/* === TAB SWITCHER / SLIDER === */
+.tabSwitcher {
+  display: flex;
+  justify-content: center;
+  background: #f3f4f6; /* lys grå bakgrunn som kontrast mot mørk knapp */
+  border-radius: 999px;
+  padding: 0.25rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Inactive tab */
+.tabButton {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 0.55rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-radius: 999px;
+  cursor: pointer;
+  color: #4b5563; /* nøytral mørkegrå */
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+/* Active tab (MATCHER ORIGINAL LOGIN-KNAPPEN) */
+.tabButtonActive {
+  background: #111827; /* samme farge som din opprinnelige Log in-knapp */
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+/* === FORM FIELDS === */
 .form {
   display: grid;
-  gap: 0.8rem;
+  gap: 0.9rem;
 }
 
 .label {
   display: grid;
-  gap: 0.4rem;
-  font-size: 0.9rem;
+  gap: 0.3rem;
+  font-size: 0.85rem;
   color: var(--text-color);
 }
 
@@ -52,36 +101,80 @@
   border-color: #3b82f6;
 }
 
+/* Rød outline ved valideringsfeil */
+.inputError {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 1px rgba(220, 38, 38, 0.35);
+}
+
+.inputError:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 1px rgba(220, 38, 38, 0.5);
+}
+
+/* Feilmelding under enkeltfelt */
+.fieldError {
+  font-size: 0.8rem;
+  color: #dc2626;
+  margin-top: -0.2rem;
+  margin-bottom: 0.3rem;
+}
+
+/* Checkbox in register tab */
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.85rem;
+  color: var(--text-color);
+}
+
+.checkbox {
+  width: 16px;
+  height: 16px;
+}
+
+.helperText {
+  font-size: 0.8rem;
+  color: var(--muted-text-color);
+  margin-top: -0.3rem; /* trekker det litt opp mot checkbox */
+  margin-bottom: 0.8rem; /* gir rom før neste felt */
+  line-height: 1.35;
+}
+
+/* === ERROR MESSAGE (global / API) === */
 .error {
   color: red;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
   font-size: 0.9rem;
   text-align: center;
 }
 
+/* === SUBMIT BUTTON === */
 .button {
   border-radius: 6px;
   border: none;
   background: #111827;
   color: #fff;
   font-size: 0.95rem;
-  font-weight: 500;
-  padding: 0.6rem 0.75rem;
+  font-weight: 600;
+  padding: 0.75rem;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: background 0.25s ease;
 }
 
 .button:hover {
   background: #1e293b;
 }
 
+/* === CLOSE BUTTON (X) === */
 .closeBtn {
   position: absolute;
   top: 0.75rem;
   right: 0.75rem;
   background: transparent;
   border: none;
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   line-height: 1;
   cursor: pointer;
   color: var(--muted-text-color);

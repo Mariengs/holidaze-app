@@ -222,52 +222,88 @@ body {
   color: var(--danger-color, #b91c1c);
 }
 
-/* Auth Buttons */
-.loginBtn {
-  background-color: var(--button-primary-bg);
-  color: var(--button-primary-text);
-  border: none;
-  border-radius: 6px;
-  padding: 0.45rem 0.9rem;
+/* Auth Buttons – subtil primærstil */
+.loginBtn,
+.registerBtn {
+  background-color: rgba(37, 99, 235, 0.08);
+  color: var(--button-primary-bg);
+  border: 1px solid rgba(37, 99, 235, 0.8);
+  border-radius: 999px;
+  padding: 0.45rem 1.1rem;
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  text-decoration: none;
+  line-height: 1.2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.1s ease;
 }
 
-.loginBtn:hover {
-  background-color: var(--button-primary-hover-bg);
-}
-
-.logoutBtn {
+/* Hover – fylt primærknapp */
+.loginBtn:hover,
+.registerBtn:hover {
   background-color: var(--button-primary-bg);
-  border: 1px solid var(--button-secondary-border);
-  border-radius: 6px;
-  padding: 0.45rem 0.9rem;
+  color: var(--button-primary-text);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  transform: translateY(-1px);
+}
+
+/* Dark mode variant – mer subtil, mindre “neon” */
+:global(.dark) .loginBtn,
+:global(.dark) .registerBtn {
+  background-color: rgba(37, 99, 235, 0.16);
+  border-color: rgba(59, 130, 246, 0.7);
+  color: rgba(191, 219, 254, 0.96);
+  box-shadow: 0 1px 8px rgba(15, 23, 42, 0.75);
+}
+
+:global(.dark) .loginBtn:hover,
+:global(.dark) .registerBtn:hover {
+  background-color: #1d4ed8;
+  color: #e5edff;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.85);
+}
+
+/* Logout – subtil sekundærknapp */
+.logoutBtn {
+  background-color: transparent;
+  border: 1px solid var(--button-secondary-border, var(--border-color));
+  border-radius: 999px;
+  padding: 0.45rem 1.1rem;
   font-size: 0.9rem;
   cursor: pointer;
   color: var(--text-color);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.1s ease;
 }
 
+/* Light mode hover – mørk subtil bakgrunn */
 .logoutBtn:hover {
-  background-color: var(--button-secondary-hover-bg);
+  background-color: rgba(0, 0, 0, 0.06);
+  transform: translateY(-1px);
 }
 
-.registerBtn {
-  background-color: var(--button-primary-bg);
-  color: #fff;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  padding: 0.45rem 0.9rem;
-  text-decoration: none;
-  line-height: 1.2;
-  display: inline-block;
-  border: 0;
+/* Dark mode base */
+:global(.dark) .logoutBtn {
+  border-color: rgba(148, 163, 184, 0.5);
+  color: rgba(228, 232, 240, 0.95);
 }
 
-.registerBtn:hover {
-  background-color: var(--button-primary-hover-bg);
+/* Dark mode hover – mørkere, elegant touch */
+:global(.dark) .logoutBtn:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #f1f5f9;
+  transform: translateY(-1px);
 }
 
 /* Footer */
@@ -329,8 +365,6 @@ body {
   padding: 0 1.5rem;
   width: 100%;
 }
-
-/* RESPONSIV E*/
 
 /* Small screens */
 @media (max-width: 640px) {
