@@ -222,7 +222,7 @@ body {
   color: var(--danger-color, #b91c1c);
 }
 
-/* Auth Buttons – subtil primærstil */
+/* Auth Buttons */
 .loginBtn,
 .registerBtn {
   background-color: rgba(37, 99, 235, 0.08);
@@ -246,7 +246,7 @@ body {
     transform 0.1s ease;
 }
 
-/* Hover – fylt primærknapp */
+/* Hover */
 .loginBtn:hover,
 .registerBtn:hover {
   background-color: var(--button-primary-bg);
@@ -255,7 +255,7 @@ body {
   transform: translateY(-1px);
 }
 
-/* Dark mode variant – mer subtil, mindre “neon” */
+/* Dark mode */
 :global(.dark) .loginBtn,
 :global(.dark) .registerBtn {
   background-color: rgba(37, 99, 235, 0.16);
@@ -271,7 +271,7 @@ body {
   box-shadow: 0 4px 14px rgba(15, 23, 42, 0.85);
 }
 
-/* Logout – subtil sekundærknapp */
+/* Logout  */
 .logoutBtn {
   background-color: transparent;
   border: 1px solid var(--button-secondary-border, var(--border-color));
@@ -287,7 +287,7 @@ body {
     transform 0.1s ease;
 }
 
-/* Light mode hover – mørk subtil bakgrunn */
+/* Light mode hover  */
 .logoutBtn:hover {
   background-color: rgba(0, 0, 0, 0.06);
   transform: translateY(-1px);
@@ -299,7 +299,7 @@ body {
   color: rgba(228, 232, 240, 0.95);
 }
 
-/* Dark mode hover – mørkere, elegant touch */
+/* Dark mode hover */
 :global(.dark) .logoutBtn:hover {
   background-color: rgba(255, 255, 255, 0.08);
   color: #f1f5f9;
@@ -412,7 +412,7 @@ body {
   }
 }
 
-/* Hide desktop nav on mobile, show mobile menu */
+/* mobile menu */
 @media (max-width: 720px) {
   .navLinks {
     display: none;

@@ -1,4 +1,4 @@
-/* === BACKDROP === */
+/* BACKDROP */
 .backdrop {
   position: fixed;
   inset: 0;
@@ -8,7 +8,7 @@
   z-index: 9999;
 }
 
-/* === MODAL === */
+/* MODAL */
 .modal {
   position: relative;
   background: var(--card-bg);
@@ -16,7 +16,7 @@
   border-radius: 16px;
   padding: 2rem;
   width: 100%;
-  max-width: 420px; /* Økt for å gi plass til tabs */
+  max-width: 420px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   font-family: system-ui, sans-serif;
 }
@@ -40,11 +40,11 @@
   line-height: 1.4;
 }
 
-/* === TAB SWITCHER / SLIDER === */
+/* TAB SWITCHER / SLIDER*/
 .tabSwitcher {
   display: flex;
   justify-content: center;
-  background: #f3f4f6; /* lys grå bakgrunn som kontrast mot mørk knapp */
+  background: #f3f4f6;
   border-radius: 999px;
   padding: 0.25rem;
   margin-bottom: 1.5rem;
@@ -60,20 +60,20 @@
   font-weight: 500;
   border-radius: 999px;
   cursor: pointer;
-  color: #4b5563; /* nøytral mørkegrå */
+  color: #4b5563;
   transition:
     background-color 0.2s ease,
     color 0.2s ease;
 }
 
-/* Active tab (MATCHER ORIGINAL LOGIN-KNAPPEN) */
+/* Active tab */
 .tabButtonActive {
-  background: #111827; /* samme farge som din opprinnelige Log in-knapp */
+  background: #111827;
   color: #fff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
-/* === FORM FIELDS === */
+/* FORM FIELDS  */
 .form {
   display: grid;
   gap: 0.9rem;
@@ -101,7 +101,7 @@
   border-color: #3b82f6;
 }
 
-/* Rød outline ved valideringsfeil */
+/* Outline */
 .inputError {
   border-color: #dc2626;
   box-shadow: 0 0 0 1px rgba(220, 38, 38, 0.35);
@@ -112,7 +112,7 @@
   box-shadow: 0 0 0 1px rgba(220, 38, 38, 0.5);
 }
 
-/* Feilmelding under enkeltfelt */
+/* Error */
 .fieldError {
   font-size: 0.8rem;
   color: #dc2626;
@@ -137,12 +137,12 @@
 .helperText {
   font-size: 0.8rem;
   color: var(--muted-text-color);
-  margin-top: -0.3rem; /* trekker det litt opp mot checkbox */
-  margin-bottom: 0.8rem; /* gir rom før neste felt */
+  margin-top: -0.3rem;
+  margin-bottom: 0.8rem;
   line-height: 1.35;
 }
 
-/* === ERROR MESSAGE (global / API) === */
+/* ERROR MESSAGE (global / API)*/
 .error {
   color: red;
   margin-bottom: 0.5rem;
@@ -150,7 +150,7 @@
   text-align: center;
 }
 
-/* === SUBMIT BUTTON === */
+/* SUBMIT BUTTON */
 .button {
   border-radius: 6px;
   border: none;
@@ -167,7 +167,7 @@
   background: #1e293b;
 }
 
-/* === CLOSE BUTTON (X) === */
+/* CLOSE BUTTON*/
 .closeBtn {
   position: absolute;
   top: 0.75rem;

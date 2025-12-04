@@ -371,10 +371,8 @@ export default function Venues() {
     setMaxPriceInput("10000");
     setMinGuestsInput("0");
 
-    // Clear URL parameters
     setSearchParams({});
 
-    // Force BookingSearchBar to reset by changing key
     setResetKey((prev) => prev + 1);
   }
 
@@ -455,7 +453,7 @@ export default function Venues() {
           </span>
         </button>
 
-        {/* Filter content - always visible on desktop, collapsible on mobile */}
+        {/* Filter content - desktop, collapsible on mobile */}
         <div
           className={`${styles.filterContent} ${isFiltersOpen ? styles.filterContentOpen : ""}`}
         >

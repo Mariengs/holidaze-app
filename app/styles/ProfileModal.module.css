@@ -61,7 +61,7 @@
   letter-spacing: -0.02em;
 }
 
-/* Danger variant for destructive actions */
+/* danger destructive actions */
 .headingDanger {
   color: var(--danger-color);
   margin-top: 0;

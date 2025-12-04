@@ -1,4 +1,4 @@
-/* Overlay (dark backdrop) */
+/* Overlay */
 .overlay {
   position: fixed;
   inset: 0;
@@ -509,9 +509,7 @@ fieldset.formGroup {
   color: #ef4444;
 }
 
-/* RESPONSIVE - MOBILE */
-
-/* Tablet/medium screens - keep compact */
+/* Tablet/medium screens */
 @media (max-width: 768px) {
   .starsGroup {
     gap: 0.2rem;
@@ -566,7 +564,7 @@ fieldset.formGroup {
     min-width: 0;
   }
 
-  /* Show star slider on mobile */
+  /* Show star*/
   .ratingRowDesktop {
     display: none;
   }
@@ -575,7 +573,7 @@ fieldset.formGroup {
     display: block;
   }
 
-  /* Image preview stacks vertically */
+  /* Image preview stack */
   .imagePreviewRow {
     flex-direction: column;
   }
@@ -585,7 +583,6 @@ fieldset.formGroup {
     height: 180px;
   }
 
-  /* Smaller image blocks */
   .imageBlock {
     padding: 1rem;
   }
