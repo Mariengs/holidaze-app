@@ -1,7 +1,3 @@
-/**
- * @vitest-environment jsdom
- */
-
 import React from "react";
 import {
   describe,
@@ -13,19 +9,13 @@ import {
   beforeAll,
   afterAll,
 } from "vitest";
-import {
-  render,
-  screen,
-  fireEvent,
-  cleanup,
-  waitFor,
-} from "@testing-library/react";
+import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 
 import Header from "../../app/components/Header";
 import * as authApi from "../../app/api/auth";
 
-// --- Mocks for auth API ---
+// Mocks for auth API
 vi.mock("../../app/api/auth", () => ({
   getToken: vi.fn(),
   getProfile: vi.fn(),
@@ -69,13 +59,62 @@ function renderHeader(
   );
 }
 
-// --- Fix for window.addEventListener / removeEventListener ---
-const originalAddEventListener = window.addEventListener;
-const originalRemoveEventListener = window.removeEventListener;
+const originalAddEventListener = (window as any).addEventListener;
+const originalRemoveEventListener = (window as any).removeEventListener;
+const originalDispatchEvent = (window as any).dispatchEvent;
+
+type ListenerFn = (ev: Event) => void;
+const windowListeners: Record<string, Set<ListenerFn>> = {};
 
 beforeAll(() => {
-  (window as any).addEventListener = vi.fn();
-  (window as any).removeEventListener = vi.fn();
+  // addEventListener
+  (window as any).addEventListener = (
+    type: string,
+    listener: EventListenerOrEventListenerObject
+  ) => {
+    if (typeof listener === "function") {
+      if (!windowListeners[type]) {
+        windowListeners[type] = new Set();
+      }
+      windowListeners[type].add(listener);
+    }
+
+    if (typeof originalAddEventListener === "function") {
+      originalAddEventListener.call(window, type, listener);
+    }
+  };
+
+  // removeEventListener
+  (window as any).removeEventListener = (
+    type: string,
+    listener: EventListenerOrEventListenerObject
+  ) => {
+    if (typeof listener === "function" && windowListeners[type]) {
+      windowListeners[type].delete(listener);
+    }
+
+    if (typeof originalRemoveEventListener === "function") {
+      originalRemoveEventListener.call(window, type, listener);
+    }
+  };
+
+  // dispatchEvent
+  (window as any).dispatchEvent = (event: Event) => {
+    const { type } = event;
+    const listeners = windowListeners[type];
+
+    if (listeners) {
+      listeners.forEach((listener) => {
+        listener.call(window, event);
+      });
+    }
+
+    if (typeof originalDispatchEvent === "function") {
+      return originalDispatchEvent.call(window, event);
+    }
+
+    return true;
+  };
 });
 
 // --- Mock window.location for logout / reload ---
@@ -94,9 +133,18 @@ beforeAll(() => {
 });
 
 afterAll(() => {
-  (window as any).addEventListener = originalAddEventListener;
-  (window as any).removeEventListener = originalRemoveEventListener;
+  // Restore window event functions
+  if (originalAddEventListener) {
+    (window as any).addEventListener = originalAddEventListener;
+  }
+  if (originalRemoveEventListener) {
+    (window as any).removeEventListener = originalRemoveEventListener;
+  }
+  if (originalDispatchEvent) {
+    (window as any).dispatchEvent = originalDispatchEvent;
+  }
 
+  // Restore location
   Object.defineProperty(window, "location", {
     configurable: true,
     value: originalLocation,
@@ -300,10 +348,8 @@ describe("Header", () => {
     const venuesItem = await screen.findByRole("menuitem", { name: "Venues" });
     fireEvent.click(venuesItem);
 
-    await waitFor(() => {
-      expect(
-        screen.queryByRole("menuitem", { name: "Venues" })
-      ).not.toBeInTheDocument();
-    });
+    expect(
+      screen.queryByRole("menuitem", { name: "Venues" })
+    ).not.toBeInTheDocument();
   });
 });
