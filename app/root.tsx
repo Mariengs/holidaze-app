@@ -8,7 +8,6 @@ import { AuthProvider } from "./components/context/AuthContext";
 import { ToastProvider } from "./components/context/ToastContext";
 import styles from "./styles/layout.module.css";
 
-import "./styles/global.css";
 import "./styles/theme.css";
 
 type Theme = "light" | "dark";
