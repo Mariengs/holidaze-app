@@ -144,7 +144,6 @@ export default function BookingForm({
             }
           }}
           onBlur={(e) => {
-            // If field is empty on blur, set to 1
             if (e.target.value === "" || Number(e.target.value) < 1) {
               setGuests(1);
             }

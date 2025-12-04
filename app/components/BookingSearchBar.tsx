@@ -22,7 +22,6 @@ export default function BookingSearchBar({
   const [guests, setGuests] = useState(2);
   const [showCalendar, setShowCalendar] = useState(false);
 
-  // Initialize with today and tomorrow as default date range
   const getDefaultDateRange = () => {
     const today = new Date();
     const tomorrow = new Date(today);
@@ -76,7 +75,6 @@ export default function BookingSearchBar({
   const displayCheckIn = formatDate(dateRange[0].startDate);
   const displayCheckOut = formatDate(dateRange[0].endDate);
 
-  // Get today's date at midnight for minDate
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 

@@ -1,6 +1,6 @@
 .wrapper {
   margin: 0 auto 1.75rem;
-  max-width: 1600px; /* Mye bredere - var 1400px */
+  max-width: 1600px;
   position: relative;
 }
 
@@ -13,9 +13,14 @@
   background-color: var(--card-bg);
   border: 1px solid var(--border-color);
   box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
-  padding: 0.3rem; /* Lavere - var 0.6rem */
+  padding: 0.3rem;
   overflow: visible;
   position: relative;
+
+  /* 🔽 Lås bredden slik du har den lokalt */
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto; /* sentrer baren */
 }
 
 /* Shared field styles */
