@@ -11,7 +11,6 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   const [checkingAuth, setCheckingAuth] = useState(true);
 
   useEffect(() => {
-    // Kjør kun i nettleser
     if (typeof window === "undefined") return;
 
     const token = getToken();
@@ -24,12 +23,10 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   }
 
   function handleModalClose() {
-    // Redirect til hjemmesiden hvis brukeren prøver å lukke modal
-    // uten å logge inn (siden de trenger å være innlogget for å se denne siden)
     window.location.href = "/";
   }
 
-  // Unngå flicker: ikke vis noe før vi har sjekket auth
+  // no flicker
   if (checkingAuth) return null;
 
   if (!isLoggedIn) {
@@ -53,6 +50,5 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     );
   }
 
-  // Hvis innlogget → vis det beskyttede innholdet
   return <>{children}</>;
 }

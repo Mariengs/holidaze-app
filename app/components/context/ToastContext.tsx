@@ -47,7 +47,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
       const item: ToastItem = { id, message, type, duration };
       setToasts((prev) => [...prev, item]);
 
-      // Fallback: fjern etter at Toast har animert ut (Toast selv kaller onClose også)
+      // Fallback toast
       setTimeout(() => removeToast(id), duration + 1500);
     },
     [removeToast]

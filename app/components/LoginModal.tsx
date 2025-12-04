@@ -32,7 +32,7 @@ export default function LoginModal({ onSuccess, onClose }: LoginModalProps) {
   return (
     <div className={styles.backdrop}>
       <div className={styles.modal}>
-        {/* ✕ close button */}
+        {/* close button */}
         <button
           className={styles.closeBtn}
           onClick={onClose}

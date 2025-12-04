@@ -39,33 +39,24 @@ export default function RegisterPage() {
     try {
       setLoading(true);
 
-      // 1. Registrer ny bruker med valgt rolle
       await registerUser({
         name,
         email,
         password,
-        venueManager, // dette er true/false fra checkboxen
+        venueManager,
       });
 
-      // 2. Logg inn for å hente token, apiKey og lagre profilen i localStorage
       await loginUser(email, password);
 
-      // 3. Hvis brukeren valgte "I am a Venue Manager"
-      //    men API evt gir venueManager:false første gang,
-      //    tving serveren -> venueManager:true og sync localStorage.
       if (venueManager === true) {
         try {
           await forceVenueManagerTrue();
         } catch (err) {
-          // hvis dette feiler, vi lar fortsatt brukeren være logget inn
           console.warn("Could not force venueManager true:", err);
         }
       }
-
-      // 4. si fra til resten av appen at auth-data er oppdatert (header osv.)
       window.dispatchEvent(new Event("auth-updated"));
 
-      // 5. toast + naviger til profilen
       setToastMessage("Account created 🎉 You're now logged in!");
       setTimeout(() => navigate("/profile"), 1000);
     } catch (err) {

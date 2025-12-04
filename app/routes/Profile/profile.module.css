@@ -218,9 +218,7 @@
   color: #dc2626;
 }
 
-/* ========================
-   VENUES LIST
-   ======================== */
+/* VENUES LIST */
 
 .venueList {
   list-style: none;
@@ -411,10 +409,7 @@
   color: var(--muted-text-color);
 }
 
-/* ========================
-   BOOKINGS LIST
-   ======================== */
-
+/* BOOKINGS LIST */
 .bookingList {
   list-style: none;
   padding: 0;
@@ -525,10 +520,7 @@
   color: white;
 }
 
-/* ========================
-   RESPONSIVE
-   ======================== */
-
+/* RESPONSIVE */
 @media (max-width: 640px) {
   .wrapper {
     padding: 0 1rem;

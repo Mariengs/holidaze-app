@@ -16,11 +16,9 @@
   padding: 0.3rem;
   overflow: visible;
   position: relative;
-
-  /* 🔽 Lås bredden slik du har den lokalt */
   max-width: 800px;
   width: 100%;
-  margin: 0 auto; /* sentrer baren */
+  margin: 0 auto;
 }
 
 /* Shared field styles */
@@ -34,33 +32,30 @@
   position: relative;
 }
 
-/* Give destination field significantly more space */
 .field:first-child {
-  flex: 2.2 1 0; /* Mer plass */
+  flex: 2.2 1 0;
   min-width: 280px;
   padding-right: 1.5rem;
 }
 
-/* Date field gets more space */
 .field:nth-child(3) {
-  flex: 1.8 1 0; /* Mer plass - var 0.9 */
+  flex: 1.8 1 0;
   min-width: 200px;
 }
 
-/* Guests field gets normal space */
 .field:nth-child(5) {
-  flex: 1 1 0; /* Normal plass - var 0.7 */
+  flex: 1 1 0;
   min-width: 120px;
 }
 
 .icon {
-  width: 24px; /* Mindre - var 26px */
-  height: 24px; /* Mindre - var 26px */
+  width: 24px;
+  height: 24px;
   border-radius: 999px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.9rem; /* Mindre - var 0.95rem */
+  font-size: 0.9rem;
   background-color: var(--capacity-icon-bg);
   color: var(--capacity-icon-text);
   flex-shrink: 0;
@@ -69,7 +64,7 @@
 .fieldContent {
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Vertikal sentrering av innholdet */
+  justify-content: center;
   gap: 0.15rem;
   min-width: 0;
   position: relative;
@@ -320,7 +315,7 @@
   .submitButton {
     width: 100%;
     margin-top: 0.5rem;
-    padding: 0.9rem 0; /* Litt høyere - var 0.8rem */
+    padding: 0.9rem 0;
     border-radius: 0.75rem;
   }
 

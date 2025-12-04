@@ -22,26 +22,23 @@
   animation: slideIn 0.4s ease forwards;
 }
 
-/* Fargevarianter */
 .success {
-  background-color: #16a34a; /* grønn */
+  background-color: #16a34a;
 }
 
 .error {
-  background-color: #dc2626; /* rød */
+  background-color: #dc2626;
 }
 
 .info {
-  background-color: #2563eb; /* blå */
+  background-color: #2563eb;
 }
 
-/* Når toasten skal skjules */
 .hidden {
   opacity: 0;
   transform: translateY(-10px);
 }
 
-/* Animasjon når toasten dukker opp */
 @keyframes slideIn {
   from {
     opacity: 0;
@@ -53,7 +50,6 @@
   }
 }
 
-/* Responsiv liten justering for små skjermer */
 @media (max-width: 640px) {
   .toast {
     width: 90%;

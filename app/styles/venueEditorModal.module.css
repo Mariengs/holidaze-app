@@ -1,7 +1,3 @@
-/* ===================================
-   VENUE EDITOR MODAL - MODERN DESIGN
-   =================================== */
-
 /* Overlay (dark backdrop) */
 .overlay {
   position: fixed;
@@ -513,9 +509,7 @@ fieldset.formGroup {
   color: #ef4444;
 }
 
-/* ===================================
-   RESPONSIVE - MOBILE
-   =================================== */
+/* RESPONSIVE - MOBILE */
 
 /* Tablet/medium screens - keep compact */
 @media (max-width: 768px) {
@@ -630,9 +624,7 @@ fieldset.formGroup {
   }
 }
 
-/* ===================================
-   DARK MODE SPECIFIC ADJUSTMENTS
-   =================================== */
+/* DARK MODE SPECIFIC ADJUSTMENTS*/
 
 :global(.dark) .overlay {
   background: rgba(0, 0, 0, 0.75);

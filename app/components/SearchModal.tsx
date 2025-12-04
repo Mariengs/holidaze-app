@@ -36,7 +36,7 @@ export default function SearchModal({
   const [guests, setGuests] = useState(2);
   const [guestsInput, setGuestsInput] = useState("2");
 
-  // Initialize with today and tomorrow as default date range
+  // Initialize date
   const getDefaultDateRange = (): DateRangeItem[] => {
     const today = new Date();
     const tomorrow = new Date(today);
@@ -152,7 +152,6 @@ export default function SearchModal({
     ? `${formatDateLabel(selection.startDate)} – ${formatDateLabel(selection.endDate)}`
     : "Select dates";
 
-  // Get today's date at midnight for minDate
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 

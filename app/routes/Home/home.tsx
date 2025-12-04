@@ -33,7 +33,7 @@ export default function HomePage() {
     if (values.checkIn) params.set("checkIn", values.checkIn);
     if (values.checkOut) params.set("checkOut", values.checkOut);
 
-    // Navigate to venues page with search params
+    // Navigate
     navigate(`/venues?${params.toString()}`);
   }
 

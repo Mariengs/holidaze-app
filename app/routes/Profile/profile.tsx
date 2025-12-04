@@ -34,7 +34,7 @@ export default function ProfilePage() {
   const [loadingVenues, setLoadingVenues] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // --- MODAL STATE ---
+  // MODAL STATE
   const [showVenueEditor, setShowVenueEditor] = useState(false);
   const [editingVenue, setEditingVenue] = useState<Venue | undefined>(
     undefined
@@ -132,7 +132,7 @@ export default function ProfilePage() {
     );
   }
 
-  // --- early UI states ---
+  //  early UI states
   if (loadingProfileData) {
     return (
       <section className={styles.centerMessage}>
@@ -158,7 +158,7 @@ export default function ProfilePage() {
     );
   }
 
-  // --- main render ---
+  //  main render
   return (
     <>
       <section className={styles.wrapper}>

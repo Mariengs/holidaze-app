@@ -62,7 +62,7 @@
 .button {
   border-radius: 6px;
   border: none;
-  background: #111827; /* mørk blå-sort, fungerer i begge moden */
+  background: #111827;
   color: #fff;
   font-size: 0.95rem;
   font-weight: 500;

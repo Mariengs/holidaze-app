@@ -1,5 +1,4 @@
 .main {
-  /* La layouten styre bredde/padding – denne kan holdes ganske "lett" */
   padding-bottom: 2.5rem;
 }
 
@@ -90,7 +89,7 @@
 
 .searchInput:focus {
   border-color: var(--nav-link-hover-color);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25); /* blå-ish ring, funker i begge tema */
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.25);
   background-color: var(--bg-color);
 }
 
@@ -288,7 +287,6 @@
 }
 
 /* Amenities */
-
 .amenities {
   margin-top: 0.6rem;
   display: flex;

@@ -54,7 +54,7 @@ export default function VenueEditorModal({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Clickable stars (desktop)
+  // Clickable stars
   function EditableStars({
     value = 0,
     onChange,
@@ -211,7 +211,6 @@ export default function VenueEditorModal({
   }
 
   function handleCancel() {
-    // Check if user has made any changes
     const hasChanges =
       name.trim() !== "" ||
       description.trim() !== "" ||

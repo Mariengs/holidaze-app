@@ -129,7 +129,6 @@ export default function SingleVenue() {
   const lastOfMonth = new Date(year, month + 1, 0);
   const daysInMonth = lastOfMonth.getDate();
 
-  // Start week on Monday (1) instead of Sunday (0)
   let startWeekday = firstOfMonth.getDay();
   startWeekday = startWeekday === 0 ? 6 : startWeekday - 1;
 
@@ -189,7 +188,6 @@ export default function SingleVenue() {
 
       // Check if range has booked dates
       if (isRangeBlocked(dateFrom, iso)) {
-        // Range blocked - restart selection from clicked date
         setDateFrom(iso);
         setDateTo("");
         return;
@@ -571,7 +569,6 @@ export default function SingleVenue() {
           onDateToChange={setDateTo}
           onClearDates={handleClearDates}
           onBookingSuccess={async () => {
-            // Refresh venue data to show updated bookings
             try {
               const data = await getVenueById(id);
               setVenue(data);
