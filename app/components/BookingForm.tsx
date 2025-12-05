@@ -13,6 +13,8 @@ interface BookingFormProps {
   onDateToChange: (v: string) => void;
   onClearDates: () => void;
   onBookingSuccess: () => Promise<void>;
+  totalPrice?: number;
+  numberOfNights?: number;
 }
 
 export default function BookingForm({
@@ -20,11 +22,14 @@ export default function BookingForm({
   maxGuests,
   dateFrom,
   dateTo,
+  totalPrice,
+  numberOfNights,
   onDateFromChange,
   onDateToChange,
   onClearDates,
   onBookingSuccess,
 }: BookingFormProps) {
+  // Local state for guests and UI feedback
   const [guests, setGuests] = useState(1);
   const [message, setMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -33,9 +38,11 @@ export default function BookingForm({
   const token = getToken();
   const isLoggedIn = !!token;
 
+  // Handle booking submission
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
+    // Basic client-side validation
     if (!isLoggedIn) {
       setMessage("You must be logged in to make a booking.");
       return;
@@ -53,6 +60,7 @@ export default function BookingForm({
 
     setLoading(true);
     setMessage(null);
+
     try {
       await createBooking({ dateFrom, dateTo, guests, venueId });
 
@@ -63,6 +71,7 @@ export default function BookingForm({
         duration: 3000,
       });
 
+      // Reset state and notify parent
       onClearDates();
       setGuests(1);
       await onBookingSuccess();
@@ -81,6 +90,7 @@ export default function BookingForm({
     }
   }
 
+  // If user is not logged in, show info box instead of the form
   if (!isLoggedIn) {
     return (
       <div className={styles.lockedBox}>
@@ -95,10 +105,12 @@ export default function BookingForm({
 
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
+      {/* Error message (for validation / API errors) */}
       {message && !message.startsWith("✅") && (
         <p className={styles.msgError}>{message}</p>
       )}
 
+      {/* Read-only date summary based on the calendar selection */}
       <div className={styles.dateDisplay}>
         <div className={styles.field}>
           <span className={styles.label}>Check-in</span>
@@ -125,6 +137,7 @@ export default function BookingForm({
         </div>
       </div>
 
+      {/* Guests input */}
       <label className={styles.field}>
         <span className={styles.label}>Guests (max {maxGuests})</span>
         <input
@@ -135,6 +148,7 @@ export default function BookingForm({
           onChange={(e) => {
             const val = e.target.value;
             if (val === "") {
+              // Allow empty string while typing, fix on blur
               setGuests(0);
             } else {
               const num = Number(val);
@@ -144,6 +158,7 @@ export default function BookingForm({
             }
           }}
           onBlur={(e) => {
+            // Ensure guests never stays below 1
             if (e.target.value === "" || Number(e.target.value) < 1) {
               setGuests(1);
             }
@@ -153,6 +168,22 @@ export default function BookingForm({
         />
       </label>
 
+      {/* Inline total summary above the button.
+          If no dates are selected, show a friendly placeholder instead of "0". */}
+      <div className={styles.inlineTotal}>
+        {numberOfNights && numberOfNights > 0 && totalPrice !== undefined ? (
+          <>
+            <span>Total:</span>
+            <strong>NOK {totalPrice}</strong>
+          </>
+        ) : (
+          <span className={styles.inlineTotalPlaceholder}>
+            Select dates to see the total price
+          </span>
+        )}
+      </div>
+
+      {/* Submit button */}
       <button
         type="submit"
         disabled={loading || !dateFrom || !dateTo}

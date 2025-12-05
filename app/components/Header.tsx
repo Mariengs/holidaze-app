@@ -97,8 +97,7 @@ export default function Header({ theme, onToggleTheme }: HeaderProps) {
   function handleVenueSaved(savedVenue: Venue) {
     setShowVenueEditor(false);
     setEditingVenue(undefined);
-    // Optional: Navigate to the new venue
-    // navigate(`/venues/${savedVenue.id}`);
+    navigate(`/venues/${savedVenue.id}`);
   }
 
   useEffect(() => {

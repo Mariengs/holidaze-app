@@ -10,6 +10,7 @@ export interface Booking {
   venue?: {
     id: string;
     name: string;
+    price?: number;
     media?: { url: string; alt?: string }[];
   };
 }
@@ -37,7 +38,7 @@ function buildHeaders(includeJson = false) {
   return baseHeaders;
 }
 
-/* ---------- Create Booking ---------- */
+/* Create Booking */
 export async function createBooking({
   dateFrom,
   dateTo,
@@ -64,7 +65,7 @@ export async function createBooking({
   return data.data;
 }
 
-/* ---------- Get all bookings for logged-in user ---------- */
+/*  Get all bookings for logged-in user */
 export async function getUserBookings(userName: string): Promise<Booking[]> {
   const res = await fetch(
     `${API_BASE}/profiles/${encodeURIComponent(userName)}/bookings?_venue=true`,
@@ -82,7 +83,7 @@ export async function getUserBookings(userName: string): Promise<Booking[]> {
   return data.data;
 }
 
-/* ---------- Cancel booking ---------- */
+/*  Cancel booking */
 export async function deleteBooking(bookingId: string): Promise<void> {
   const res = await fetch(`${API_BASE}/bookings/${bookingId}`, {
     method: "DELETE",

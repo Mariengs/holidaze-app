@@ -75,7 +75,7 @@ export interface VenuePayload {
   };
 }
 
-/* ---------- Get all venues or search by query ---------- */
+/* Get all venues or search by query */
 export async function getAllVenues(query?: string): Promise<Venue[]> {
   const token = getToken();
   const apiKey = getApiKey();
@@ -114,7 +114,7 @@ export async function getAllVenues(query?: string): Promise<Venue[]> {
   return dataPublic.data || [];
 }
 
-/* ---------- Get single venue ---------- */
+/* Get single venue */
 export async function getVenueById(id: string): Promise<Venue> {
   const token = getToken();
   const apiKey = getApiKey();
@@ -143,7 +143,7 @@ export async function getVenueById(id: string): Promise<Venue> {
   return jsonPublic.data;
 }
 
-/* ---------- Create a booking ---------- */
+/* Create a booking  */
 export async function createBooking({
   dateFrom,
   dateTo,
@@ -166,7 +166,7 @@ export async function createBooking({
   return data.data;
 }
 
-/* ---------- Get venues owned by a specific user ---------- */
+/*  Get venues owned by a specific user  */
 export async function getUserVenues(username: string): Promise<Venue[]> {
   const token = getToken();
   const apiKey = getApiKey();
@@ -192,7 +192,7 @@ export async function getUserVenues(username: string): Promise<Venue[]> {
   return data.data || [];
 }
 
-/* ---------- Create new venue ---------- */
+/*  Create new venue */
 export async function createVenue(body: VenuePayload): Promise<Venue> {
   const res = await fetch(`${API_BASE}/venues`, {
     method: "POST",
@@ -207,7 +207,7 @@ export async function createVenue(body: VenuePayload): Promise<Venue> {
   return data.data;
 }
 
-/* ---------- Update an existing venue ---------- */
+/* Update an existing venue */
 export async function updateVenue(
   id: string,
   body: VenuePayload
@@ -225,7 +225,7 @@ export async function updateVenue(
   return data.data;
 }
 
-/* ---------- Delete venue ---------- */
+/* Delete venue  */
 export async function deleteVenue(id: string) {
   const res = await fetch(`${API_BASE}/venues/${id}`, {
     method: "DELETE",

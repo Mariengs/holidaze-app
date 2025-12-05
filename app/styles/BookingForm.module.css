@@ -134,6 +134,26 @@
   transform: none;
 }
 
+.inlineTotal {
+  margin-top: 1rem;
+  margin-bottom: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.inlineTotal strong {
+  font-size: 1.05rem;
+}
+
+.inlineTotalPlaceholder {
+  font-size: 0.9rem;
+  color: var(--muted-text-color);
+}
+
 @media (max-width: 640px) {
   .dateDisplay {
     grid-template-columns: 1fr;

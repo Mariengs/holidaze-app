@@ -112,6 +112,9 @@ export default function ProfilePage() {
 
     setShowVenueEditor(false);
     setEditingVenue(undefined);
+    if (!editingVenue) {
+      navigate(`/venues/${savedVenue.id}`);
+    }
   }
 
   function handleVenueDeleted(deletedVenueId: string) {

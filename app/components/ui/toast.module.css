@@ -1,9 +1,9 @@
-/* === TOAST CONTAINER === */
+/*  TOAST CONTAINER */
 .toast {
   position: fixed;
   top: 1.25rem;
   right: 1.25rem;
-  z-index: 11000; /* viktig – foran loginmodal */
+  z-index: 11000;
 
   display: flex;
   align-items: center;
@@ -27,7 +27,7 @@
   animation: slideIn 0.35s ease forwards;
 }
 
-/* === VARIANTS === */
+/* VARIANTS */
 .success {
   background-color: #16a34a;
 }
@@ -40,13 +40,13 @@
   background-color: #2563eb;
 }
 
-/* === HIDDEN STATE === */
+/* HIDDEN STATE */
 .hidden {
   opacity: 0;
   transform: translateY(-10px);
 }
 
-/* === ANIMATION === */
+/* ANIMATION */
 @keyframes slideIn {
   from {
     opacity: 0;
@@ -58,7 +58,7 @@
   }
 }
 
-/* === MOBILE === */
+/* MOBILE  */
 @media (max-width: 640px) {
   .toast {
     width: calc(100% - 2rem);

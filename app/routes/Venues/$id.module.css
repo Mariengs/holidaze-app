@@ -749,6 +749,90 @@
   margin-bottom: 1.5rem;
 }
 
+.priceSummary {
+  width: 100%;
+  max-width: 540px;
+  margin: 0 auto 1.5rem;
+  padding: 1rem 1.25rem;
+  border-radius: 16px;
+  border: 1px solid transparent;
+  background-image:
+    linear-gradient(var(--card-bg), var(--card-bg)),
+    linear-gradient(120deg, var(--search-button-bg), var(--accent-green));
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Liten gradient-line on top of card */
+.priceSummary::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--search-button-bg),
+    var(--accent-green)
+  );
+  opacity: 0.95;
+}
+
+.priceSummary::before {
+  content: "";
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 22px;
+  height: 14px;
+  border-radius: 3px;
+  background: var(--muted-text-color);
+  opacity: 0.9;
+  box-shadow:
+    0 -4px 0 0 var(--search-button-bg) inset,
+    0 4px 0 0 var(--search-button-bg) inset;
+}
+
+.priceSummary p {
+  margin: 0;
+}
+
+.priceSummary p:first-child {
+  padding-left: 2.1rem;
+  font-size: 0.9rem;
+  color: var(--muted-text-color);
+}
+
+.priceSummary p:last-child {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-color);
+  white-space: nowrap;
+}
+
+.priceSummary strong {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+/* Når vi viser bare “Select dates…”-teksten */
+.priceSummary .muted {
+  padding-left: 2.1rem;
+  width: 100%;
+  text-align: left;
+}
+
 /* RESPONSIVE */
 @media (max-width: 768px) {
   .page {
@@ -821,5 +905,15 @@
 
   .amenitiesList {
     grid-template-columns: 1fr;
+  }
+
+  .priceSummary {
+    max-width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .priceSummary p:last-child {
+    align-self: flex-end;
   }
 }

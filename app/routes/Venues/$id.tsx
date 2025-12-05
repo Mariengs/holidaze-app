@@ -273,6 +273,25 @@ export default function SingleVenue() {
   const images = venue.media || [];
   const hasMultipleImages = images.length > 1;
 
+  // Price calculation based on selected dates
+  const numberOfNights =
+    dateFrom && dateTo
+      ? (() => {
+          const [sy, sm, sd] = dateFrom.split("-").map(Number);
+          const [ey, em, ed] = dateTo.split("-").map(Number);
+
+          const startUtc = Date.UTC(sy, sm - 1, sd);
+          const endUtc = Date.UTC(ey, em - 1, ed);
+
+          // +1 fordi både start- og sluttdato regnes som overnattinger
+          const diffDays = (endUtc - startUtc) / (1000 * 60 * 60 * 24) + 1;
+
+          return diffDays > 0 ? diffDays : 0;
+        })()
+      : 0;
+
+  const totalPrice = numberOfNights * venue.price;
+
   return (
     <main className={styles.page}>
       {/* Image Gallery */}
@@ -393,12 +412,12 @@ export default function SingleVenue() {
       <section className={styles.metaRow}>
         <div className={styles.metaCard}>
           <span className={styles.metaLabel}>Price</span>
-          <span className={styles.metaValue}>${venue.price} / night</span>
+          <span className={styles.metaValue}>NOK {venue.price} / night</span>
         </div>
         <div className={styles.metaCard}>
           <span className={styles.metaLabel}>Rating</span>
           <span className={styles.metaValue}>
-            ⭐ {venue.rating ?? "No rating yet"}
+            ★ {venue.rating ?? "No rating yet"}
           </span>
         </div>
         <div className={styles.metaCard}>
@@ -560,6 +579,23 @@ export default function SingleVenue() {
       {/* Booking form */}
       <section className={styles.formSection}>
         <h2>Book this venue</h2>
+
+        <div className={styles.priceSummary}>
+          {numberOfNights > 0 ? (
+            <>
+              <p>
+                {numberOfNights} night{numberOfNights > 1 ? "s" : ""} × NOK{" "}
+                {venue.price} / night
+              </p>
+              <p>
+                Total: <strong>NOK {totalPrice}</strong>
+              </p>
+            </>
+          ) : (
+            <p className={styles.muted}>Select dates to see the total price.</p>
+          )}
+        </div>
+
         <BookingForm
           venueId={venue.id}
           maxGuests={venue.maxGuests}
@@ -576,6 +612,8 @@ export default function SingleVenue() {
               console.error("Failed to refresh venue:", err);
             }
           }}
+          totalPrice={totalPrice}
+          numberOfNights={numberOfNights}
         />
       </section>
     </main>

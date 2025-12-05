@@ -44,21 +44,82 @@ export default function VenueCard({ venue, onEdit, onDelete }: Props) {
 
           {Array.isArray(venue.bookings) && venue.bookings.length > 0 && (
             <div className={styles.venueBookingsBox}>
-              <p className={styles.venueBookingsTitle}>Upcoming bookings:</p>
+              <p className={styles.venueBookingsTitle}>Upcoming bookings</p>
               <ul className={styles.venueBookingsList}>
-                {venue.bookings.map((bk) => (
-                  <li key={bk.id} className={styles.venueBookingItem}>
-                    <div className={styles.venueBookingDates}>
-                      {bk.dateFrom.split("T")[0]} → {bk.dateTo.split("T")[0]}
-                    </div>
-                    <div className={styles.venueBookingInfo}>
-                      {bk.guests} guests
-                    </div>
-                    <div className={styles.venueBookingInfo}>
-                      {bk.customer?.name} ({bk.customer?.email})
-                    </div>
-                  </li>
-                ))}
+                {venue.bookings.map((bk) => {
+                  const start = new Date(bk.dateFrom);
+                  const end = new Date(bk.dateTo);
+
+                  const startLabel = start.toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  });
+
+                  const endLabel = end.toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  });
+
+                  const startUtc = Date.UTC(
+                    start.getFullYear(),
+                    start.getMonth(),
+                    start.getDate()
+                  );
+                  const endUtc = Date.UTC(
+                    end.getFullYear(),
+                    end.getMonth(),
+                    end.getDate()
+                  );
+                  const diffDays =
+                    (endUtc - startUtc) / (1000 * 60 * 60 * 24) + 1;
+                  const nights = diffDays > 0 ? diffDays : 0;
+                  const hasValidRange = nights > 0 && Number.isFinite(nights);
+
+                  const pricePerNight =
+                    typeof venue.price === "number" ? venue.price : null;
+                  const totalPrice =
+                    hasValidRange && pricePerNight !== null
+                      ? pricePerNight * nights
+                      : null;
+
+                  return (
+                    <li key={bk.id} className={styles.venueBookingItem}>
+                      {/* Dato + netter */}
+                      <div className={styles.venueBookingDatesRow}>
+                        <span className={styles.venueBookingDatesLabel}>
+                          Stay
+                        </span>
+                        <span className={styles.venueBookingDatesRange}>
+                          {startLabel} – {endLabel}
+                        </span>
+                        {hasValidRange && (
+                          <span className={styles.venueBookingNights}>
+                            · {nights} night{nights > 1 ? "s" : ""}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Guests + totalpris */}
+                      <div className={styles.venueBookingMetaRow}>
+                        <span className={styles.venueBookingGuests}>
+                          {bk.guests} guests
+                        </span>
+                        {totalPrice !== null && (
+                          <span className={styles.venueBookingPrice}>
+                            NOK {totalPrice}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Kundedetaljer */}
+                      <div className={styles.venueBookingCustomer}>
+                        {bk.customer?.name} ({bk.customer?.email})
+                      </div>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           )}

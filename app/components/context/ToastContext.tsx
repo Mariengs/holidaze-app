@@ -59,7 +59,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     <ToastContext.Provider value={value}>
       {children}
 
-      {/* Global toast-container, alltid på toppen til høyre */}
+      {/* Global toast-container */}
       <div
         style={{
           position: "fixed",

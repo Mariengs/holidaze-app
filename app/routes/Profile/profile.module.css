@@ -365,12 +365,11 @@
   border-color: rgba(239, 68, 68, 0.3);
 }
 
-/* Venue bookings box */
 .venueBookingsBox {
   margin-top: 0.75rem;
   background: var(--bg-color);
   border: 1px solid var(--border-color);
-  border-radius: 0.75rem;
+  border-radius: 0.9rem;
   padding: 1rem;
 }
 
@@ -392,21 +391,88 @@
   gap: 0.75rem;
 }
 
+/* Single booking row inside "Upcoming bookings" */
 .venueBookingItem {
   font-size: 0.85rem;
   line-height: 1.5;
-  border-left: 3px solid var(--button-primary-bg);
-  padding-left: 0.75rem;
-  color: var(--text-color);
+  padding: 0.75rem 0.85rem;
+  border-radius: 0.75rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
 }
 
-.venueBookingDates {
-  color: var(--text-color);
+/* Extra visual separation between rows */
+.venueBookingItem + .venueBookingItem {
+  margin-top: 0.25rem;
+}
+
+/* Dates row: label + range + nights */
+.venueBookingDatesRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.venueBookingDatesLabel {
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  color: var(--muted-text-color);
   font-weight: 600;
 }
 
-.venueBookingInfo {
+.venueBookingDatesRange {
+  font-weight: 600;
+}
+
+.venueBookingNights {
+  font-size: 0.8rem;
   color: var(--muted-text-color);
+}
+
+/* Guests + total  */
+.venueBookingMetaRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  margin-top: 0.1rem;
+}
+
+.venueBookingGuests {
+  color: var(--muted-text-color);
+}
+
+/* Price badge */
+.venueBookingPrice {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  background: rgba(37, 99, 235, 0.08);
+  color: var(--button-primary-bg);
+}
+
+:global(.dark) .venueBookingPrice {
+  background: rgba(59, 130, 246, 0.18);
+  color: #bfdbfe;
+}
+
+/* Customer info at the bottom */
+.venueBookingCustomer {
+  font-size: 0.8rem;
+  color: var(--muted-text-color);
+  margin-top: 0.15rem;
 }
 
 /* BOOKINGS LIST */
@@ -455,9 +521,12 @@
 }
 
 .bookingContent {
-  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
+/* Venue name */
 .bookingVenueName {
   margin: 0 0 0.5rem 0;
   font-size: 1.1rem;
@@ -475,16 +544,61 @@
 }
 
 .bookingDates {
-  margin: 0 0 0.5rem 0;
-  font-size: 0.95rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0 0 0.25rem 0;
+  font-size: 0.9rem;
   color: var(--text-color);
+  font-weight: 500;
+}
+
+.bookingDatesLabel {
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  color: var(--muted-text-color);
   font-weight: 600;
 }
 
+.bookingDatesRange {
+  font-weight: 600;
+}
+
+.bookingNights {
+  font-size: 0.85rem;
+  color: var(--muted-text-color);
+}
+
+/* Guests */
 .bookingGuests {
   margin: 0;
   font-size: 0.9rem;
   color: var(--muted-text-color);
+}
+
+/* Total price section */
+.bookingPriceRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: 0.35rem;
+  font-size: 0.95rem;
+}
+
+.bookingPriceLabel {
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted-text-color);
+  letter-spacing: 0.08em;
+}
+
+.bookingPriceValue {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-color);
 }
 
 /* Cancel button */
