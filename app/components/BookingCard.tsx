@@ -17,7 +17,7 @@ export default function BookingCard({ booking, onCancel }: Props) {
   const start = new Date(booking.dateFrom);
   const end = new Date(booking.dateTo);
 
-  // Format dates nicely: "12 Mar 2025"
+  // Format dates
   const startLabel = start.toLocaleDateString("en-GB", {
     day: "2-digit",
     month: "short",
@@ -30,7 +30,7 @@ export default function BookingCard({ booking, onCancel }: Props) {
     year: "numeric",
   });
 
-  // Calculate number of nights (same idea as SingleVenue)
+  // Calculate number of nights
   const startUtc = Date.UTC(
     start.getFullYear(),
     start.getMonth(),
@@ -40,9 +40,6 @@ export default function BookingCard({ booking, onCancel }: Props) {
   const diffDays = (endUtc - startUtc) / (1000 * 60 * 60 * 24) + 1;
   const nights = diffDays > 0 ? diffDays : 0;
   const hasValidRange = nights > 0 && Number.isFinite(nights);
-
-  // Price per night – if your Booking.venue type doesn't have price yet,
-  // you can either add it there OR keep this as `any`:
   const pricePerNight = (v as any).price;
   const hasPrice = typeof pricePerNight === "number";
   const totalPrice = hasValidRange && hasPrice ? pricePerNight * nights : null;
