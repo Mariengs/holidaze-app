@@ -50,6 +50,28 @@ Users can browse venues, make bookings, and manage listings depending on their r
 
 ---
 
+# Design & Planning
+
+- Figma Style Guide (logo, colours, typography, components)
+- Desktop + mobile prototypes
+- Kanban workflow (Trello or GitHub Projects)
+- Frequent commits based on user stories
+- Manual testing of all user stories
+
+## Validation tools
+
+- Lighthouse
+- HTML Validator
+- WAVE Accessibility Tool
+
+---
+
+# Deployment
+
+Deploy using:
+
+- Netlify
+
 ## Getting Started
 
 ### Install dependencies
@@ -57,9 +79,15 @@ Users can browse venues, make bookings, and manage listings depending on their r
 ```bash
 npm install
 
+Run development server
+npm run dev
+
+Build for production
 npm run build
 
+Start production server
 npm start
 
+Run tests
 npm test
 ```
