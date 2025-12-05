@@ -36,8 +36,9 @@ export default function VenueEditorModal({
   // Basic fields
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [price, setPrice] = useState<number>(0);
-  const [maxGuests, setMaxGuests] = useState<number>(1);
+  // numeric fields as strings so inputs can be empty
+  const [price, setPrice] = useState<string>("");
+  const [maxGuests, setMaxGuests] = useState<string>("1");
   const [city, setCity] = useState("");
   const [country, setCountry] = useState("");
   const [mediaList, setMediaList] = useState<MediaItem[]>([{ url: "" }]);
@@ -49,10 +50,15 @@ export default function VenueEditorModal({
     breakfast: false,
     pets: false,
   });
-  const [rating, setRating] = useState<number>(0);
+  const [rating, setRating] = useState<string>("0");
 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Field errors for numeric fields
+  const [priceError, setPriceError] = useState<string | null>(null);
+  const [maxGuestsError, setMaxGuestsError] = useState<string | null>(null);
+  const [ratingError, setRatingError] = useState<string | null>(null);
 
   // Clickable stars
   function EditableStars({
@@ -151,14 +157,80 @@ export default function VenueEditorModal({
     );
   }
 
+  // Validation helpers
+
+  function validatePrice(value: string): boolean {
+    if (value.trim() === "") {
+      setPriceError("Price is required.");
+      return false;
+    }
+    const num = Number(value);
+    if (Number.isNaN(num)) {
+      setPriceError("Price must be a number.");
+      return false;
+    }
+    if (num < 0) {
+      setPriceError("Price cannot be negative.");
+      return false;
+    }
+    setPriceError(null);
+    return true;
+  }
+
+  function validateMaxGuests(value: string): boolean {
+    if (value.trim() === "") {
+      setMaxGuestsError("Max guests is required.");
+      return false;
+    }
+    const num = Number(value);
+    if (Number.isNaN(num) || !Number.isFinite(num)) {
+      setMaxGuestsError("Max guests must be a number.");
+      return false;
+    }
+    if (!Number.isInteger(num)) {
+      setMaxGuestsError("Max guests must be a whole number.");
+      return false;
+    }
+    if (num < 1) {
+      setMaxGuestsError("There must be at least 1 guest.");
+      return false;
+    }
+    setMaxGuestsError(null);
+    return true;
+  }
+
+  function validateRating(value: string): boolean {
+    if (value.trim() === "") {
+      setRatingError("Rating is required.");
+      return false;
+    }
+    const num = Number(value);
+    if (Number.isNaN(num)) {
+      setRatingError("Rating must be a number.");
+      return false;
+    }
+    if (num < 0 || num > 5) {
+      setRatingError("Rating must be between 0 and 5.");
+      return false;
+    }
+    setRatingError(null);
+    return true;
+  }
+
   useEffect(() => {
     if (!isOpen) return;
 
     if (initialVenue) {
       setName(initialVenue.name || "");
       setDescription(initialVenue.description || "");
-      setPrice(initialVenue.price ?? 0);
-      setMaxGuests(initialVenue.maxGuests ?? 1);
+      setPrice(
+        typeof initialVenue.price === "number" ? String(initialVenue.price) : ""
+      );
+      setMaxGuests(
+        typeof initialVenue.maxGuests === "number"
+          ? String(initialVenue.maxGuests)
+          : "1"
+      );
       setCity(initialVenue.location?.city || "");
       setCountry(initialVenue.location?.country || "");
       setMediaList(
@@ -173,22 +245,27 @@ export default function VenueEditorModal({
         pets: !!initialVenue.meta?.pets,
       });
       setRating(
-        typeof initialVenue.rating === "number" ? initialVenue.rating : 0
+        typeof initialVenue.rating === "number"
+          ? String(initialVenue.rating)
+          : "0"
       );
     } else {
       setName("");
       setDescription("");
-      setPrice(0);
-      setMaxGuests(1);
+      setPrice("");
+      setMaxGuests("1");
       setCity("");
       setCountry("");
       setMediaList([{ url: "" }]);
       setMeta({ wifi: false, parking: false, breakfast: false, pets: false });
-      setRating(0);
+      setRating("0");
     }
 
     setError(null);
     setSaving(false);
+    setPriceError(null);
+    setMaxGuestsError(null);
+    setRatingError(null);
   }, [isOpen, initialVenue]);
 
   if (!isOpen) return null;
@@ -211,11 +288,15 @@ export default function VenueEditorModal({
   }
 
   function handleCancel() {
+    const numericPrice = Number(price || 0);
+    const numericMaxGuests = Number(maxGuests || 0);
+    const numericRating = Number(rating || 0);
+
     const hasChanges =
       name.trim() !== "" ||
       description.trim() !== "" ||
-      price > 0 ||
-      maxGuests > 1 ||
+      numericPrice > 0 ||
+      numericMaxGuests > 1 ||
       city.trim() !== "" ||
       country.trim() !== "" ||
       mediaList.some((m) => m.url.trim() !== "") ||
@@ -223,7 +304,7 @@ export default function VenueEditorModal({
       meta.parking ||
       meta.breakfast ||
       meta.pets ||
-      rating > 0;
+      numericRating > 0;
 
     if (hasChanges) {
       if (
@@ -241,6 +322,16 @@ export default function VenueEditorModal({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+
+    // validate numbers before saving
+    const priceOk = validatePrice(price);
+    const guestsOk = validateMaxGuests(maxGuests);
+    const ratingOk = validateRating(rating);
+
+    if (!priceOk || !guestsOk || !ratingOk) {
+      return;
+    }
+
     setSaving(true);
 
     try {
@@ -249,13 +340,17 @@ export default function VenueEditorModal({
         .filter((url) => url !== "")
         .map((url) => ({ url, alt: name || "venue image" }));
 
+      const numericPrice = Number(price || 0);
+      const numericMaxGuests = Number(maxGuests || 0);
+      const numericRating = Math.max(0, Math.min(5, Number(rating || 0)));
+
       const body: VenuePayload = {
         name,
         description,
-        price: Number(price),
-        maxGuests: Number(maxGuests),
+        price: numericPrice,
+        maxGuests: numericMaxGuests,
         media: cleanedMedia,
-        rating: Math.max(0, Math.min(5, Number(rating))),
+        rating: numericRating,
         meta,
         location:
           city || country
@@ -286,6 +381,8 @@ export default function VenueEditorModal({
       setSaving(false);
     }
   }
+
+  const ratingNumber = rating === "" ? 0 : Number(rating || 0);
 
   return (
     <div className={styles.overlay}>
@@ -324,10 +421,21 @@ export default function VenueEditorModal({
                     type="number"
                     min={0}
                     value={price}
-                    onChange={(e) => setPrice(Number(e.target.value))}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setPrice(val);
+                      if (val !== "") {
+                        validatePrice(val);
+                      } else {
+                        setPriceError(null);
+                      }
+                    }}
                     required
                     className={styles.input}
                   />
+                  {priceError && (
+                    <span className={styles.error}>{priceError}</span>
+                  )}
                 </label>
 
                 <label className={`${styles.formGroup} ${styles.col}`}>
@@ -336,10 +444,21 @@ export default function VenueEditorModal({
                     type="number"
                     min={1}
                     value={maxGuests}
-                    onChange={(e) => setMaxGuests(Number(e.target.value))}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setMaxGuests(val);
+                      if (val !== "") {
+                        validateMaxGuests(val);
+                      } else {
+                        setMaxGuestsError(null);
+                      }
+                    }}
                     required
                     className={styles.input}
                   />
+                  {maxGuestsError && (
+                    <span className={styles.error}>{maxGuestsError}</span>
+                  )}
                 </label>
               </div>
 
@@ -408,18 +527,28 @@ export default function VenueEditorModal({
 
                 {/* Desktop: stars + number input */}
                 <div className={styles.ratingRowDesktop}>
-                  <EditableStars value={rating} onChange={setRating} />
+                  <EditableStars
+                    value={ratingNumber}
+                    onChange={(v) => {
+                      setRating(String(v));
+                      setRatingError(null);
+                    }}
+                  />
                   <input
                     type="number"
                     min={0}
                     max={5}
                     step={1}
                     value={rating}
-                    onChange={(e) =>
-                      setRating(
-                        Math.max(0, Math.min(5, Number(e.target.value)))
-                      )
-                    }
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setRating(val);
+                      if (val !== "") {
+                        validateRating(val);
+                      } else {
+                        setRatingError(null);
+                      }
+                    }}
                     className={`${styles.input} ${styles.ratingInput}`}
                     aria-label="Rating (0 to 5)"
                   />
@@ -427,8 +556,18 @@ export default function VenueEditorModal({
 
                 {/* Mobile: star slider */}
                 <div className={styles.ratingRowMobile}>
-                  <StarSlider value={rating} onChange={setRating} />
+                  <StarSlider
+                    value={ratingNumber}
+                    onChange={(v) => {
+                      setRating(String(v));
+                      setRatingError(null);
+                    }}
+                  />
                 </div>
+
+                {ratingError && (
+                  <span className={styles.error}>{ratingError}</span>
+                )}
               </fieldset>
 
               {/* IMAGES */}
