@@ -78,16 +78,30 @@ Deploy using:
 
 ```bash
 npm install
+```
 
-Run development server
+### Run development server
+
+```bash
 npm run dev
+```
 
-Build for production
+### Build for production
+
+```bash
 npm run build
+```
 
-Start production server
+### Start production server
+
+```bash
 npm start
 
-Run tests
+```
+
+### Run tests
+
+```bash
 npm test
+
 ```
