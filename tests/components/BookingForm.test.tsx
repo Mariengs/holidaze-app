@@ -16,7 +16,7 @@ import { ToastProvider } from "../../app/components/context/ToastContext";
 vi.mock("../../app/api/auth");
 vi.mock("../../app/api/venues");
 
-// Helper to render with providers
+// Helper
 function renderWithProviders(ui: React.ReactElement) {
   return render(<ToastProvider>{ui}</ToastProvider>);
 }
@@ -392,7 +392,6 @@ describe("BookingForm", () => {
       };
       renderWithProviders(<BookingForm {...propsWithDifferentDates} />);
 
-      // Should render without errors
       expect(
         screen.getByRole("button", { name: /book now/i })
       ).toBeInTheDocument();

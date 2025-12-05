@@ -10,7 +10,7 @@ function renderWithRouter(ui: React.ReactElement) {
   return render(<MemoryRouter>{ui}</MemoryRouter>);
 }
 
-// Base booking-mock – castes via unknown for å slippe TS-gnål
+// Base booking-mock – castes via unknown for type-safety
 const baseBooking = {
   id: "booking-1",
   dateFrom: "2025-01-02T10:00:00.000Z",
@@ -56,10 +56,10 @@ describe("BookingCard", () => {
       })
     ).toBeInTheDocument();
 
-    // Datoer skal være uten tid (split på T)
+    // Dates should be without time (split på T)
     expect(screen.getByText("2025-01-02 → 2025-01-05")).toBeInTheDocument();
 
-    // Guests-tekst
+    // Guests-text
     expect(screen.getByText(/guests:\s*3/i)).toBeInTheDocument();
   });
 
@@ -101,7 +101,6 @@ describe("BookingCard", () => {
   it("does not render venue link content when booking has no venue", () => {
     setup({ venue: undefined as any });
 
-    // Hele innholdet (link + alt inni) er bak v &&, så ingen link
     expect(screen.queryByRole("link")).not.toBeInTheDocument();
     expect(screen.queryByRole("heading")).not.toBeInTheDocument();
   });

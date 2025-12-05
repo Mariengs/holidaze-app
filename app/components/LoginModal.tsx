@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { loginUser, registerUser, forceVenueManagerTrue } from "../api/auth";
 import Toast from "./ui/Toast";
 import styles from "../styles/LoginModal.module.css";
@@ -36,6 +37,11 @@ export default function LoginModal({ onSuccess, onClose }: LoginModalProps) {
   // Toast state (for successful registration)
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [pendingSuccess, setPendingSuccess] = useState(false);
+
+  // Password visibility
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const [showRegPassword, setShowRegPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // Helpers
   function validateEmail(value: string): boolean {
@@ -231,14 +237,30 @@ export default function LoginModal({ onSuccess, onClose }: LoginModalProps) {
 
               <label className={styles.label}>
                 <span>Password</span>
-                <input
-                  type="password"
-                  placeholder="••••••••"
-                  value={loginPassword}
-                  onChange={(e) => setLoginPassword(e.target.value)}
-                  className={styles.input}
-                  required
-                />
+                <div className={styles.inputGroup}>
+                  <input
+                    type={showLoginPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    className={styles.input}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className={styles.passwordToggleBtn}
+                    onClick={() => setShowLoginPassword((v) => !v)}
+                    aria-label={
+                      showLoginPassword ? "Hide password" : "Show password"
+                    }
+                  >
+                    {showLoginPassword ? (
+                      <AiOutlineEyeInvisible />
+                    ) : (
+                      <AiOutlineEye />
+                    )}
+                  </button>
+                </div>
               </label>
 
               <button
@@ -291,24 +313,40 @@ export default function LoginModal({ onSuccess, onClose }: LoginModalProps) {
               {/* Password */}
               <label className={styles.label}>
                 <span>Password</span>
-                <input
-                  type="password"
-                  value={regPassword}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    setRegPassword(value);
-                    // live-validering
-                    validatePassword(value);
-                    // oppdatere confirm hvis allerede fylt inn
-                    if (confirmPassword) {
-                      validateConfirmPassword(confirmPassword, value);
+                <div className={styles.inputGroup}>
+                  <input
+                    type={showRegPassword ? "text" : "password"}
+                    value={regPassword}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setRegPassword(value);
+                      // live-validering
+                      validatePassword(value);
+                      // oppdatere confirm hvis allerede fylt inn
+                      if (confirmPassword) {
+                        validateConfirmPassword(confirmPassword, value);
+                      }
+                    }}
+                    className={`${styles.input} ${
+                      passwordError ? styles.inputError : ""
+                    }`}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className={styles.passwordToggleBtn}
+                    onClick={() => setShowRegPassword((v) => !v)}
+                    aria-label={
+                      showRegPassword ? "Hide password" : "Show password"
                     }
-                  }}
-                  className={`${styles.input} ${
-                    passwordError ? styles.inputError : ""
-                  }`}
-                  required
-                />
+                  >
+                    {showRegPassword ? (
+                      <AiOutlineEyeInvisible />
+                    ) : (
+                      <AiOutlineEye />
+                    )}
+                  </button>
+                </div>
                 {passwordError && (
                   <span className={styles.fieldError}>{passwordError}</span>
                 )}
@@ -317,20 +355,38 @@ export default function LoginModal({ onSuccess, onClose }: LoginModalProps) {
               {/* Confirm password */}
               <label className={styles.label}>
                 <span>Confirm Password</span>
-                <input
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    setConfirmPassword(value);
-                    // live-validering
-                    validateConfirmPassword(value, regPassword);
-                  }}
-                  className={`${styles.input} ${
-                    confirmError ? styles.inputError : ""
-                  }`}
-                  required
-                />
+                <div className={styles.inputGroup}>
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={confirmPassword}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setConfirmPassword(value);
+                      // live-validering
+                      validateConfirmPassword(value, regPassword);
+                    }}
+                    className={`${styles.input} ${
+                      confirmError ? styles.inputError : ""
+                    }`}
+                    required
+                  />
+                  <button
+                    type="button"
+                    className={styles.passwordToggleBtn}
+                    onClick={() => setShowConfirmPassword((v) => !v)}
+                    aria-label={
+                      showConfirmPassword
+                        ? "Hide confirm password"
+                        : "Show confirm password"
+                    }
+                  >
+                    {showConfirmPassword ? (
+                      <AiOutlineEyeInvisible />
+                    ) : (
+                      <AiOutlineEye />
+                    )}
+                  </button>
+                </div>
                 {confirmError && (
                   <span className={styles.fieldError}>{confirmError}</span>
                 )}

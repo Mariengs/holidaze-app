@@ -7,6 +7,8 @@ describe("LoginModal", () => {
   const mockOnSuccess = vi.fn();
   const mockOnClose = vi.fn();
   let loginUserSpy: ReturnType<typeof vi.spyOn>;
+  let registerUserSpy: ReturnType<typeof vi.spyOn>;
+  let forceVenueManagerTrueSpy: ReturnType<typeof vi.spyOn>;
 
   const defaultProps = {
     onSuccess: mockOnSuccess,
@@ -16,21 +18,28 @@ describe("LoginModal", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     loginUserSpy = vi.spyOn(authApi, "loginUser");
+    registerUserSpy = vi.spyOn(authApi, "registerUser");
+    forceVenueManagerTrueSpy = vi.spyOn(authApi, "forceVenueManagerTrue");
   });
 
   afterEach(() => {
     loginUserSpy.mockRestore();
+    registerUserSpy.mockRestore();
+    forceVenueManagerTrueSpy.mockRestore();
     cleanup();
   });
 
-  // ---------- Rendering ----------
+  // Rendering
   describe("Rendering", () => {
-    it("should render modal with all elements", () => {
+    it("should render modal with all elements (login tab by default)", () => {
       render(<LoginModal {...defaultProps} />);
 
+      // Heading
       expect(
-        screen.getByRole("heading", { name: "Log in" })
+        screen.getByRole("heading", { name: "Holidaze" })
       ).toBeInTheDocument();
+
+      // Login form (default)
       expect(
         screen.getByPlaceholderText("your.name@stud.noroff.no")
       ).toBeInTheDocument();
@@ -38,7 +47,13 @@ describe("LoginModal", () => {
       expect(
         screen.getByRole("button", { name: "Log in" })
       ).toBeInTheDocument();
+
+      // Close button
       expect(screen.getByRole("button", { name: "Close" })).toBeInTheDocument();
+
+      // Tab buttons (role="tab")
+      expect(screen.getByRole("tab", { name: "Login" })).toBeInTheDocument();
+      expect(screen.getByRole("tab", { name: "Register" })).toBeInTheDocument();
     });
 
     it("should render email input with correct attributes", () => {
@@ -65,7 +80,7 @@ describe("LoginModal", () => {
     });
   });
 
-  // ---------- User interactions ----------
+  // User interactions
   describe("User interactions", () => {
     it("should update email when user types", () => {
       render(<LoginModal {...defaultProps} />);
@@ -97,12 +112,23 @@ describe("LoginModal", () => {
       expect(mockOnClose).toHaveBeenCalledTimes(1);
       expect(mockOnSuccess).not.toHaveBeenCalled();
     });
+
+    it("should switch to register tab when Register tab is clicked", () => {
+      render(<LoginModal {...defaultProps} />);
+
+      fireEvent.click(screen.getByRole("tab", { name: "Register" }));
+
+      expect(screen.getByText("Name")).toBeInTheDocument();
+      expect(screen.getByText("Email (@stud.noroff.no)")).toBeInTheDocument();
+      expect(screen.getByText("Confirm Password")).toBeInTheDocument();
+    });
   });
 
-  // ---------- Form submission ----------
+  // Form submission (login)
   describe("Form submission", () => {
     it("should call loginUser when form is submitted", async () => {
       loginUserSpy.mockResolvedValueOnce(undefined);
+
       render(<LoginModal {...defaultProps} />);
 
       fireEvent.change(
@@ -120,7 +146,7 @@ describe("LoginModal", () => {
         .closest("form")!;
       fireEvent.submit(form);
 
-      // microtick
+      // flush microtasks
       await Promise.resolve();
 
       expect(loginUserSpy).toHaveBeenCalledTimes(1);
@@ -128,6 +154,7 @@ describe("LoginModal", () => {
 
     it("should call onSuccess when login succeeds", async () => {
       loginUserSpy.mockResolvedValueOnce(undefined);
+
       render(<LoginModal {...defaultProps} />);
 
       fireEvent.change(
@@ -146,11 +173,13 @@ describe("LoginModal", () => {
       fireEvent.submit(form);
 
       await Promise.resolve();
+
       expect(mockOnSuccess).toHaveBeenCalledTimes(1);
     });
 
     it("should show loading state during login", () => {
       loginUserSpy.mockImplementation(() => new Promise(() => {}));
+
       render(<LoginModal {...defaultProps} />);
 
       fireEvent.change(
@@ -173,6 +202,7 @@ describe("LoginModal", () => {
 
     it("should disable submit button during loading", () => {
       loginUserSpy.mockImplementation(() => new Promise(() => {}));
+
       render(<LoginModal {...defaultProps} />);
 
       fireEvent.change(
@@ -197,10 +227,11 @@ describe("LoginModal", () => {
     });
   });
 
-  // ---------- Error handling ----------
+  // Error handling (login)
   describe("Error handling", () => {
     it("should call loginUser when login fails", async () => {
       loginUserSpy.mockRejectedValueOnce(new Error("Invalid credentials"));
+
       render(<LoginModal {...defaultProps} />);
 
       fireEvent.change(
@@ -219,11 +250,13 @@ describe("LoginModal", () => {
       fireEvent.submit(form);
 
       await Promise.resolve();
+
       expect(loginUserSpy).toHaveBeenCalledTimes(1);
     });
 
     it("should not call onSuccess when login fails", async () => {
       loginUserSpy.mockRejectedValueOnce(new Error("Login failed"));
+
       render(<LoginModal {...defaultProps} />);
 
       fireEvent.change(
@@ -242,11 +275,13 @@ describe("LoginModal", () => {
       fireEvent.submit(form);
 
       await Promise.resolve();
+
       expect(mockOnSuccess).not.toHaveBeenCalled();
     });
 
     it("should call API on error", async () => {
       loginUserSpy.mockRejectedValueOnce(new Error("Login failed"));
+
       render(<LoginModal {...defaultProps} />);
 
       fireEvent.change(
@@ -265,11 +300,13 @@ describe("LoginModal", () => {
       fireEvent.submit(form);
 
       await Promise.resolve();
+
       expect(loginUserSpy).toHaveBeenCalled();
     });
 
     it("should handle error without message", async () => {
       loginUserSpy.mockRejectedValueOnce(new Error(""));
+
       render(<LoginModal {...defaultProps} />);
 
       fireEvent.change(
@@ -288,14 +325,16 @@ describe("LoginModal", () => {
       fireEvent.submit(form);
 
       await Promise.resolve();
+
       expect(loginUserSpy).toHaveBeenCalled();
     });
   });
 
-  // ---------- Edge cases ----------
+  // Edge cases
   describe("Edge cases", () => {
     it("should handle rapid form submits", async () => {
       loginUserSpy.mockResolvedValue(undefined);
+
       render(<LoginModal {...defaultProps} />);
 
       fireEvent.change(
@@ -317,6 +356,7 @@ describe("LoginModal", () => {
       fireEvent.submit(form);
 
       await Promise.resolve();
+
       expect(loginUserSpy).toHaveBeenCalled();
     });
 
@@ -357,7 +397,47 @@ describe("LoginModal", () => {
     });
   });
 
-  // ---------- Accessibility ----------
+  // Registration flow
+  describe("Registration flow", () => {
+    it("should allow submitting registration form with valid data", () => {
+      render(<LoginModal {...defaultProps} />);
+
+      fireEvent.click(screen.getByRole("tab", { name: "Register" }));
+      fireEvent.change(screen.getByLabelText("Name"), {
+        target: { value: "Test User" },
+      });
+      fireEvent.change(screen.getByLabelText("Email (@stud.noroff.no)"), {
+        target: { value: "test@stud.noroff.no" },
+      });
+      fireEvent.change(screen.getByLabelText("Password"), {
+        target: { value: "password123" },
+      });
+      fireEvent.change(screen.getByLabelText("Confirm Password"), {
+        target: { value: "password123" },
+      });
+
+      const form = screen
+        .getByRole("button", { name: "Register" })
+        .closest("form")!;
+      fireEvent.submit(form);
+    });
+
+    it("should toggle venue manager checkbox", () => {
+      render(<LoginModal {...defaultProps} />);
+
+      fireEvent.click(screen.getByRole("tab", { name: "Register" }));
+
+      const checkbox = screen.getByLabelText(
+        "I am a Venue Manager"
+      ) as HTMLInputElement;
+
+      expect(checkbox.checked).toBe(false);
+      fireEvent.click(checkbox);
+      expect(checkbox.checked).toBe(true);
+    });
+  });
+
+  // Accessibility
   describe("Accessibility", () => {
     it("should have accessible close button", () => {
       render(<LoginModal {...defaultProps} />);

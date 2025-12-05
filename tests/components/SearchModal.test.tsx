@@ -2,11 +2,10 @@ import React from "react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 
-// Mock react-date-range slik at vi har kontroll i testene
+// Mock react-date-range
 vi.mock("react-date-range", () => ({
   DateRange: (props: any) => {
     const handleClick = () => {
-      // Simuler at brukeren velger et dato-intervall
       props.onChange({
         selection: {
           startDate: new Date("2025-01-01"),
@@ -47,7 +46,7 @@ describe("SearchModal", () => {
   const renderModal = (props = {}) =>
     render(<SearchModal {...defaultProps} {...props} />);
 
-  // ---------- Rendering ----------
+  //  Rendering
 
   it("does not render when isOpen is false", () => {
     renderModal({ isOpen: false });
@@ -75,7 +74,7 @@ describe("SearchModal", () => {
     expect(screen.getByRole("button", { name: /close/i })).toBeInTheDocument();
   });
 
-  // ---------- Closing ----------
+  // Closing
 
   it("calls onClose when close button is clicked", () => {
     renderModal();
@@ -88,7 +87,7 @@ describe("SearchModal", () => {
   it("calls onClose when backdrop is clicked", () => {
     renderModal();
 
-    // Backdrop er første div inne i containeren
+    // Backdrop
     const container = screen.getByText(/search for stays/i).closest("div");
     const root = container?.parentElement?.parentElement;
     const backdrop = root?.querySelector("div");
@@ -102,7 +101,7 @@ describe("SearchModal", () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  // ---------- Destination ----------
+  // Destination
 
   it("updates destination field when user types", () => {
     renderModal();
@@ -116,7 +115,7 @@ describe("SearchModal", () => {
     expect(destinationInput.value).toBe("Oslo");
   });
 
-  // ---------- Guests ----------
+  // Guests
 
   it("updates guests when user types a valid number", () => {
     renderModal();
@@ -138,14 +137,14 @@ describe("SearchModal", () => {
       /number of guests/i
     ) as HTMLInputElement;
 
-    // Sett til 0 og trig blur (som kjører handleGuestsBlur)
+    // set guests to 0 and blur
     fireEvent.change(guestsInput, { target: { value: "0" } });
     fireEvent.blur(guestsInput);
 
-    // Vent et mikrotick på at state oppdateres
+    // mikrotick state update
     await Promise.resolve();
 
-    // Submit skjemaet
+    // Submit form
     const form = screen
       .getByRole("button", { name: /search/i })
       .closest("form")!;
@@ -154,11 +153,11 @@ describe("SearchModal", () => {
     expect(onSearch).toHaveBeenCalledTimes(1);
     const values = onSearch.mock.calls[0][0];
 
-    // Viktigste garanti: gjester kan ikke være mindre enn 1
+    // Guests should be 1
     expect(values.guests).toBeGreaterThanOrEqual(1);
   });
 
-  // ---------- Dates ----------
+  // Dates
 
   it("shows 'Select dates' before any date is selected", () => {
     renderModal();
@@ -169,36 +168,35 @@ describe("SearchModal", () => {
   it("updates date label after selecting dates via DateRange", () => {
     renderModal();
 
-    // Vår mock DateRange rendrer en knapp som triggrer onChange
+    // mock DateRange rendrer trigger onChange
     const datePickerButton = screen.getByRole("button", {
       name: /open date picker/i,
     });
     fireEvent.click(datePickerButton);
 
-    // Etter at dato er valgt skal label ikke være 'Select dates'
+    // Date
     expect(screen.queryByText(/select dates/i)).not.toBeInTheDocument();
   });
 
   it("resets dates and label when 'Clear dates' is clicked", () => {
     renderModal();
 
-    // Først velger vi dato (så datesSelected blir true)
+    // DatePicker
     const datePickerButton = screen.getByRole("button", {
       name: /open date picker/i,
     });
     fireEvent.click(datePickerButton);
     expect(screen.queryByText(/select dates/i)).not.toBeInTheDocument();
 
-    // Klikk på 'Clear dates'
+    // Click 'Clear dates'
     const clearButton = screen.getByRole("button", { name: /clear dates/i });
     fireEvent.click(clearButton);
 
-    // Label skal tilbake til 'Select dates'
+    // Label back to 'Select dates'
     expect(screen.getByText(/select dates/i)).toBeInTheDocument();
   });
 
-  // ---------- Submit / onSearch ----------
-
+  // Submit / onSearch
   it("calls onSearch with selected dates and guests", () => {
     renderModal();
 
@@ -215,7 +213,7 @@ describe("SearchModal", () => {
     fireEvent.change(guestsInput, { target: { value: "4" } });
     fireEvent.blur(guestsInput);
 
-    // Velg datoer via mocked DateRange
+    // Dates via mocked DateRange
     const datePickerButton = screen.getByRole("button", {
       name: /open date picker/i,
     });

@@ -11,10 +11,10 @@ import VenueEditorModal from "../../app/components/VenueEditorModal";
 import * as venuesApi from "../../app/api/venues";
 import { ToastProvider } from "../../app/components/context/ToastContext";
 
-// Mock the venues API
+// Mock
 vi.mock("../../app/api/venues");
 
-// Mock window.confirm
+// Mock
 const mockConfirm = vi.fn();
 global.confirm = mockConfirm;
 
@@ -418,7 +418,7 @@ describe("VenueEditorModal", () => {
       );
 
       const starButtons = screen.getAllByRole("radio");
-      fireEvent.click(starButtons[3]); // Click 4th star (4 rating)
+      fireEvent.click(starButtons[3]);
 
       const ratingInput = screen.getByLabelText("Rating (0 to 5)");
       expect(ratingInput).toHaveValue(4);
@@ -780,19 +780,15 @@ describe("VenueEditorModal", () => {
         />
       );
 
-      // Initially one media URL field
       const initialUrlInputs = screen.getAllByLabelText("Image URL");
       expect(initialUrlInputs).toHaveLength(1);
 
-      // Add a second media URL field
       const addButton = screen.getByRole("button", { name: "+ Add image" });
       fireEvent.click(addButton);
 
-      // Now should have two fields
       const updatedUrlInputs = screen.getAllByLabelText("Image URL");
       expect(updatedUrlInputs).toHaveLength(2);
 
-      // Both remove buttons should be enabled (accessible name is "✕")
       const removeButtons = screen.getAllByRole("button", { name: "✕" });
       expect(removeButtons).toHaveLength(2);
       removeButtons.forEach((button) => {
@@ -815,7 +811,6 @@ describe("VenueEditorModal", () => {
         />
       );
 
-      // Verify form is populated with existing data
       expect(screen.getByLabelText("Name")).toHaveValue("Cozy Cabin");
       expect(screen.getByLabelText("Description")).toHaveValue(
         "A beautiful cabin in the woods"
@@ -914,7 +909,6 @@ describe("VenueEditorModal", () => {
         />
       );
 
-      // Bypass HTML5 validation by using form.requestSubmit = form.submit
       const form = container.querySelector("form");
       if (form) {
         const submitEvent = new Event("submit", {
@@ -1113,7 +1107,6 @@ describe("VenueEditorModal", () => {
       const cityInput = screen.getByLabelText("City");
       const countryInput = screen.getByLabelText("Country");
 
-      // Verify location inputs exist and are empty
       expect(cityInput).toBeInTheDocument();
       expect(cityInput).toHaveValue("");
       expect(countryInput).toBeInTheDocument();
@@ -1132,13 +1125,11 @@ describe("VenueEditorModal", () => {
       const cityInput = screen.getByLabelText("City");
       const countryInput = screen.getByLabelText("Country");
 
-      // Verify location inputs are present and not required
       expect(cityInput).toBeInTheDocument();
       expect(cityInput).not.toBeRequired();
       expect(countryInput).toBeInTheDocument();
       expect(countryInput).not.toBeRequired();
 
-      // Should accept input
       fireEvent.change(cityInput, { target: { value: "Oslo" } });
       expect(cityInput).toHaveValue("Oslo");
     });

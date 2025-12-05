@@ -117,7 +117,7 @@ beforeAll(() => {
   };
 });
 
-// --- Mock window.location for logout / reload ---
+//  Mock window.location for logout/reload
 const originalLocation = window.location;
 
 beforeAll(() => {

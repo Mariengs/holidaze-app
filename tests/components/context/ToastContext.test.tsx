@@ -220,7 +220,6 @@ describe("ToastContext", () => {
       expect(screen.getByText("Custom")).toBeInTheDocument();
 
       // After another 3500ms (total 6500ms), second toast should be removed
-      // Note: ToastContext has fallback timer at duration + 1500ms
       act(() => {
         vi.advanceTimersByTime(3500);
       });

@@ -193,7 +193,7 @@ describe("ProtectedRoute", () => {
       const loginButton = screen.getByTestId("login-success-btn");
       fireEvent.click(loginButton);
 
-      // Protected content should now be visible
+      // Protected content should be visible
       expect(screen.getByTestId("protected-content")).toBeInTheDocument();
       expect(screen.queryByTestId("login-modal")).not.toBeInTheDocument();
     });
@@ -262,8 +262,6 @@ describe("ProtectedRoute", () => {
       expect(screen.queryByTestId("protected-content")).not.toBeInTheDocument();
 
       fireEvent.click(screen.getByTestId("modal-close-btn"));
-
-      // Still not visible (redirect happens)
       expect(screen.queryByTestId("protected-content")).not.toBeInTheDocument();
     });
   });
@@ -303,8 +301,6 @@ describe("ProtectedRoute", () => {
     it("should check for typeof window to prevent SSR errors", () => {
       mockGetToken.mockReturnValue("test-token");
 
-      // The component has `if (typeof window === "undefined") return;`
-      // This test just verifies the component can render without crashing
       expect(() => {
         render(
           <ProtectedRoute>

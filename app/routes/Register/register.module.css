@@ -44,6 +44,55 @@
   border-color: #3b82f6;
 }
 
+/* Wrapper for inputs med toggle-knapp (password / confirm password) */
+.inputGroup {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+/* Juster input når den står i en inputGroup slik at det er plass til ikonet */
+.inputGroup .input {
+  margin-bottom: 0;
+  padding-right: 3rem; /* plass til ikonknappen til høyre */
+}
+
+/* Ikonknapp for show/hide password */
+.passwordToggleBtn {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: var(--muted-text-color);
+  font-size: 1.1rem; /* ikon-størrelse */
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background-color 0.15s ease-in-out,
+    color 0.15s ease-in-out,
+    transform 0.1s ease-in-out;
+}
+
+.passwordToggleBtn:hover {
+  background-color: rgba(59, 130, 246, 0.12);
+  color: #3b82f6;
+}
+
+.passwordToggleBtn:active {
+  transform: translateY(-50%) scale(0.95);
+}
+
+.passwordToggleBtn:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Checkbox / venue manager */
 .checkboxLabel {
   display: flex;
   align-items: center;
@@ -55,6 +104,7 @@
   margin-right: 0.5rem;
 }
 
+/* Error-melding */
 .error {
   color: red;
   text-align: center;
@@ -62,6 +112,7 @@
   font-weight: 500;
 }
 
+/* Submit-knapp */
 .button {
   width: 100%;
   background-color: #3b82f6;
@@ -78,6 +129,12 @@
   background-color: #2563eb;
 }
 
+.button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Undertekst / login-lenke */
 .text {
   text-align: center;
   margin-top: 1rem;
@@ -92,4 +149,20 @@
 
 .link:hover {
   color: #2563eb;
+}
+
+/* Autofill-fix for feltene i register-skjemaet */
+.input:-webkit-autofill,
+.input:-webkit-autofill:hover,
+.input:-webkit-autofill:focus,
+.input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px var(--card-bg) inset !important;
+  -webkit-text-fill-color: var(--text-color) !important;
+  caret-color: var(--text-color);
+}
+
+.input:-moz-autofill {
+  box-shadow: 0 0 0 30px var(--card-bg) inset;
+  -moz-text-fill-color: var(--text-color);
+  caret-color: var(--text-color);
 }

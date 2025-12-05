@@ -2,11 +2,10 @@ import React from "react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 
-// Mock react-date-range så vi har full kontroll
+// Mock react-date-range
 vi.mock("react-date-range", () => ({
   DateRange: (props: any) => {
     const handleClick = () => {
-      // Simuler at brukeren velger en bestemt periode
       props.onChange({
         selection: {
           startDate: new Date("2025-01-10"),
@@ -40,7 +39,7 @@ describe("BookingSearchBar", () => {
   const renderBar = (props = {}) =>
     render(<BookingSearchBar onSearch={onSearch} {...props} />);
 
-  // ---------- Rendering ----------
+  // Rendering
 
   it("renders destination, dates, guests and search button", () => {
     renderBar();
@@ -54,7 +53,7 @@ describe("BookingSearchBar", () => {
     expect(screen.getByRole("button", { name: /search/i })).toBeInTheDocument();
   });
 
-  // ---------- Inputs ----------
+  // Inputs
 
   it("updates destination when user types", () => {
     renderBar();
@@ -78,12 +77,12 @@ describe("BookingSearchBar", () => {
     expect(guestsInput.value).toBe("4");
   });
 
-  // ---------- Calendar toggle ----------
+  // Calendar toggle
 
   it("shows calendar popup when date button is clicked", () => {
     renderBar();
 
-    // Finn date-knappen (den som viser dd/mm/yyyy / dd/mm/yyyy)
+    // Find date-button (dd/mm/yyyy / dd/mm/yyyy)
     const dateButton = screen.getByRole("button", {
       name: /\d{2}\/\d{2}\/\d{4} \/ \d{2}\/\d{2}\/\d{4}/,
     });
@@ -115,7 +114,7 @@ describe("BookingSearchBar", () => {
     ).not.toBeInTheDocument();
   });
 
-  // ---------- Date selection & reset ----------
+  // Date selection & reset
 
   it("updates date display after selecting dates from DateRange", () => {
     renderBar();
@@ -124,16 +123,15 @@ describe("BookingSearchBar", () => {
       name: /\d{2}\/\d{2}\/\d{4} \/ \d{2}\/\d{2}\/\d{4}/,
     });
 
-    // Åpne kalender
+    // Open calendar
     fireEvent.click(dateButton);
 
-    // Klikk på mokket DateRange-knapp for å trigge onChange
+    //Click on DateRange-button mock to trigger onChange
     const mockPickerButton = screen.getByRole("button", {
       name: /mock date picker/i,
     });
     fireEvent.click(mockPickerButton);
 
-    // Nå skal teksten være basert på 10.01.2025–12.01.2025
     expect(
       screen.getByRole("button", {
         name: /10\/01\/2025 \/ 12\/01\/2025/,
@@ -148,14 +146,14 @@ describe("BookingSearchBar", () => {
       name: /\d{2}\/\d{2}\/\d{4} \/ \d{2}\/\d{2}\/\d{4}/,
     });
 
-    // Åpne kalender og velg mock-datoer
+    // Open calendar
     fireEvent.click(dateButton);
     const mockPickerButton = screen.getByRole("button", {
       name: /mock date picker/i,
     });
     fireEvent.click(mockPickerButton);
 
-    // Sjekk at vi faktisk har fått den nye dato-labelen
+    // Check new dates-label
     expect(
       screen.getByRole("button", {
         name: /10\/01\/2025 \/ 12\/01\/2025/,
@@ -176,7 +174,7 @@ describe("BookingSearchBar", () => {
     ).not.toBeInTheDocument();
   });
 
-  // ---------- Search ----------
+  // Search
 
   it("calls onSearch with dates and guests", () => {
     renderBar();
@@ -187,11 +185,11 @@ describe("BookingSearchBar", () => {
     ) as HTMLInputElement;
     fireEvent.change(destinationInput, { target: { value: "Bergen" } });
 
-    // Sett guests
+    // Set guests
     const guestsInput = screen.getByLabelText(/guests/i) as HTMLInputElement;
     fireEvent.change(guestsInput, { target: { value: "3" } });
 
-    // Åpne kalender og velg mock-datoer
+    // Open calendar and mock-datoer
     const dateButton = screen.getByRole("button", {
       name: /\d{2}\/\d{2}\/\d{4} \/ \d{2}\/\d{2}\/\d{4}/,
     });

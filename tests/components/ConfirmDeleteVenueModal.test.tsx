@@ -1,4 +1,3 @@
-// tests/components/ConfirmDeleteVenueModal.test.tsx
 import React from "react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, cleanup, fireEvent } from "@testing-library/react";
@@ -119,7 +118,7 @@ describe("ConfirmDeleteVenueModal", () => {
 
     fireEvent.click(deleteButton);
 
-    // Vent ett mikrotick så den async handleDelete får kjørt ferdig
+    //  mikrotick for async handleDelete
     await Promise.resolve();
 
     expect(deleteVenue).toHaveBeenCalledTimes(1);

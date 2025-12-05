@@ -10,7 +10,7 @@ function renderWithRouter(ui: React.ReactElement) {
   return render(<MemoryRouter>{ui}</MemoryRouter>);
 }
 
-// Base mock-venue – castes som unknown først, så som Venue for å slippe TS-gnål
+// Base mock-venue
 const baseVenue = {
   id: "venue-1",
   name: "Cozy Cabin",
@@ -153,7 +153,7 @@ describe("VenueCard", () => {
 
     cleanup();
 
-    // Med handlers
+    // handlers
     const onEdit = vi.fn();
     const onDelete = vi.fn();
     setup({}, { onEdit, onDelete });

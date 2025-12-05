@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { registerUser, loginUser, forceVenueManagerTrue } from "../../api/auth";
 import Toast from "../../components/ui/Toast";
 import styles from "./register.module.css";
@@ -113,8 +114,9 @@ export default function RegisterPage() {
               type="button"
               className={styles.passwordToggleBtn}
               onClick={() => setShowPassword((v) => !v)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
             >
-              {showPassword ? "Hide" : "Show"}
+              {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
             </button>
           </div>
 
@@ -134,8 +136,17 @@ export default function RegisterPage() {
               type="button"
               className={styles.passwordToggleBtn}
               onClick={() => setShowConfirmPassword((v) => !v)}
+              aria-label={
+                showConfirmPassword
+                  ? "Hide confirm password"
+                  : "Show confirm password"
+              }
             >
-              {showConfirmPassword ? "Hide" : "Show"}
+              {showConfirmPassword ? (
+                <AiOutlineEyeInvisible />
+              ) : (
+                <AiOutlineEye />
+              )}
             </button>
           </div>
 
